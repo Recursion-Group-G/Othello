@@ -1,4 +1,5 @@
 # othello
+ここは開発環境です。
 
 ## Project setup
 ```
