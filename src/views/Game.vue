@@ -3,7 +3,7 @@
         <v-content class="v-content">    
             <v-container>
             </v-container>
-            <v-container>
+            <v-container class="board">
                 <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                     <div>
@@ -26,11 +26,11 @@
             <!-- Players -->
             <v-container>
                 <v-row class="d-flex space-between text-center mb-5">
-                    <!-- v-forの"2"とプレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え-->
+                    <!-- v-forの"2"、Playerの名前、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え-->
                     <v-col v-for="k in 2" 
                         :key="k"
                     >
-                    <h2 class="player-font">Player{{k}}:2</h2> 
+                    <h2 class="player-font">Player{{k}}: 2</h2> 
                     </v-col>
                 </v-row>
             </v-container>
@@ -43,21 +43,22 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'Game',
-  components: {
-  },
-  data: () => ({
-    //後でconfig.tsに移行する
-    board: {
-        color:{
-            white: '#ffffff'
-        },
-        size:{
-            row: 8,
-            col: 8
-        }
+    name: 'Game',
+    components: {
     },
-  }),
+    data: () => ({
+        //後でconfig.tsに移行する
+        board: {
+            color:{
+                white: '#ffffff'
+            },
+            size:{
+                row: 8,
+                col: 8
+            }
+        },
+    }),
+
 });
 </script>
 
@@ -110,6 +111,32 @@ export default Vue.extend({
 
 .player-font {
    font-family: "Lato";
+   font-size: 40px;
 }
 
+
+@media screen and (max-width: 480px) {
+    /* 480px以下に適用されるCSS（スマホ用） */
+    .board {
+        width: 100%;
+    }
+
+    .glass-square{
+        width: 50px;
+        height: 50px;
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s;
+        gap: 20px;
+        border-radius: 0px;
+        backdrop-filter: blur(9px);
+        /*background-color: rgba(255,255,255, 0.5);*/
+        background-color: #09c15a;    
+        box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
+        border: 3.36px rgba(255,255,255,0.4) solid;
+        border-bottom: 3.36px rgba(40,40,40,0.35) solid;
+        border-right: 3.36px rgba(40,40,40,0.35) solid;
+    }
+
+}
 </style>
