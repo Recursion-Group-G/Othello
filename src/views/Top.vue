@@ -22,18 +22,18 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
+<style scoped> 
 
 .vh-100{
-  height: 100vh;
+    height: 100vh;
 }
 
 /* Google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 .top {
-  font-family: "Lato";
-  font-size: 100px;
+    font-family: "Lato";
+    font-size: 100px;
 }
 
 </style>
