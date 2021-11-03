@@ -9,7 +9,6 @@
                     height="200"
                 />
             </v-col>
-
             <v-col class="mb-4">
                 <h1 class="display-2 font-weight-bold mb-3">
                     Welcome to Vuetify
@@ -23,10 +22,8 @@
                     >
                 </p>
             </v-col>
-
             <v-col class="mb-5" cols="12">
                 <h2 class="headline font-weight-bold mb-3">What's next?</h2>
-
                 <v-row justify="center">
                     <a
                         v-for="(next, i) in whatsNext"
@@ -129,7 +126,8 @@ export default Vue.extend({
             },
             {
                 text: 'Frequently Asked Questions',
-                href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
+                href:
+                    'https://vuetifyjs.com/getting-started/frequently-asked-questions',
             },
         ],
     }),
