@@ -1,0 +1,627 @@
+diff --git a/.eslintrc.js b/.eslintrc.js
+index d7fea5f..4740883 100644
+--- a/.eslintrc.js
++++ b/.eslintrc.js
+@@ -1,18 +1,19 @@
+ module.exports = {
+-    root: true,
+-    env: {
+-        node: true,
+-    },
+-    extends: [
+-        'plugin:vue/essential',
+-        'eslint:recommended',
+-        '@vue/typescript/recommended',
+-    ],
+-    parserOptions: {
+-        ecmaVersion: 2020,
+-    },
+-    rules: {
+-        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+-        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+-    },
++  root: true,
++  env: {
++    node: true,
++  },
++  extends: [
++    "plugin:vue/essential",
++    "eslint:recommended",
++    "@vue/typescript/recommended",
++    "@vue/prettier",
++  ],
++  parserOptions: {
++    ecmaVersion: 2020,
++  },
++  rules: {
++    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
++    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
++  },
+ };
+diff --git a/.gitignore b/.gitignore
+index aa77954..403adbc 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,7 +1,7 @@
+ .DS_Store
+ node_modules
+ /dist
+-.prettierrc
++
+ 
+ # local env files
+ .env.local
+diff --git a/babel.config.js b/babel.config.js
+index e955840..162a3ea 100644
+--- a/babel.config.js
++++ b/babel.config.js
+@@ -1,5 +1,3 @@
+ module.exports = {
+-  presets: [
+-    '@vue/cli-plugin-babel/preset'
+-  ]
+-}
++  presets: ["@vue/cli-plugin-babel/preset"],
++};
+diff --git a/package-lock.json b/package-lock.json
+index cc92135..20ee2c6 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -2384,6 +2384,15 @@
+         }
+       }
+     },
++    "@vue/eslint-config-prettier": {
++      "version": "6.0.0",
++      "resolved": "https://registry.npmjs.org/@vue/eslint-config-prettier/-/eslint-config-prettier-6.0.0.tgz",
++      "integrity": "sha512-wFQmv45c3ige5EA+ngijq40YpVcIkAy0Lihupnsnd1Dao5CBbPyfCzqtejFLZX1EwH/kCJdpz3t6s+5wd3+KxQ==",
++      "dev": true,
++      "requires": {
++        "eslint-config-prettier": "^6.0.0"
++      }
++    },
+     "@vue/eslint-config-typescript": {
+       "version": "7.0.0",
+       "resolved": "https://registry.npmjs.org/@vue/eslint-config-typescript/-/eslint-config-typescript-7.0.0.tgz",
+@@ -5302,6 +5311,15 @@
+         }
+       }
+     },
++    "eslint-config-prettier": {
++      "version": "6.15.0",
++      "resolved": "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz",
++      "integrity": "sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==",
++      "dev": true,
++      "requires": {
++        "get-stdin": "^6.0.0"
++      }
++    },
+     "eslint-loader": {
+       "version": "2.2.1",
+       "resolved": "https://registry.npmjs.org/eslint-loader/-/eslint-loader-2.2.1.tgz",
+@@ -5315,6 +5333,15 @@
+         "rimraf": "^2.6.1"
+       }
+     },
++    "eslint-plugin-prettier": {
++      "version": "3.3.1",
++      "resolved": "https://registry.npmjs.org/eslint-plugin-prettier/-/eslint-plugin-prettier-3.3.1.tgz",
++      "integrity": "sha512-Rq3jkcFY8RYeQLgk2cCwuc0P7SEFwDravPhsJZOQ5N4YI4DSg50NyqJ/9gdZHzQlHf8MvafSesbNJCcP/FF6pQ==",
++      "dev": true,
++      "requires": {
++        "prettier-linter-helpers": "^1.0.0"
++      }
++    },
+     "eslint-plugin-vue": {
+       "version": "6.2.2",
+       "resolved": "https://registry.npmjs.org/eslint-plugin-vue/-/eslint-plugin-vue-6.2.2.tgz",
+@@ -5743,6 +5770,12 @@
+       "integrity": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==",
+       "dev": true
+     },
++    "fast-diff": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/fast-diff/-/fast-diff-1.2.0.tgz",
++      "integrity": "sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==",
++      "dev": true
++    },
+     "fast-glob": {
+       "version": "2.2.7",
+       "resolved": "https://registry.npmjs.org/fast-glob/-/fast-glob-2.2.7.tgz",
+@@ -6096,6 +6129,12 @@
+         "has-symbols": "^1.0.1"
+       }
+     },
++    "get-stdin": {
++      "version": "6.0.0",
++      "resolved": "https://registry.npmjs.org/get-stdin/-/get-stdin-6.0.0.tgz",
++      "integrity": "sha512-jp4tHawyV7+fkkSKyvjuLZswblUtz+SQKzSWnBbii16BuZksJlU1wuBYXY75r+duh/llF1ur6oNwi+2ZzjKZ7g==",
++      "dev": true
++    },
+     "get-stream": {
+       "version": "4.1.0",
+       "resolved": "https://registry.npmjs.org/get-stream/-/get-stream-4.1.0.tgz",
+@@ -9469,9 +9508,19 @@
+       "dev": true
+     },
+     "prettier": {
+-      "version": "2.4.1",
+-      "resolved": "https://registry.npmjs.org/prettier/-/prettier-2.4.1.tgz",
+-      "integrity": "sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA=="
++      "version": "2.2.1",
++      "resolved": "https://registry.npmjs.org/prettier/-/prettier-2.2.1.tgz",
++      "integrity": "sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==",
++      "dev": true
++    },
++    "prettier-linter-helpers": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/prettier-linter-helpers/-/prettier-linter-helpers-1.0.0.tgz",
++      "integrity": "sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==",
++      "dev": true,
++      "requires": {
++        "fast-diff": "^1.1.2"
++      }
+     },
+     "pretty-error": {
+       "version": "2.1.2",
+diff --git a/package.json b/package.json
+index 8d56473..e47bb18 100644
+--- a/package.json
++++ b/package.json
+@@ -9,7 +9,6 @@
+   },
+   "dependencies": {
+     "core-js": "^3.6.5",
+-    "prettier": "^2.4.1",
+     "vue": "^2.6.11",
+     "vuetify": "^2.4.0"
+   },
+@@ -20,9 +19,12 @@
+     "@vue/cli-plugin-eslint": "~4.5.0",
+     "@vue/cli-plugin-typescript": "~4.5.0",
+     "@vue/cli-service": "~4.5.0",
++    "@vue/eslint-config-prettier": "^6.0.0",
+     "@vue/eslint-config-typescript": "^7.0.0",
+     "eslint": "^6.7.2",
++    "eslint-plugin-prettier": "^3.3.1",
+     "eslint-plugin-vue": "^6.2.2",
++    "prettier": "^2.2.1",
+     "sass": "~1.32.0",
+     "sass-loader": "^10.0.0",
+     "typescript": "~4.1.5",
+diff --git a/src/App.vue b/src/App.vue
+index 2811e18..4856f25 100644
+--- a/src/App.vue
++++ b/src/App.vue
+@@ -1,10 +1,6 @@
+ <template>
+   <v-app>
+-    <v-app-bar
+-      app
+-      color="primary"
+-      dark
+-    >
++    <v-app-bar app color="primary" dark>
+       <div class="d-flex align-center">
+         <v-img
+           alt="Vuetify Logo"
+@@ -14,7 +10,6 @@
+           transition="scale-transition"
+           width="40"
+         />
+-
+         <v-img
+           alt="Vuetify Name"
+           class="shrink mt-1 hidden-sm-and-down"
+@@ -24,9 +19,7 @@
+           width="100"
+         />
+       </div>
+-
+       <v-spacer></v-spacer>
+-
+       <v-btn
+         href="https://github.com/vuetifyjs/vuetify/releases/latest"
+         target="_blank"
+@@ -36,20 +29,19 @@
+         <v-icon>mdi-open-in-new</v-icon>
+       </v-btn>
+     </v-app-bar>
+-
+     <v-main>
+-      <Login/>
++      <Login />
+     </v-main>
+   </v-app>
+ </template>
+ 
+ <script lang="ts">
+-import Vue from 'vue';
++import Vue from "vue";
+ // import HelloWorld from './components/HelloWorld.vue';
+-import Login from './views/Login.vue';
++import Login from "./views/Login.vue";
+ 
+ export default Vue.extend({
+-  name: 'App',
++  name: "App",
+   components: {
+     Login,
+   },
+diff --git a/src/components/HelloWorld.vue b/src/components/HelloWorld.vue
+index ddf2faa..eb489ce 100644
+--- a/src/components/HelloWorld.vue
++++ b/src/components/HelloWorld.vue
+@@ -1,137 +1,136 @@
+ <template>
+-    <v-container>
+-        <v-row class="text-center">
+-            <v-col cols="12">
+-                <v-img
+-                    :src="require('../assets/logo.svg')"
+-                    class="my-3"
+-                    contain
+-                    height="200"
+-                />
+-            </v-col>
++  <v-container>
++    <v-row class="text-center">
++      <v-col cols="12">
++        <v-img
++          :src="require('../assets/logo.svg')"
++          class="my-3"
++          contain
++          height="200"
++        />
++      </v-col>
+ 
+-            <v-col class="mb-4">
+-                <h1 class="display-2 font-weight-bold mb-3">
+-                    Welcome to Vuetify
+-                </h1>
++      <v-col class="mb-4">
++        <h1 class="display-2 font-weight-bold mb-3">Welcome to Vuetify</h1>
+ 
+-                <p class="subheading font-weight-regular">
+-                    For help and collaboration with other Vuetify developers,
+-                    <br />please join our online
+-                    <a href="https://community.vuetifyjs.com" target="_blank"
+-                        >Discord Community</a
+-                    >
+-                </p>
+-            </v-col>
++        <p class="subheading font-weight-regular">
++          For help and collaboration with other Vuetify developers,
++          <br />please join our online
++          <a href="https://community.vuetifyjs.com" target="_blank"
++            >Discord Community</a
++          >
++        </p>
++      </v-col>
+ 
+-            <v-col class="mb-5" cols="12">
+-                <h2 class="headline font-weight-bold mb-3">What's next?</h2>
++      <v-col class="mb-5" cols="12">
++        <h2 class="headline font-weight-bold mb-3">What's next?</h2>
+ 
+-                <v-row justify="center">
+-                    <a
+-                        v-for="(next, i) in whatsNext"
+-                        :key="i"
+-                        :href="next.href"
+-                        class="subheading mx-3"
+-                        target="_blank"
+-                    >
+-                        {{ next.text }}
+-                    </a>
+-                </v-row>
+-            </v-col>
++        <v-row justify="center">
++          <a
++            v-for="(next, i) in whatsNext"
++            :key="i"
++            :href="next.href"
++            class="subheading mx-3"
++            target="_blank"
++          >
++            {{ next.text }}
++          </a>
++        </v-row>
++      </v-col>
+ 
+-            <v-col class="mb-5" cols="12">
+-                <h2 class="headline font-weight-bold mb-3">Important Links</h2>
++      <v-col class="mb-5" cols="12">
++        <h2 class="headline font-weight-bold mb-3">Important Links</h2>
+ 
+-                <v-row justify="center">
+-                    <a
+-                        v-for="(link, i) in importantLinks"
+-                        :key="i"
+-                        :href="link.href"
+-                        class="subheading mx-3"
+-                        target="_blank"
+-                    >
+-                        {{ link.text }}
+-                    </a>
+-                </v-row>
+-            </v-col>
++        <v-row justify="center">
++          <a
++            v-for="(link, i) in importantLinks"
++            :key="i"
++            :href="link.href"
++            class="subheading mx-3"
++            target="_blank"
++          >
++            {{ link.text }}
++          </a>
++        </v-row>
++      </v-col>
+ 
+-            <v-col class="mb-5" cols="12">
+-                <h2 class="headline font-weight-bold mb-3">Ecosystem</h2>
++      <v-col class="mb-5" cols="12">
++        <h2 class="headline font-weight-bold mb-3">Ecosystem</h2>
+ 
+-                <v-row justify="center">
+-                    <a
+-                        v-for="(eco, i) in ecosystem"
+-                        :key="i"
+-                        :href="eco.href"
+-                        class="subheading mx-3"
+-                        target="_blank"
+-                    >
+-                        {{ eco.text }}
+-                    </a>
+-                </v-row>
+-            </v-col>
++        <v-row justify="center">
++          <a
++            v-for="(eco, i) in ecosystem"
++            :key="i"
++            :href="eco.href"
++            class="subheading mx-3"
++            target="_blank"
++          >
++            {{ eco.text }}
++          </a>
+         </v-row>
+-    </v-container>
++      </v-col>
++    </v-row>
++  </v-container>
+ </template>
+ 
+ <script lang="ts">
+-import Vue from 'vue';
++import Vue from "vue";
+ 
+ export default Vue.extend({
+-    name: 'HelloWorld',
++  name: "HelloWorld",
+ 
+-    data: () => ({
+-        ecosystem: [
+-            {
+-                text: 'vuetify-loader',
+-                href: 'https://github.com/vuetifyjs/vuetify-loader',
+-            },
+-            {
+-                text: 'github',
+-                href: 'https://github.com/vuetifyjs/vuetify',
+-            },
+-            {
+-                text: 'awesome-vuetify',
+-                href: 'https://github.com/vuetifyjs/awesome-vuetify',
+-            },
+-        ],
+-        importantLinks: [
+-            {
+-                text: 'Documentation',
+-                href: 'https://vuetifyjs.com',
+-            },
+-            {
+-                text: 'Chat',
+-                href: 'https://community.vuetifyjs.com',
+-            },
+-            {
+-                text: 'Made with Vuetify',
+-                href: 'https://madewithvuejs.com/vuetify',
+-            },
+-            {
+-                text: 'Twitter',
+-                href: 'https://twitter.com/vuetifyjs',
+-            },
+-            {
+-                text: 'Articles',
+-                href: 'https://medium.com/vuetify',
+-            },
+-        ],
+-        whatsNext: [
+-            {
+-                text: 'Explore components',
+-                href: 'https://vuetifyjs.com/components/api-explorer',
+-            },
+-            {
+-                text: 'Select a layout',
+-                href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
+-            },
+-            {
+-                text: 'Frequently Asked Questions',
+-                href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
+-            },
+-        ],
+-    }),
++  data: () => ({
++    ecosystem: [
++      {
++        text: "vuetify-loader",
++        href: "https://github.com/vuetifyjs/vuetify-loader",
++      },
++      {
++        text: "github",
++        href: "https://github.com/vuetifyjs/vuetify",
++      },
++      {
++        text: "awesome-vuetify",
++        href: "https://github.com/vuetifyjs/awesome-vuetify",
++      },
++    ],
++    importantLinks: [
++      {
++        text: "Documentation",
++        href: "https://vuetifyjs.com",
++      },
++      {
++        text: "Chat",
++        href: "https://community.vuetifyjs.com",
++      },
++      {
++        text: "Made with Vuetify",
++        href: "https://madewithvuejs.com/vuetify",
++      },
++      {
++        text: "Twitter",
++        href: "https://twitter.com/vuetifyjs",
++      },
++      {
++        text: "Articles",
++        href: "https://medium.com/vuetify",
++      },
++    ],
++    whatsNext: [
++      {
++        text: "Explore components",
++        href: "https://vuetifyjs.com/components/api-explorer",
++      },
++      {
++        text: "Select a layout",
++        href: "https://vuetifyjs.com/getting-started/pre-made-layouts",
++      },
++      {
++        text: "Frequently Asked Questions",
++        href:
++          "https://vuetifyjs.com/getting-started/frequently-asked-questions",
++      },
++    ],
++  }),
+ });
+ </script>
+diff --git a/src/main.ts b/src/main.ts
+index f26f408..a3c8c3f 100644
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -1,10 +1,10 @@
+-import Vue from 'vue'
+-import App from './App.vue'
+-import vuetify from './plugins/vuetify'
++import Vue from "vue";
++import App from "./App.vue";
++import vuetify from "./plugins/vuetify";
+ 
+-Vue.config.productionTip = false
++Vue.config.productionTip = false;
+ 
+ new Vue({
+   vuetify,
+-  render: h => h(App)
+-}).$mount('#app')
++  render: (h) => h(App),
++}).$mount("#app");
+diff --git a/src/plugins/vuetify.ts b/src/plugins/vuetify.ts
+index 5bdec19..4c59904 100644
+--- a/src/plugins/vuetify.ts
++++ b/src/plugins/vuetify.ts
+@@ -1,7 +1,6 @@
+-import Vue from 'vue';
+-import Vuetify from 'vuetify/lib/framework';
++import Vue from "vue";
++import Vuetify from "vuetify/lib/framework";
+ 
+ Vue.use(Vuetify);
+ 
+-export default new Vuetify({
+-});
++export default new Vuetify({});
+diff --git a/src/shims-tsx.d.ts b/src/shims-tsx.d.ts
+index c656c68..2bcdf9f 100644
+--- a/src/shims-tsx.d.ts
++++ b/src/shims-tsx.d.ts
+@@ -1,4 +1,4 @@
+-import Vue, { VNode } from 'vue'
++import Vue, { VNode } from "vue";
+ 
+ declare global {
+   namespace JSX {
+@@ -7,7 +7,7 @@ declare global {
+     // tslint:disable no-empty-interface
+     interface ElementClass extends Vue {}
+     interface IntrinsicElements {
+-      [elem: string]: any
++      [elem: string]: any;
+     }
+   }
+ }
+diff --git a/src/shims-vue.d.ts b/src/shims-vue.d.ts
+index d9f24fa..0660bd6 100644
+--- a/src/shims-vue.d.ts
++++ b/src/shims-vue.d.ts
+@@ -1,4 +1,4 @@
+-declare module '*.vue' {
+-  import Vue from 'vue'
+-  export default Vue
++declare module "*.vue" {
++  import Vue from "vue";
++  export default Vue;
+ }
+diff --git a/src/shims-vuetify.d.ts b/src/shims-vuetify.d.ts
+index 9e73071..84c9877 100644
+--- a/src/shims-vuetify.d.ts
++++ b/src/shims-vuetify.d.ts
+@@ -1,4 +1,4 @@
+-declare module 'vuetify/lib/framework' {
+-  import Vuetify from 'vuetify'
+-  export default Vuetify
++declare module "vuetify/lib/framework" {
++  import Vuetify from "vuetify";
++  export default Vuetify;
+ }
+diff --git a/src/views/.prettierrc b/src/views/.prettierrc
+new file mode 100644
+index 0000000..b327bd0
+--- /dev/null
++++ b/src/views/.prettierrc
+@@ -0,0 +1,5 @@
++{
++    "tabWidth": 4,
++    "semi": true,
++    "singleQuote": true
++}
+diff --git a/src/views/Login.vue b/src/views/Login.vue
+index 2af98d0..a44c828 100644
+--- a/src/views/Login.vue
++++ b/src/views/Login.vue
+@@ -16,7 +16,9 @@
+                         required
+                     ></v-text-field>
+                     <v-row class="d-flex">
+-                        <v-btn class="button" dark large color="deep-purple">Game Start</v-btn>
++                        <v-btn class="button" dark large color="deep-purple"
++                            >Game Start</v-btn
++                        >
+                     </v-row>
+                 </v-col>
+             </v-row>
+diff --git a/vue.config.js b/vue.config.js
+index 2ae460b..a86cc1b 100644
+--- a/vue.config.js
++++ b/vue.config.js
+@@ -1,5 +1,3 @@
+ module.exports = {
+-  transpileDependencies: [
+-    'vuetify'
+-  ]
+-}
++  transpileDependencies: ["vuetify"],
++};

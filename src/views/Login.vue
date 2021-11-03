@@ -16,7 +16,9 @@
                         required
                     ></v-text-field>
                     <v-row class="d-flex">
-                        <v-btn class="button" dark large color="deep-purple">Game Start</v-btn>
+                        <v-btn class="button" dark large color="deep-purple"
+                            >Game Start</v-btn
+                        >
                     </v-row>
                 </v-col>
             </v-row>
