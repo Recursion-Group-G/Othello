@@ -37,7 +37,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-// import HelloWorld from './components/HelloWorld.vue';
 import Login from './views/Login.vue';
 
 export default Vue.extend({
