@@ -1,11 +1,15 @@
 <template>
-    <div >
-        <div class="d-flex justify-center align-center vh-100" >
+    <div>
+        <div class="d-flex justify-center align-center vh-100">
             <div>
                 <h1 class="top mb-10">Othello</h1>
                 <div class="d-flex justify-center">
-                    <v-btn class="deep-purple accent-3 white--text " depressed elevation="24">
-                            Start
+                    <v-btn
+                        class="deep-purple accent-3 white--text"
+                        depressed
+                        elevation="24"
+                    >
+                        Start
                     </v-btn>
                 </div>
             </div>
@@ -13,18 +17,16 @@
     </div>
 </template>
 
-
 <script lang="ts">
-import  Vue  from 'vue';
+import Vue from 'vue';
 
 export default Vue.extend({
-    name: "Top"
+    name: 'Top',
 });
 </script>
 
-<style scoped> 
-
-.vh-100{
+<style scoped>
+.vh-100 {
     height: 100vh;
 }
 
@@ -32,8 +34,7 @@ export default Vue.extend({
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 .top {
-    font-family: "Lato";
+    font-family: 'Lato';
     font-size: 100px;
 }
-
 </style>
