@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-main>
+            <Top />
             <Login />
             <Game />
         </v-main>
@@ -11,6 +12,7 @@
 import Vue from 'vue';
 import Game from './views/Game.vue';
 import Login from './views/Login.vue';
+import Top from './views/Top.vue';
 
 export default Vue.extend({
     name: 'App',
@@ -18,6 +20,7 @@ export default Vue.extend({
     components: {
         Game,
         Login,
+        Top,
     },
 
     data: () => ({
