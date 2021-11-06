@@ -27,10 +27,10 @@ export default {
     }
 
     methods: {
-        openModal: function(){
+        openModal() {
             this.showContent = true
         },
-        closeModal: function(){
+        closeModal() {
             this.showContent = false
         }
     }
