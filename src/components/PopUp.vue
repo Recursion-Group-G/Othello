@@ -1,4 +1,5 @@
 <template>
+    <div id="app">
     <v-app>
         <button v-on:click="openModal">Click</button>
 
@@ -14,27 +15,27 @@
             </v-card>
         </div>
     </v-app>
+    </div>
 
 </template>
 
 
 <script>
-export default {
-    data(){
-        return{
-            showContent: false,
-        }
-    }
-
+new Vue({
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: {
+        showContent: false,
+    },
     methods: {
-        openModal() {
+        openModal: function(){
             this.showContent = true
         },
-        closeModal() {
+        closeModal: function(){
             this.showContent = false
         }
     }
-}
+});
 </script>
 
 
