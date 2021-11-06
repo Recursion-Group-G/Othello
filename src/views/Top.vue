@@ -8,6 +8,7 @@
                         class="deep-purple accent-3 white--text"
                         depressed
                         elevation="24"
+                        href="/#/login"
                     >
                         Start
                     </v-btn>
