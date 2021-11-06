@@ -21,7 +21,7 @@
 
 
 <script>
-new Vue({
+export default {
     el: '#app',
     vuetify: new Vuetify(),
     data: {
@@ -35,7 +35,7 @@ new Vue({
             this.showContent = false
         }
     }
-});
+};
 </script>
 
 
