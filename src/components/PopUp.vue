@@ -10,13 +10,13 @@
 
                     <div>
                         <v-btn
-                            class="deep-purple accent-3 white--text pop-btn"
+                            class="deep-purple accent-3 white--text"
                             elevation="24"
                         >
                             Top
                         </v-btn>
                         <v-btn
-                            class="deep-purple accent-3 white--text pop-btn"
+                            class="deep-purple accent-3 white--text"
                             elevation="24"
                         >
                             Retry
@@ -72,15 +72,5 @@ export default {
   padding: 1em;
   background:#fff;
 }
-.pop-btn{
-    display: block;
 
-    
-}
-
-@media screen and (min-width:480px) { 
-    .pop-btn {
-        display: flex;
-    }
-}
 </style>
