@@ -1,9 +1,7 @@
 <template>
     <v-app>
         <v-main>
-            <Top />
-            <Login />
-            <Game />
+            <router-view></router-view>
         </v-main>
     </v-app>
 </template>
@@ -16,13 +14,6 @@ import Top from './views/Top.vue';
 
 export default Vue.extend({
     name: 'App',
-
-    components: {
-        Game,
-        Login,
-        Top,
-    },
-
     data: () => ({
         //
     }),
