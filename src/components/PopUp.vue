@@ -1,5 +1,4 @@
 <template>
-    <div id="app">
     <v-app>
         <button v-on:click="openModal">Click</button>
 
@@ -15,15 +14,12 @@
             </v-card>
         </div>
     </v-app>
-    </div>
 
 </template>
 
 
 <script>
 export default {
-    el: '#app',
-    vuetify: new Vuetify(),
     data: {
         showContent: false,
     },
