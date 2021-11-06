@@ -9,6 +9,7 @@
                 <v-card-actions>
                     <v-btn>Top</v-btn>
                     <v-btn>Retry?</v-btn>
+                    <v-btn v-on:click="closeModal">Close</v-btn>
                 </v-card-actions>
             </v-card>
         </div>
