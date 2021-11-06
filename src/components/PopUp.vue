@@ -4,17 +4,26 @@
         <v-btn v-on:click="openModal">Click</v-btn>
 
         <div id="popup" v-show="showContent">
-            <div id="content">
-                <v-card>
-                    <v-card-title>XX is Winner</v-card-title>
+            <v-card id="content" class="d-flex justify-center">
+                <div>
+                    <h2 class="text-center">XX is Winner</h2>
 
-                    <v-card-actions>
-                        <v-btn>Top</v-btn>
-                        <v-btn>Retry?</v-btn>
-                        <v-btn v-on:click="closeModal">Close</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </div>
+                    <div>
+                        <v-btn
+                            class="deep-purple accent-3 white--text pop-btn"
+                            elevation="24"
+                        >
+                            Top
+                        </v-btn>
+                        <v-btn
+                            class="deep-purple accent-3 white--text pop-btn"
+                            elevation="24"
+                        >
+                            Retry
+                        </v-btn>
+                    </div>
+                </div>
+            </v-card>
         </div>
 
     </v-app>
@@ -23,9 +32,9 @@
 
 <script>
 export default {
-    data: {
+    data: () => ({
         showContent: false,
-    },
+    }),
     methods: {
         openModal: function(){
             this.showContent = true
@@ -38,12 +47,12 @@ export default {
 </script>
 
 
-<sytle>
+<style>
 #popup{
-  /*　要素を重ねた時の順番　*/
+  /* 要素を重ねた時の順番 */
   z-index:1;
 
-  /*　画面全体を覆う設定　*/
+  /* 画面全体を覆う設定 */
   position:fixed;
   top:0;
   left:0;
@@ -51,7 +60,7 @@ export default {
   height:100%;
   background-color:rgba(0,0,0,0.5);
 
-  /*　画面の中央に要素を表示させる設定　*/
+  /* 画面の中央に要素を表示させる設定 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,8 +68,19 @@ export default {
 
 #content{
   z-index:2;
-  width:50%;
+  width:250px;
   padding: 1em;
   background:#fff;
 }
-</sytle>
+.pop-btn{
+    display: block;
+
+    
+}
+
+@media screen and (min-width:480px) { 
+    .pop-btn {
+        display: flex;
+    }
+}
+</style>
