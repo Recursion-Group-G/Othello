@@ -21,8 +21,10 @@
                             dark
                             large
                             color="deep-purple"
-                            href="/#/game"
-                            >Game Start</v-btn
+                            href="/game"
+                            ><router-link to="/game" class="button-link"
+                                >Game Start</router-link
+                            ></v-btn
                         >
                     </v-row>
                 </v-col>
@@ -59,5 +61,14 @@ export default Vue.extend({
     color: #ffffff;
     font-size: 16px;
     border-radius: 10px;
+}
+
+.button-link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+a {
+    color: #ffffff !important;
 }
 </style>

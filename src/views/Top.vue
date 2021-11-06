@@ -10,7 +10,9 @@
                         elevation="24"
                         href="/#/login"
                     >
-                        Start
+                        <router-link to="/login" class="button-link"
+                            >Start</router-link
+                        >
                     </v-btn>
                 </div>
             </div>
