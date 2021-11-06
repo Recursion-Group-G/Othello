@@ -1,20 +1,23 @@
 <template>
     <v-app>
-        <button v-on:click="openModal">Click</button>
+
+        <v-btn v-on:click="openModal">Click</v-btn>
 
         <div id="popup" v-show="showContent">
-            <v-card id="content">
-                <v-card-title>XX is Winner</v-card-title>
+            <div id="content">
+                <v-card>
+                    <v-card-title>XX is Winner</v-card-title>
 
-                <v-card-actions>
-                    <v-btn>Top</v-btn>
-                    <v-btn>Retry?</v-btn>
-                    <v-btn v-on:click="closeModal">Close</v-btn>
-                </v-card-actions>
-            </v-card>
+                    <v-card-actions>
+                        <v-btn>Top</v-btn>
+                        <v-btn>Retry?</v-btn>
+                        <v-btn v-on:click="closeModal">Close</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
         </div>
-    </v-app>
 
+    </v-app>
 </template>
 
 
