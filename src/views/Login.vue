@@ -15,17 +15,12 @@
                         label="Name（Player2）"
                         required
                     ></v-text-field>
-                    <v-row class="d-flex">
-                        <v-btn
-                            class="button"
-                            dark
-                            large
-                            color="deep-purple"
-                            href="/game"
-                            ><router-link to="/game" class="button-link"
-                                >Game Start</router-link
-                            ></v-btn
-                        >
+                    <v-row class="d-flex justify-center mt-10 white--text">
+                        <router-link to="/game" class="button-link">
+                            <v-btn dark large color="deep-purple">
+                                Game Start
+                            </v-btn>
+                        </router-link>
                     </v-row>
                 </v-col>
             </v-row>
@@ -52,23 +47,7 @@ export default Vue.extend({
     font-size: 40px;
 }
 
-.button {
-    display: block;
-    margin: 60px auto;
-    width: 200px;
-    height: 40px;
-    background-color: #6558f5;
-    color: #ffffff;
-    font-size: 16px;
-    border-radius: 10px;
-}
-
 .button-link {
-    color: #ffffff;
     text-decoration: none;
-}
-
-a {
-    color: #ffffff !important;
 }
 </style>

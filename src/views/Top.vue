@@ -4,16 +4,15 @@
             <div>
                 <h1 class="top mb-10">Othello</h1>
                 <div class="d-flex justify-center">
-                    <v-btn
-                        class="deep-purple accent-3 white--text"
-                        depressed
-                        elevation="24"
-                        href="/#/login"
-                    >
-                        <router-link to="/login" class="button-link"
-                            >Start</router-link
+                    <router-link to="/login" class="button-link">
+                        <v-btn
+                            class="deep-purple accent-3 white--text"
+                            depressed
+                            elevation="24"
                         >
-                    </v-btn>
+                            Start
+                        </v-btn>
+                    </router-link>
                 </div>
             </div>
         </div>
