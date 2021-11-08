@@ -1,8 +1,8 @@
 class Player {
-    name: string
-    score: number
-    color: string 
-    isCpu: boolean
+    name: string;
+    score: number;
+    color: string;
+    isCpu: boolean;
 
     constructor(name: string, score: number, color: string, isCpu: boolean) {
         this.name = name;
