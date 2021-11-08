@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 class FlipAnimation {
     constructor() {
@@ -46,18 +45,6 @@ class FlipAnimation {
         this.scene.add(this.camera);
 
         /**
-         * Controls
-         */
-        // const controls = new OrbitControls(camera, canvas);
-        // controls.enableDamping = true;
-
-        /**
-         * Axes Helper
-         */
-        // const axesHelper = new THREE.AxesHelper();
-        // scene.add(axesHelper);
-
-        /**
          * Stone
          */
         const height = 0.13;
@@ -95,21 +82,6 @@ class FlipAnimation {
         this.scene.add(this.othelloStone);
 
         /**
-         * Floor
-         */
-        // const planeGeomentry = new THREE.PlaneGeometry(3, 3);
-        // const planeMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0xffff00,
-        //     opacity: 0.1,
-        //     transparent: true,
-        // });
-        // const plane = new THREE.Mesh(planeGeomentry, planeMaterial);
-        // plane.position.z = -height;
-        // plane.receiveShadow = true;
-        // plane.castShadow = true;
-        // this.scene.add(plane);
-
-        /**
          * Light
          */
         const spotLight = new THREE.SpotLight(0xffffff);
@@ -137,8 +109,6 @@ class FlipAnimation {
 
         console.time('for');
         const animate = async () => {
-            // Update controls
-            // controls.update();
 
             // Render
             this.renderer.render(this.scene, this.camera);
@@ -162,7 +132,7 @@ class FlipAnimation {
         };
 
         animate();
-        
+
         const sleep = (msec) =>
             new Promise((resolve) => setTimeout(resolve, msec));
         await sleep(1200); //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
