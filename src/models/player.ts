@@ -11,3 +11,5 @@ class Player {
         this.isCpu = isCpu;
     }
 }
+
+export default Player
