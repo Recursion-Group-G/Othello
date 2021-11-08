@@ -1,46 +1,48 @@
 <template>
-    <v-app>
-
-        <v-btn v-on:click="openModal">Click</v-btn>
-
-        <div id="popup" v-show="showContent">
+    <div>
+        <div id="popup" v-show="isVisible">
             <v-card id="content" class="d-flex justify-center">
                 <div>
-                    <h2 class="text-center">XX is Winner</h2>
+                    <h1 class="text-center">XX is Winner</h1>
 
-                    <div>
-                        <v-btn
-                            class="deep-purple accent-3 white--text"
-                            elevation="24"
-                        >
-                            Top
-                        </v-btn>
-                        <v-btn
-                            class="deep-purple accent-3 white--text"
-                            elevation="24"
-                        >
-                            Retry
-                        </v-btn>
-                    </div>
+                    <v-row>
+                        <v-col cols="12" sm="6">
+                            <v-btn
+                                class="deep-purple accent-3 white--text"
+                                elevation="24"
+                                block
+                            >
+                                Top
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                            <v-btn
+                                class="deep-purple accent-3 white--text"
+                                elevation="24"
+                                block
+                            >
+                                Retry
+                            </v-btn>
+                        </v-col>
+                    </v-row>
                 </div>
             </v-card>
         </div>
-
-    </v-app>
+    </div>
 </template>
 
 
 <script>
 export default {
     data: () => ({
-        showContent: false,
+        isVisible: true,
     }),
     methods: {
         openModal: function(){
-            this.showContent = true
+            this.isVisible = true
         },
         closeModal: function(){
-            this.showContent = false
+            this.isVisible = false
         }
     }
 };
@@ -68,7 +70,7 @@ export default {
 
 #content{
   z-index:2;
-  width:250px;
+  width: 50%;
   padding: 1em;
   background:#fff;
 }
