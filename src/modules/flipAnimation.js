@@ -1,12 +1,14 @@
 import * as THREE from 'three';
 
 class FlipAnimation {
-    constructor() {
+    constructor(id, fromColor, toColor) {
         /**
          * DOM Elements
          */
-        this.canvas = document.querySelector('.three');
-        this.square = this.canvas.parentNode;
+        this.canvas = document.createElement('canvas');
+        this.square = document.getElementById(id);
+
+        this.square.append(this.canvas)
 
         this.canvas.height = this.square.clientHeight * 2;
         this.canvas.width = this.square.clientWidth * 2;
@@ -56,11 +58,11 @@ class FlipAnimation {
         );
 
         const frontMaterial = new THREE.MeshPhongMaterial({
-            color: 0x000000,
+            color: fromColor,
             // wireframe: true,
         });
         const backMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
+            color: toColor,
             // wireframe: true,
         });
 
@@ -104,12 +106,11 @@ class FlipAnimation {
         this.renderer.render(this.scene, this.camera);
     }
     async flip() {
-        let rotationZ = this.othelloStone.rotation.z + Math.PI;
+        const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
 
         console.time('for');
         const animate = async () => {
-
             // Render
             this.renderer.render(this.scene, this.camera);
 
