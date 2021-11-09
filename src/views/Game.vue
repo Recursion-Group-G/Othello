@@ -15,8 +15,12 @@
                             :key="i"
                             class="d-flex"
                         >
-                            <div v-for="j in board.size.row" :key="j">
-                                <div class="board-square"></div>
+                            <div v-for="j in board.size.col" :key="j">
+                                <div
+                                    :id="`${i}-${j}`"
+                                    class="board-square"
+                                    @click="clickToFlip(`${i}-${j}`)"
+                                ></div>
                             </div>
                         </div>
                     </div>
@@ -45,6 +49,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import FlipAnimation from '@/modules/flipAnimation';
 
 export default Vue.extend({
     name: 'Game',
@@ -67,6 +72,14 @@ export default Vue.extend({
             return this.$vuetify.breakpoint.name === 'xs';
         },
     },
+    methods: {
+        clickToFlip: async function (id: string) {
+            //とりあえず黒から白へ
+            const animation = new FlipAnimation(id, '#ffffff', '#000000');
+            await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
+            animation.remove();
+        },
+    },
 });
 </script>
 
@@ -81,12 +94,17 @@ export default Vue.extend({
 .board-square {
     width: 90px;
     height: 90px;
-    color: #ffffff;
+
+    /* color: #ffffff; */
     cursor: pointer;
-    transition: all 0.2s;
+    /* transition: all 0.2s; */
     gap: 20px;
     border-radius: 0px;
-    backdrop-filter: blur(9px);
+    /* backdrop-filterが
+    ないと近くの中に収まらないけど
+    あると重たくなってレートが遅くなるので
+    0pxにしておく */
+    backdrop-filter: blur(0px);
     background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
@@ -94,10 +112,11 @@ export default Vue.extend({
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
 }
 
-.board-square:hover {
+/* テスト用に一旦コメントアウト */
+/* .board-square:hover {
     opacity: 0.2;
     background: #000000;
-}
+} */
 
 .player-font {
     font-family: 'Lato';
