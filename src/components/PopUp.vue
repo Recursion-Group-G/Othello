@@ -7,22 +7,26 @@
 
                     <v-row>
                         <v-col cols="12" sm="6">
-                            <v-btn
-                                class="deep-purple accent-3 white--text"
-                                elevation="24"
-                                block
-                            >
-                                Top
-                            </v-btn>
+                            <a href="./views/Top.vue">
+                                <v-btn
+                                    class="deep-purple accent-3 white--text"
+                                    elevation="24"
+                                    block
+                                >
+                                    Top
+                                </v-btn>
+                            </a>
                         </v-col>
                         <v-col cols="12" sm="6">
-                            <v-btn
-                                class="deep-purple accent-3 white--text"
-                                elevation="24"
-                                block
-                            >
-                                Retry
-                            </v-btn>
+                            <a href="./views/Game.vue">
+                                <v-btn
+                                    class="deep-purple accent-3 white--text"
+                                    elevation="24"
+                                    block
+                                >
+                                    Retry
+                                </v-btn>
+                            </a>
                         </v-col>
                     </v-row>
                 </div>
