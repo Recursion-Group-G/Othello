@@ -1,14 +1,17 @@
 import Stone from './stone';
 
+interface Point {
+    x: number
+    y: number
+}
+
 class Square {
-    row: number
-    col: number
+    point: Point
     stone: Stone | null;
     isEmpty: boolean;
 
-    constructor(row: number, col: number) {
-        this.row = row;
-        this.col = col;
+    constructor(point: Point) {
+        this.point = point;
         this.stone = null;
         this.isEmpty = false;
     }
