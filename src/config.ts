@@ -1,7 +1,10 @@
 interface Config {
     stone: {
         color: {
-            [key: string]: string;
+            [key: string]: {
+                code: string;
+                id: number;
+            }
         };
     };
     board: {
@@ -21,7 +24,7 @@ interface Config {
     };
     table: {
         phase: {
-            [key: number]: string;
+            [key: string]: number;
         };
     };
 }
@@ -29,8 +32,14 @@ interface Config {
 const config: Config = {
     stone: {
         color: {
-            black: '#000000',
-            white: '#ffffff',
+            black: {
+                code: '#000000',
+                id: 0,
+            },
+            white: {
+                code: '#ffffff',
+                id: 1,
+            }
         },
     },
     board: {
@@ -53,9 +62,9 @@ const config: Config = {
     },
     table: {
         phase: {
-            0: 'thinking',
-            1: 'skip',
-            2: 'roundover',
+            'thinking': 0,
+            'skip': 1,
+            'roundover': 2,
         },
     },
 };
