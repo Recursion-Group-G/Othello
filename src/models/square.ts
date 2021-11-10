@@ -1,25 +1,24 @@
 import Stone from './stone';
 
 interface Point {
-    x: number
-    y: number
+    x: number;
+    y: number;
 }
 
 class Square {
-    point: Point
+    point: Point;
     stone: Stone | null;
     isEmpty: boolean;
 
-    top: Square | null 
-    right: Square | null 
-    bottom: Square | null 
-    left: Square | null
-    
-    topRight: Square | null 
-    topLeft: Square | null 
-    bottomRight: Square | null 
-    bottomLeft: Square | null 
+    top: Square | null;
+    right: Square | null;
+    bottom: Square | null;
+    left: Square | null;
 
+    topRight: Square | null;
+    topLeft: Square | null;
+    bottomRight: Square | null;
+    bottomLeft: Square | null;
 
     constructor(point: Point) {
         this.point = point;
@@ -30,7 +29,7 @@ class Square {
         this.right = null;
         this.bottom = null;
         this.left = null;
-        this.topRight = null; 
+        this.topRight = null;
         this.topLeft = null;
         this.bottomRight = null;
         this.bottomLeft = null;

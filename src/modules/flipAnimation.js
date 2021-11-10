@@ -8,7 +8,7 @@ class FlipAnimation {
         this.canvas = document.createElement('canvas');
         this.square = document.getElementById(id);
 
-        this.square.append(this.canvas)
+        this.square.append(this.canvas);
 
         this.canvas.height = this.square.clientHeight * 2;
         this.canvas.width = this.square.clientWidth * 2;
