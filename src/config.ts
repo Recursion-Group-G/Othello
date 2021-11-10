@@ -4,7 +4,7 @@ interface Config {
             [key: string]: {
                 code: string;
                 id: number;
-            }
+            };
         };
     };
     board: {
@@ -39,7 +39,7 @@ const config: Config = {
             white: {
                 code: '#ffffff',
                 id: 1,
-            }
+            },
         },
     },
     board: {
@@ -62,11 +62,11 @@ const config: Config = {
     },
     table: {
         phase: {
-            'thinking': 0,
-            'skip': 1,
-            'roundover': 2,
+            thinking: 0,
+            skip: 1,
+            roundover: 2,
         },
     },
 };
 
-export default config
+export default config;
