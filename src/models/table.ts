@@ -3,16 +3,16 @@ import Board from './board';
 import Config from '../config';
 
 class Table {
-    players: Player[];
+    players: Player[] | null;
     turnCounter: number;
     phase: number;
-    board: Board;
+    board: Board | null;
 
-    constructor(players: Player[], board: Board) {
-        this.players = players;
+    constructor() {
+        this.players = null;
         this.turnCounter = 0;
         this.phase = Config.table.phase.thinking;
-        this.board = board;
+        this.board = null;
     }
 }
 
