@@ -1,8 +1,6 @@
 <template>
     <v-app>
         <v-main>
-            <!-- 確認用developへメー時する時に削除 -->
-            <PopUp/>
             <router-view></router-view>
         </v-main>
     </v-app>
