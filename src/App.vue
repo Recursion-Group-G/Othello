@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import PopUp from './components/PopUp.vue';
+import PopUp from './views/PopUp.vue';
 
 export default Vue.extend({
   name: 'App',

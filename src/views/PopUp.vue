@@ -7,7 +7,7 @@
 
                     <v-row>
                         <v-col cols="12" sm="6">
-                            <a href="./views/Top.vue">
+                            <router-link to="/top">
                                 <v-btn
                                     class="deep-purple accent-3 white--text"
                                     elevation="24"
@@ -15,10 +15,10 @@
                                 >
                                     Top
                                 </v-btn>
-                            </a>
+                            </router-link>
                         </v-col>
                         <v-col cols="12" sm="6">
-                            <a href="./views/Game.vue">
+                            <router-link to="/game">
                                 <v-btn
                                     class="deep-purple accent-3 white--text"
                                     elevation="24"
@@ -26,7 +26,7 @@
                                 >
                                     Retry
                                 </v-btn>
-                            </a>
+                            </router-link>
                         </v-col>
                     </v-row>
                 </div>
