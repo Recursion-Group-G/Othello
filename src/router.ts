@@ -10,7 +10,7 @@ const routes = [
     { path: '/', component: Top },
     { path: '/login', component: Login },
     { path: '/game', component: Game }
-};
+];
 
 const router = new VueRouter({
     mode: 'history',
