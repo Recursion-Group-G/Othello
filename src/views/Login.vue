@@ -29,6 +29,8 @@
                             :key="index"
                             v-model="player.color"
                             :items="colors"
+                            item-text="name"
+                            item-value="obj"
                             :label="`Color (Player${index + 1})`"
                         ></v-select>
                     </template>
@@ -54,23 +56,26 @@
 import Vue from 'vue';
 import Player from '../models/player';
 import Config from '../config';
+import Color from '../models/stone'
 
 export default Vue.extend({
     name: 'Login',
     data() {
         return {
             selectedMode: { modeString: '', modeName: '' },
-            modes: [
-                { modeString: 'Player VS Player', modeName: 'versusPlayer' },
-                { modeString: 'Player VS CPU', modeName: 'versusCPU' },
-            ],
+            modes: Config.top.modes,
 
-            colors: Object.keys(Config.stone.color),
+            colors: Object.keys(Config.stone.color).map(colorString=>{
+                return {
+                    name: colorString,
+                    obj: Config.stone.color[colorString],
+                }
+            }),
 
             players: new Array(Config.player.number.min)
                 .fill({})
                 .map(
-                    () => new Player('', Config.player.initialScore, '', false)
+                    () => new Player('', Config.player.initialScore, new Color({code: '', id: 0}), false)
                 ),
 
             cpuPlayerName: 'CPU',
@@ -79,40 +84,25 @@ export default Vue.extend({
 
     methods: {
         sendPlayers() {
-            if (this.selectedMode.modeName === 'versusCPU')
-                this.switchCpuPlayer(this.players[Config.player.cpuIndex]); //ConfigにCPUがどこになるのかIndex追加
+            const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
+            if (this.selectedMode.modeName === Config.top.modes[cpuIndex].modeName)
+                this.switchCpuPlayer(this.players[cpuIndex]); 
             this.$emit('playersData', this.players);
         },
 
         switchCpuPlayer(player: Player) {
             player.name = this.cpuPlayerName;
-            player.color = this.judgeCpuColor();
+            //player.color = this.judgeCpuColor();
             player.isCpu = true;
         },
 
         judgeCpuColor(): string {
-            if (this.players[Config.player.playerIndex].color === 'white')
+            if (this.players[Config.player.playerIndex].color.color.code === Config.stone.color.white.code){
                 return 'black';
-            else if (this.players[Config.player.playerIndex].color === 'black')
+            }else if (this.players[Config.player.playerIndex].color.color.code === Config.stone.color.black.code){
                 return 'white';
-            else return ''; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
+            }else return ''; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
         },
-
-        /* from player.ts
-        class Player {
-            name: string;
-            score: number;
-            color: string;
-            isCpu: boolean;
-
-            constructor(name: string, score: number, color: string, isCpu: boolean) {
-                this.name = name;
-                this.score = score;
-                this.color = color;
-                this.isCpu = isCpu;
-            }
-        }
-        */
     },
 });
 </script>

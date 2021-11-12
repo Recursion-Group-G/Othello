@@ -1,4 +1,7 @@
 interface Config {
+    top: {
+        modes: {[key: string]: string}[];
+    };
     stone: {
         color: {
             [key: string]: {
@@ -33,6 +36,12 @@ interface Config {
 }
 
 const config: Config = {
+    top: {
+        modes: [
+            { modeString: 'Player VS Player', modeName: 'PvP' },
+            { modeString: 'Player VS CPU', modeName: 'PvC' },
+        ],
+    },
     stone: {
         color: {
             black: {
