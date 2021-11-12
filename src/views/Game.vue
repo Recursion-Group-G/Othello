@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FlipAnimation from '@/modules/flipAnimation';
+import FlipAnimation from '../modules/flipAnimation';
 
 export default Vue.extend({
     name: 'Game',
