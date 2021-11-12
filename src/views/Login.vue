@@ -6,6 +6,7 @@
                     <h1 class="page-title">Select Mode</h1>
                     <!--Select Mode-->
                     <v-select
+                        class="mt-10"
                         v-model="selectedMode"
                         :items="modes"
                         item-text="modeString"
@@ -13,37 +14,33 @@
                         label="Game Mode"
                         return-object
                     ></v-select>
-                    <!--Player1 #Player情報はv-forで書き直し？-->
-                    <v-text-field
-                        v-model="playerInfo.player1.name"
-                        :counter="10"
-                        label="Name（Player1）"
-                        required
-                    ></v-text-field>
-                    <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
-                    <v-select
-                        v-model="playerInfo.player1.color"
-                        :items="colors"
-                        label="Color (Player1)"
-                    ></v-select>
-
-                    <v-text-field
-                        v-model="playerInfo.player2.name"
-                        :counter="10"
-                        label="Name（Player2）"
-                        required
-                    ></v-text-field>
-                    <v-select
-                        v-model="playerInfo.player2.color"
-                        :items="colors"
-                        label="Color (Player2)"
-                    ></v-select>
-
+                    <!--Player-->
+                    <template v-for="(player, index) in players">
+                        <v-text-field
+                            :key="index"
+                            class="mt-10"
+                            v-model="player.name"
+                            :counter="10"
+                            :label="`Name (Player${index + 1})`"
+                            required
+                        ></v-text-field>
+                        <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
+                        <v-select
+                            :key="index"
+                            v-model="player.color"
+                            :items="colors"
+                            :label="`Color (Player${index + 1})`"
+                        ></v-select>
+                    </template>
+                    <!-- Game Start button -->
                     <v-row class="d-flex justify-center mt-10 white--text">
                         <router-link to="/game" class="button-link">
                             <v-btn
-                                @click="makePlayerModel"
-                                dark large color="deep-purple">
+                                @click="sendPlayers"
+                                dark
+                                large
+                                color="deep-purple"
+                            >
                                 Game Start
                             </v-btn>
                         </router-link>
@@ -55,61 +52,50 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import Player from '../models/player'
+import Player from '../models/player';
+import Config from '../config';
 
 export default Vue.extend({
     name: 'Login',
     data() {
         return {
-            selectedMode: {modeString: '', modeName: ''},
+            selectedMode: { modeString: '', modeName: '' },
             modes: [
-                {modeString: 'Player VS Player', modeName: 'versusPlayer'},
-                {modeString: 'Player VS CPU', modeName: 'versusCPU'},
+                { modeString: 'Player VS Player', modeName: 'versusPlayer' },
+                { modeString: 'Player VS CPU', modeName: 'versusCPU' },
             ],
 
-            colors: ['white', 'black'],
+            colors: Object.keys(Config.stone.color),
 
-            playerInfo: {
-                player1: {
-                    name: '',
-                    color: '',
-                }, 
-                player2: {
-                    name: '',
-                    color: '',
-                } 
-            },
+            players: new Array(Config.player.number.min)
+                .fill({})
+                .map(
+                    () => new Player('', Config.player.initialScore, '', false)
+                ),
 
             cpuPlayerName: 'CPU',
-            initialScore: 2, 
-            
         };
     },
 
-
     methods: {
-        makePlayerModel(){
-            let players: Array<Player> = new Array(2); //2は後でconfigで書き換え
-            //playersとplayerInfoの長さをassertした方がよいかも
-            if(this.selectedMode.modeName === 'versusCPU') this.playerInfo.player2.name = this.cpuPlayerName;
-            Object.entries(this.playerInfo).map(([playerName, {color}])=>{
-                if(playerName === this.cpuPlayerName) players.push(this.createCpuPlayer(playerName, this.initialScore, color));
-                else players.push(this.createHumanPlayer(playerName, this.initialScore, color));
-            });
-            this.$emit('playersData', players);
-        },
-        assignColor(players: Array<Player>){
-            players.map((players)=>{
-                players.color = ''
-            });
+        sendPlayers() {
+            if (this.selectedMode.modeName === 'versusCPU')
+                this.switchCpuPlayer(this.players[Config.player.cpuIndex]); //ConfigにCPUがどこになるのかIndex追加
+            this.$emit('playersData', this.players);
         },
 
-        createCpuPlayer(playerName: string, score: number, color: string){
-            return new Player(playerName, score, color, true);
+        switchCpuPlayer(player: Player) {
+            player.name = this.cpuPlayerName;
+            player.color = this.judgeCpuColor();
+            player.isCpu = true;
         },
 
-        createHumanPlayer(playerName: string, score: number, color: string){
-            return new Player(playerName, score, color, false);
+        judgeCpuColor(): string {
+            if (this.players[Config.player.playerIndex].color === 'white')
+                return 'black';
+            else if (this.players[Config.player.playerIndex].color === 'black')
+                return 'white';
+            else return ''; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
         },
 
         /* from player.ts
@@ -127,13 +113,8 @@ export default Vue.extend({
             }
         }
         */
-    }
-
-
+    },
 });
-
-
-
 </script>
 
 <style>

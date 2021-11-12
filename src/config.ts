@@ -21,6 +21,9 @@ interface Config {
         number: {
             [key: string]: number;
         };
+        initialScore: number;
+        playerIndex: number;
+        cpuIndex: number;
     };
     table: {
         phase: {
@@ -59,6 +62,9 @@ const config: Config = {
             min: 2,
             max: 2,
         },
+        initialScore: 2,
+        playerIndex: 0, //CPUモードだったときのPlayer Index
+        cpuIndex: 1,
     },
     table: {
         phase: {
