@@ -1,30 +1,29 @@
 <template>
     <v-app>
         <v-main>
-            <Top />
-            <Login />
-            <Game />
+            <router-view @playersData="setPlayer"></router-view>
         </v-main>
     </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Game from './views/Game.vue';
-import Login from './views/Login.vue';
-import Top from './views/Top.vue';
-
+import Table from './models/table';
+import Player from './models/player';
 export default Vue.extend({
     name: 'App',
-
-    components: {
-        Game,
-        Login,
-        Top,
+    data() {
+        return {
+            table: {} as Table,
+        };
     },
-
-    data: () => ({
-        //
-    }),
+    methods: {
+        setPlayer(players: Player[]) {
+            this.table.players = players;
+        },
+    },
+    created: function () {
+        this.table = new Table();
+    },
 });
 </script>
