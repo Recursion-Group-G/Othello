@@ -1,6 +1,6 @@
 interface Config {
     top: {
-        modes: {[key: string]: string}[];
+        modes: { [key: string]: string }[];
     };
     stone: {
         color: {

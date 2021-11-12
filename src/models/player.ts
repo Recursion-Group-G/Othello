@@ -1,4 +1,4 @@
-import Color from './stone'
+import Color from './stone';
 
 class Player {
     name: string;
