@@ -14,16 +14,16 @@ export default Vue.extend({
     name: 'App',
     data() {
         return {
-            table: {} as Table
-        }
+            table: {} as Table,
+        };
     },
     methods: {
         setPlayer(players: Player[]) {
             this.table.players = players;
-        }
+        },
     },
     created: function () {
         this.table = new Table();
-    }
+    },
 });
 </script>
