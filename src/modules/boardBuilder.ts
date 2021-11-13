@@ -1,10 +1,5 @@
 import Square from "../models/square";
 import Board from "../models/board";
-interface Point {
-    x: number;
-    y: number;
-}
-
 interface Size {
     x: number;
     y: number;
@@ -28,7 +23,7 @@ class BoardBuilder{
         for(let y : number = 0; y < this.size.y; y++){
             let squareX : Square[] = [];
             for(let x : number = 0; x < this.size.x; x++){
-                squareX.push(new Square(new Point(x, y)));
+                squareX.push(new Square({x: x, y: y}));
             }
             squares.push(squareX);
         }
