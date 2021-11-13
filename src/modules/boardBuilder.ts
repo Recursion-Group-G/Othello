@@ -1,5 +1,10 @@
 import Square from "../models/square";
 import Board from "../models/board";
+interface Point {
+    x: number;
+    y: number;
+}
+
 interface Size {
     x: number;
     y: number;
@@ -7,6 +12,7 @@ interface Size {
 
 class BoardBuilder{
     private size: Size;//ボードのサイズ、幅と高さ、x,y　自分用メモ
+    private point: Point;
     private squares: Square[][] = [];
 
     constructor(){
@@ -19,17 +25,23 @@ class BoardBuilder{
     }
 
     setSquares(): BoardBuilder{
-        //二次元配列と連結リストを作成中
-
-        //二次元配列の初期化
+        //二次元配列をセット
         let squares : Square[][] = [];
+        for(let y : number = 0; y < this.size.y; y++){
+            let squareX : Square[] = [];
+            for(let x : number = 0; x < this.size.x; x++){
+                squareX.push(new Square(new Point(x, y)));
+            }
+            squares.push(squareX);
+        }
 
+        //連結リストをセット
+        //端の4点をつなげる
 
-        //二次元配列にノードを入れる
+        //端の4辺をつなげる
 
-
-
-        //連結リストを繋げる
+        //真ん中の全方向をつなげる
+        
 
 
         this.squares = squares;
