@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import ThreeConfig from './threeConfig';
 
 class FlipAnimation {
     constructor(id, fromColor, toColor) {
@@ -41,19 +42,19 @@ class FlipAnimation {
             75,
             this.sizes.width / this.sizes.height,
             0.1,
-            100
+            50
         );
-        this.camera.position.z = 3;
+        this.camera.position.z = ThreeConfig.camera.position.z;
         this.scene.add(this.camera);
 
         /**
          * Stone
          */
-        const height = 0.13;
+        const height = ThreeConfig.othelloStone.height;
         const othelloStoneGeometry = new THREE.CylinderGeometry(
             1,
             1,
-            height,
+            height / 2,
             50
         );
 
@@ -70,10 +71,10 @@ class FlipAnimation {
             othelloStoneGeometry,
             frontMaterial
         );
-        frontCylinder.position.y = height / 2;
+        frontCylinder.position.y = height/4;
 
         const backCylinder = new THREE.Mesh(othelloStoneGeometry, backMaterial);
-        backCylinder.position.y = -height / 2;
+        backCylinder.position.y = -height/4;
 
         this.othelloStone = new THREE.Group();
         this.othelloStone.add(frontCylinder);
@@ -88,7 +89,7 @@ class FlipAnimation {
          */
         const spotLight = new THREE.SpotLight(0xffffff);
         spotLight.castShadow = true;
-        spotLight.position.set(-10, 10, 20);
+        spotLight.position.set(...Object.keys(ThreeConfig.light.position).map(p=>ThreeConfig.light.position[p]));
         spotLight.shadow.mapSize.width = 2048;
         spotLight.shadow.mapSize.height = 2048;
         this.scene.add(spotLight);
@@ -117,14 +118,13 @@ class FlipAnimation {
                 cancelAnimationFrame(requestId);
                 this.othelloStone.rotation.z = rotationZ;
                 this.othelloStone.position.z = 0;
-                console.timeEnd('for');
                 return;
             }
 
             if (this.othelloStone.rotation.z < rotationZ - Math.PI / 2) {
-                this.othelloStone.position.z += 0.03;
+                this.othelloStone.position.z += ThreeConfig.othelloStone.jumpPower;
             } else {
-                this.othelloStone.position.z -= 0.03;
+                this.othelloStone.position.z -= ThreeConfig.othelloStone.jumpPower;
             }
             this.othelloStone.rotation.z += 0.05;
             requestId = requestAnimationFrame(animate);
@@ -134,7 +134,7 @@ class FlipAnimation {
 
         const sleep = (msec) =>
             new Promise((resolve) => setTimeout(resolve, msec));
-        await sleep(1200); //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
+        await sleep(ThreeConfig.sleepTime); //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
     }
     remove() {
         this.canvas.remove();
