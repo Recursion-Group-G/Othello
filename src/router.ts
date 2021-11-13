@@ -6,12 +6,10 @@ import Top from './views/Top.vue';
 
 Vue.use(VueRouter);
 
-import App from './App.vue';
-
 const routes = [
     { path: '/', component: Top },
     { path: '/login', component: Login },
-    { path: '/game', component: Game }
+    { path: '/game', component: Game },
 ];
 
 const router = new VueRouter({

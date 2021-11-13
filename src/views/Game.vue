@@ -67,9 +67,9 @@ export default Vue.extend({
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
     }),
-    created: function() {
+    created: function () {
         //今は画面遷移しないようにコメントアウト
-        // this.validateTable(); 
+        // this.validateTable();
         this.saveLocalStorage();
     },
     computed: {
@@ -79,11 +79,16 @@ export default Vue.extend({
         },
     },
     methods: {
-        validateTable: function() {
+        validateTable: function () {
             //必要な情報がnullであればトップページへ画面遷移
-            if(this.table == null || this.table.players == null || this.table.board == null) router.push('/');
+            if (
+                this.table == null ||
+                this.table.players == null ||
+                this.table.board == null
+            )
+                router.push('/');
         },
-        saveLocalStorage: function() {
+        saveLocalStorage: function () {
             console.log(1);
         },
         clickToFlip: async function (id: string) {
