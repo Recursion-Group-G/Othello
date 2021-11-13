@@ -70,6 +70,7 @@ export default Vue.extend({
     created: function() {
         //今は画面遷移しないようにコメントアウト
         // this.validateTable(); 
+        this.saveLocalStorage();
     },
     computed: {
         //スマホの画面判定
@@ -81,6 +82,9 @@ export default Vue.extend({
         validateTable: function() {
             //必要な情報がnullであればトップページへ画面遷移
             if(this.table == null || this.table.players == null || this.table.board == null) router.push('/');
+        },
+        saveLocalStorage: function() {
+            console.log(1);
         },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
