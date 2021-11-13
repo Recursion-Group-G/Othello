@@ -109,7 +109,6 @@ class FlipAnimation {
         const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
 
-        console.time('for');
         const animate = async () => {
             // Render
             this.renderer.render(this.scene, this.camera);
@@ -127,7 +126,6 @@ class FlipAnimation {
             } else {
                 this.othelloStone.position.z -= 0.03;
             }
-            console.log('2');
             this.othelloStone.rotation.z += 0.05;
             requestId = requestAnimationFrame(animate);
         };
