@@ -50,6 +50,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import FlipAnimation from '@/modules/flipAnimation';
+import router from '../router';
 
 export default Vue.extend({
     name: 'Game',
@@ -66,7 +67,10 @@ export default Vue.extend({
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
     }),
-
+    created: function() {
+        //今は画面遷移しないようにコメントアウト
+        // this.validateTable(); 
+    },
     computed: {
         //スマホの画面判定
         isXs() {
@@ -74,6 +78,10 @@ export default Vue.extend({
         },
     },
     methods: {
+        validateTable: function() {
+            //必要な情報がnullであればトップページへ画面遷移
+            if(this.table == null || this.table.players == null || this.table.board == null) router.push('/');
+        },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
             const animation = new FlipAnimation(id, '#ffffff', '#000000');
