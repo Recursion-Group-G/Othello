@@ -28,6 +28,7 @@ interface Config {
         initialScore: number;
         playerIndex: number;
         cpuIndex: number;
+        cpuName: string;
     };
     table: {
         phase: {
@@ -76,6 +77,7 @@ const config: Config = {
         initialScore: 2,
         playerIndex: 0, //CPUモードだったときのPlayer Index
         cpuIndex: 1,
+        cpuName: 'CPU',
     },
     table: {
         phase: {

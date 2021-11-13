@@ -12,10 +12,17 @@
                     item-value="modeName"
                     label="Game Mode"
                     return-object
+                    :rules="modeRules"
+                    required
                 ></v-select>
                 <!--Player-->
                 <div v-if="isPvPMode">
                     <div v-for="(player, index) in players" :key="index">
+                        <!--v-form確認中
+                        <v-form
+                            ref="form"
+                            lazy-validation
+                        > -->
                         <v-text-field
                             class="mt-10"
                             v-model="player.name"
@@ -31,7 +38,12 @@
                             item-text="name"
                             item-value="obj"
                             :label="`Color (Player${index + 1})`"
+                            :rules="colorRules"
+                            required
                         ></v-select>
+                        <!--v-form確認中
+                        </v-form>
+                        -->
                     </div>
                 </div>
                 <!--Modeの選択なし、PvCモードの時は一つの表示-->
@@ -51,18 +63,19 @@
                         item-value="obj"
                         :items="colors"
                         :label="`Color (Player${playerIndex + 1})`"
+                        :rules="colorRules"
+                        required
                     ></v-select>
                 </div>
 
                 <!-- Game Start button -->
                 <v-row class="d-flex justify-center mt-10 white--text">
-                    <router-link to="/game" class="button-link">
-                        <v-btn
-                            @click="sendPlayers"
-                            dark
-                            large
-                            color="deep-purple"
-                        >
+                    <router-link
+                        @click.native="sendPlayers"
+                        to="/game"
+                        class="button-link"
+                    >
+                        <v-btn color="deep-purple accent-3 white--text">
                             Game Start
                         </v-btn>
                     </router-link>
@@ -103,11 +116,13 @@ export default Vue.extend({
                         )
                 ),
 
-            cpuPlayerName: 'CPU',
+            cpuPlayerName: Config.player.cpuName,
 
             nameCounter: Config.top.nameCounter,
 
             playerIndex: Config.player.playerIndex,
+
+            modeRules: [(v: any) => !!v.modeName || 'Mode is required'],
 
             nameRules: [
                 (v: any) => !!v || 'Name is required',
@@ -115,11 +130,15 @@ export default Vue.extend({
                     v.length <= Config.top.nameCounter ||
                     `Name must be less than ${Config.top.nameCounter} characters`,
             ],
+
+            colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
     },
 
     methods: {
         sendPlayers() {
+            //(this.$refs.form as any).validate()
+            //作成中のためコメントアウト
             const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
             if (this.isPvCMode) {
                 this.switchCpuPlayer(this.players[cpuIndex]);
