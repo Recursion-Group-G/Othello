@@ -1,48 +1,41 @@
 <template>
-        <div class="v-content">
-            <v-container class="d-flex justify-center text-center mt-5">
-                <!-- Players上部(スマホの時のみ表示) -->
-                <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
-                <h2 class="player-font" v-if="isXs">{{ players[1] }}: 2</h2>
-            </v-container>
-            <v-container class="board">
-                <v-row class="d-flex justify-center my-3">
-                    <!-- Board -->
-                    <div>
-                        <div
-                            v-for="i in board.size.row"
-                            :key="i"
-                            class="d-flex"
-                        >
-                            <div v-for="j in board.size.col" :key="j">
-                                <div
-                                    :id="`${i}-${j}`"
-                                    class="board-square"
-                                    @click="clickToFlip(`${i}-${j}`)"
-                                ></div>
-                            </div>
+    <div class="v-content">
+        <v-container class="d-flex justify-center text-center mt-5">
+            <!-- Players上部(スマホの時のみ表示) -->
+            <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
+            <h2 class="player-font" v-if="isXs">{{ players[1] }}: 2</h2>
+        </v-container>
+        <v-container class="board">
+            <v-row class="d-flex justify-center my-3">
+                <!-- Board -->
+                <div>
+                    <div v-for="i in board.size.row" :key="i" class="d-flex">
+                        <div v-for="j in board.size.col" :key="j">
+                            <div
+                                :id="`${i}-${j}`"
+                                class="board-square"
+                                @click="clickToFlip(`${i}-${j}`)"
+                            ></div>
                         </div>
                     </div>
-                </v-row>
-            </v-container>
-            <!-- Players下部 -->
-            <v-container>
-                <v-row
-                    class="d-flex space-between text-center mb-5"
-                    v-if="!isXs"
-                >
-                    <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
-                    <v-col v-for="k in players" :key="k">
-                        <h2 class="player-font">{{ k }}: 2</h2>
-                    </v-col>
-                </v-row>
-                <v-row class="d-flex space-between text-center mb-5" v-else>
-                    <v-col>
-                        <h2 class="player-font">{{ players[0] }}: 2</h2>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </div>
+                </div>
+            </v-row>
+        </v-container>
+        <!-- Players下部 -->
+        <v-container>
+            <v-row class="d-flex space-between text-center mb-5" v-if="!isXs">
+                <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
+                <v-col v-for="k in players" :key="k">
+                    <h2 class="player-font">{{ k }}: 2</h2>
+                </v-col>
+            </v-row>
+            <v-row class="d-flex space-between text-center mb-5" v-else>
+                <v-col>
+                    <h2 class="player-font">{{ players[0] }}: 2</h2>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>
 
 <script lang="ts">
@@ -64,13 +57,13 @@ export default Vue.extend({
         },
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
-        tableJson: '',
+        localStorageTable: {},
     }),
     created: function () {
         //今は画面遷移しないようにコメントアウト
         // this.validateTable();
-        this.saveLocalStorage();
         this.getLocalStorage();
+        this.saveLocalStorage();
     },
     computed: {
         //スマホの画面判定
@@ -90,12 +83,13 @@ export default Vue.extend({
         },
         saveLocalStorage: function () {
             let tableJsonDecoded = JSON.stringify(this.table);
-            localStorage.setItem("table", tableJsonDecoded);
+            localStorage.setItem('table', tableJsonDecoded);
         },
-        getLocalStorage: function() {
-            this.tableJson = JSON.stringify(localStorage.getItem("table"));
+        getLocalStorage: function () {
+            this.localStorageTable = JSON.parse(localStorage.getItem('table'));
+            console.log(this.localStorageTable);
         },
-        clearLocalStorage: function() {
+        clearLocalStorage: function () {
             localStorage.clear();
         },
         clickToFlip: async function (id: string) {
