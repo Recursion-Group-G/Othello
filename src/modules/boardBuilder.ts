@@ -6,11 +6,12 @@ interface Size {
 }
 
 class BoardBuilder{
-    private size: Size;//ボードのサイズ、幅と高さ、x,y　自分用メモ
-    private squares: Square[][] = [];
+    private size: Size;
+    private squares: Square[][];
 
     constructor(){
-        this.reset();
+        this.size = {x: 0, y: 0};
+        this.squares = [];
     }
 
     setSize(size: Size): BoardBuilder{
@@ -54,7 +55,7 @@ class BoardBuilder{
     }
 
     reset(): void{
-        this.size = null;
+        this.size = {x: 0, y: 0};
         this.squares = [];
     }
 }
