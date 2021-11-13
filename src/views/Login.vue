@@ -14,24 +14,46 @@
                     return-object
                 ></v-select>
                 <!--Player-->
-                <div v-for="(player, index) in players" :key="index">
+                <div v-if="isPvPMode">
+                    <div v-for="(player, index) in players" :key="index">
+                        <v-text-field
+                            class="mt-10"
+                            v-model="player.name"
+                            :counter="nameCounter"
+                            :label="`Name (Player${index + 1})`"
+                            :rules="nameRules"
+                            required
+                        ></v-text-field>
+                        <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
+                        <v-select
+                            v-model="player.color"
+                            :items="colors"
+                            item-text="name"
+                            item-value="obj"
+                            :label="`Color (Player${index + 1})`"
+                        ></v-select>
+                    </div>
+                </div>
+                <!--Modeの選択なし、PvCモードの時は一つの表示-->
+                <div v-else>
                     <v-text-field
                         class="mt-10"
-                        v-model="player.name"
+                        v-model="players[playerIndex].name"
                         :counter="nameCounter"
-                        :label="`Name (Player${index + 1})`"
+                        :label="`Name (Player${playerIndex + 1})`"
                         :rules="nameRules"
                         required
                     ></v-text-field>
                     <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
                     <v-select
-                        v-model="player.color"
-                        :items="colors"
+                        v-model="players[playerIndex].color"
                         item-text="name"
                         item-value="obj"
-                        :label="`Color (Player${index + 1})`"
+                        :items="colors"
+                        :label="`Color (Player${playerIndex + 1})`"
                     ></v-select>
                 </div>
+
                 <!-- Game Start button -->
                 <v-row class="d-flex justify-center mt-10 white--text">
                     <router-link to="/game" class="button-link">
@@ -85,21 +107,21 @@ export default Vue.extend({
 
             nameCounter: Config.top.nameCounter,
 
+            playerIndex: Config.player.playerIndex,
+
             nameRules: [
-                    (v: any) => !!v || 'Name is required',
-                    (v: any) => v.length <= Config.top.nameCounter || `Name must be less than ${Config.top.nameCounter} characters`,
+                (v: any) => !!v || 'Name is required',
+                (v: any) =>
+                    v.length <= Config.top.nameCounter ||
+                    `Name must be less than ${Config.top.nameCounter} characters`,
             ],
-            
         };
     },
 
     methods: {
         sendPlayers() {
             const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
-            if (
-                this.selectedMode.modeName ===
-                Config.top.modes[cpuIndex].modeName
-            ) {
+            if (this.isPvCMode) {
                 this.switchCpuPlayer(this.players[cpuIndex]);
             }
             this.$emit('playersData', this.players);
@@ -139,6 +161,23 @@ export default Vue.extend({
             }
             else return {}; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
             */
+        },
+    },
+
+    computed: {
+        isPvCMode(): boolean {
+            const cpuIndex: number = Config.player.cpuIndex;
+            return (
+                this.selectedMode.modeName ===
+                Config.top.modes[cpuIndex].modeName
+            );
+        },
+        isPvPMode(): boolean {
+            const playerIndex: number = Config.player.playerIndex;
+            return (
+                this.selectedMode.modeName ===
+                Config.top.modes[playerIndex].modeName
+            );
         },
     },
 });
