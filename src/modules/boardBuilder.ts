@@ -19,10 +19,17 @@ class BoardBuilder{
     }
 
     setSquares(): BoardBuilder{
-        //linkを作成中
+        //二次元配列と連結リストを作成中
+
+        //二次元配列の初期化
         let squares : Square[][] = [];
 
 
+        //二次元配列にノードを入れる
+
+
+
+        //連結リストを繋げる
 
 
         this.squares = squares;
