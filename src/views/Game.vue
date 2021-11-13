@@ -1,6 +1,5 @@
 <template>
-    <v-app>
-        <v-content class="v-content">
+        <div class="v-content">
             <v-container class="d-flex justify-center text-center mt-5">
                 <!-- Players上部(スマホの時のみ表示) -->
                 <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
@@ -43,8 +42,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-        </v-content>
-    </v-app>
+        </div>
 </template>
 
 <script lang="ts">
