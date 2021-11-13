@@ -12,7 +12,6 @@ interface Size {
 
 class BoardBuilder{
     private size: Size;//ボードのサイズ、幅と高さ、x,y　自分用メモ
-    private point: Point;
     private squares: Square[][] = [];
 
     constructor(){
@@ -25,7 +24,6 @@ class BoardBuilder{
     }
 
     setSquares(): BoardBuilder{
-        //二次元配列をセット
         let squares : Square[][] = [];
         for(let y : number = 0; y < this.size.y; y++){
             let squareX : Square[] = [];
@@ -34,18 +32,25 @@ class BoardBuilder{
             }
             squares.push(squareX);
         }
+    
 
-        //連結リストをセット
-        //端の4点をつなげる
+        for(let y : number = 0; y < this.size.y; y++){
+            for(let x : number = 0; x < this.size.x; x++){
+                let curr : Square = squares[y][x];
+                
+                if(y !== 0) curr.top = squares[y - 1][x];
+                if(x !== this.size.x - 1) curr.right = squares[y][x + 1];
+                if(y !== this.size.y - 1) curr.bottom = squares[y + 1][x];
+                if(x !== 0) curr.left = squares[y][x - 1];
 
-        //端の4辺をつなげる
-
-        //真ん中の全方向をつなげる
+                if(x !== this.size.x - 1 || y !== 0) curr.topRight = squares[y - 1][x + 1];
+                if(x !== 0 || y !== 0) curr.topLeft = squares[y - 1][x - 1];
+                if(x !== this.size.x - 1 || y !== this.size.y - 1) curr.bottomRight = squares[y + 1][x + 1];
+                if(x !== 0 || y !== this.size.y - 1) curr.bottomLeft = squares[y + 1][x - 1];
+            }
+        }
         
-
-
         this.squares = squares;
-
         return this;
     }
 
