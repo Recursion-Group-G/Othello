@@ -18,8 +18,9 @@
                     <v-text-field
                         class="mt-10"
                         v-model="player.name"
-                        :counter="10"
+                        :counter="nameCounter"
                         :label="`Name (Player${index + 1})`"
+                        :rules="nameRules"
                         required
                     ></v-text-field>
                     <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
@@ -81,6 +82,14 @@ export default Vue.extend({
                 ),
 
             cpuPlayerName: 'CPU',
+
+            nameCounter: Config.top.nameCounter,
+
+            nameRules: [
+                    (v: any) => !!v || 'Name is required',
+                    (v: any) => v.length <= Config.top.nameCounter || `Name must be less than ${Config.top.nameCounter} characters`,
+            ],
+            
         };
     },
 
