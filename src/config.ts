@@ -1,4 +1,7 @@
 interface Config {
+    top: {
+        modes: { [key: string]: string }[];
+    };
     stone: {
         color: {
             [key: string]: {
@@ -21,6 +24,9 @@ interface Config {
         number: {
             [key: string]: number;
         };
+        initialScore: number;
+        playerIndex: number;
+        cpuIndex: number;
     };
     table: {
         phase: {
@@ -30,6 +36,12 @@ interface Config {
 }
 
 const config: Config = {
+    top: {
+        modes: [
+            { modeString: 'Player VS Player', modeName: 'PvP' },
+            { modeString: 'Player VS CPU', modeName: 'PvC' },
+        ],
+    },
     stone: {
         color: {
             black: {
@@ -59,6 +71,9 @@ const config: Config = {
             min: 2,
             max: 2,
         },
+        initialScore: 2,
+        playerIndex: 0, //CPUモードだったときのPlayer Index
+        cpuIndex: 1,
     },
     table: {
         phase: {
