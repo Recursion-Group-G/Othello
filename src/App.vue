@@ -1,24 +1,29 @@
 <template>
     <v-app>
         <v-main>
-            <router-view></router-view>
+            <router-view @playersData="setPlayer"></router-view>
         </v-main>
     </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import PopUp from './views/PopUp.vue';
-
+import Table from './models/table';
+import Player from './models/player';
 export default Vue.extend({
-  name: 'App',
-
-  components: {
-    PopUp,
-  },
-
-  data: () => ({
-    //
-  }),
+    name: 'App',
+    data() {
+        return {
+            table: {} as Table,
+        };
+    },
+    methods: {
+        setPlayer(players: Player[]) {
+            this.table.players = players;
+        },
+    },
+    created: function () {
+        this.table = new Table();
+    },
 });
 </script>

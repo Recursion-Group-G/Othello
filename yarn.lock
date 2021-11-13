@@ -4122,11 +4122,6 @@
     "loader-utils" "^2.0.0"
     "schema-utils" "^3.0.0"
 
-"file-uri-to-path@1.0.0":
-  "integrity" "sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw=="
-  "resolved" "https://registry.npmjs.org/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz"
-  "version" "1.0.0"
-
 "filesize@^3.6.1":
   "integrity" "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
   "resolved" "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz"
@@ -8384,6 +8379,11 @@
     "loader-runner" "^2.3.1"
     "loader-utils" "^1.1.0"
     "neo-async" "^2.6.0"
+
+"three@^0.134.0":
+  "integrity" "sha512-LbBerg7GaSPjYtTOnu41AMp7tV6efUNR3p4Wk5NzkSsNTBuA5mDGOfwwZL1jhhVMLx9V20HolIUo0+U3AXehbg=="
+  "resolved" "https://registry.npmjs.org/three/-/three-0.134.0.tgz"
+  "version" "0.134.0"
 
 "through@^2.3.6":
   "integrity" "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU="
