@@ -1,5 +1,5 @@
 class BoardBuilder{
-    size;
+    size;//ボードのサイズ、幅と高さ、x,y　自分用メモ
     squares;
 
     constructor(){
@@ -11,8 +11,14 @@ class BoardBuilder{
         return this;
     }
 
-    setSquare(){
+    setSquares(){
         //linkを作成中
+        let squares = [];
+
+
+
+
+        this.squares = squares;
 
         return this;
     }
@@ -22,7 +28,7 @@ class BoardBuilder{
     }
 
     reset(){
-        this.size = 0;
+        this.size = null;
         this.squares = null;
     }
 }
