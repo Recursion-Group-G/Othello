@@ -39,10 +39,10 @@ class BoardBuilder {
                 if(y !== this.size.y - 1) curr.bottom = squares[y + 1][x];
                 if(x !== 0) curr.left = squares[y][x - 1];
 
-                if(x !== this.size.x - 1 || y !== 0) curr.topRight = squares[y - 1][x + 1];
-                if(x !== 0 || y !== 0) curr.topLeft = squares[y - 1][x - 1];
-                if(x !== this.size.x - 1 || y !== this.size.y - 1) curr.bottomRight = squares[y + 1][x + 1];
-                if(x !== 0 || y !== this.size.y - 1) curr.bottomLeft = squares[y + 1][x - 1];
+                if(x !== this.size.x - 1 && y !== 0) curr.topRight = squares[y - 1][x + 1];
+                if(x !== 0 && y !== 0) curr.topLeft = squares[y - 1][x - 1];
+                if(x !== this.size.x - 1 && y !== this.size.y - 1) curr.bottomRight = squares[y + 1][x + 1];
+                if(x !== 0 && y !== this.size.y - 1) curr.bottomLeft = squares[y + 1][x - 1];
             }
         }
         
@@ -59,5 +59,13 @@ class BoardBuilder {
         this.squares = [];
     }
 }
+
+let bb = new BoardBuilder();
+console.log(bb);
+
+bb.setSize({x: 10, y: 10}).setSquares();
+
+console.log(bb);
+
 
 export default BoardBuilder;
