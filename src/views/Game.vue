@@ -66,11 +66,13 @@ export default Vue.extend({
         },
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
+        tableJson: '',
     }),
     created: function () {
         //今は画面遷移しないようにコメントアウト
         // this.validateTable();
         this.saveLocalStorage();
+        this.getLocalStorage();
     },
     computed: {
         //スマホの画面判定
@@ -89,7 +91,14 @@ export default Vue.extend({
                 router.push('/');
         },
         saveLocalStorage: function () {
-            console.log(1);
+            let tableJsonDecoded = JSON.stringify(this.table);
+            localStorage.setItem("table", tableJsonDecoded);
+        },
+        getLocalStorage: function() {
+            this.tableJson = JSON.stringify(localStorage.getItem("table"));
+        },
+        clearLocalStorage: function() {
+            localStorage.clear();
         },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
