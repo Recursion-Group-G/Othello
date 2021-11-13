@@ -6,19 +6,19 @@ interface Size {
 }
 
 class BoardBuilder{
-    size: Size//ボードのサイズ、幅と高さ、x,y　自分用メモ
-    squares: Square[][];
+    private size: Size;//ボードのサイズ、幅と高さ、x,y　自分用メモ
+    private squares: Square[][] = [];
 
     constructor(){
         this.reset();
     }
 
-    setSize(size: Size){
+    setSize(size: Size): BoardBuilder{
         this.size = size;
         return this;
     }
 
-    setSquares(){
+    setSquares(): BoardBuilder{
         //linkを作成中
         let squares : Square[][] = [];
 
@@ -30,12 +30,14 @@ class BoardBuilder{
         return this;
     }
 
-    build(){
+    build(): Board{
         return new Board(this.size, this.squares);
     }
 
-    reset(){
+    reset(): void{
         this.size = null;
-        this.squares = null;
+        this.squares = [];
     }
 }
+
+export default BoardBuilder;
