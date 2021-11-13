@@ -60,12 +60,4 @@ class BoardBuilder {
     }
 }
 
-let bb = new BoardBuilder();
-console.log(bb);
-
-bb.setSize({x: 10, y: 10}).setSquares();
-
-console.log(bb);
-
-
 export default BoardBuilder;
