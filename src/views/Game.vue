@@ -53,6 +53,7 @@ import FlipAnimation from '@/modules/flipAnimation';
 
 export default Vue.extend({
     name: 'Game',
+    props: ['table'],
     components: {},
     data: () => ({
         //後でconfig.tsに移行する

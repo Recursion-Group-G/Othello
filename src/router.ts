@@ -6,6 +6,8 @@ import Top from './views/Top.vue';
 
 Vue.use(VueRouter);
 
+import App from './App.vue';
+
 const routes = [
     { path: '/', component: Top },
     { path: '/login', component: Login },
