@@ -100,21 +100,16 @@ export default Vue.extend({
     width: 90px;
     height: 90px;
 
-    /* color: #ffffff; */
     cursor: pointer;
-    /* transition: all 0.2s; */
+    transition: all 0.2s;
     gap: 20px;
-    border-radius: 0px;
-    /* backdrop-filterが
-    ないと近くの中に収まらないけど
-    あると重たくなってレートが遅くなるので
-    0pxにしておく */
-    backdrop-filter: blur(0px);
     background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
     border-bottom: 6px rgba(40, 40, 40, 0.35) solid;
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
+
+    position: relative;
 }
 
 /* テスト用に一旦コメントアウト */

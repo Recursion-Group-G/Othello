@@ -43,6 +43,5 @@ export default Vue.extend({
 .stone-style {
     width: 90%;
     height: 90%;
-    color: aquamarine;
 }
 </style>

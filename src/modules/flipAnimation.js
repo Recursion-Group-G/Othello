@@ -13,7 +13,8 @@ class FlipAnimation {
 
         this.canvas.height = this.square.clientHeight * 2;
         this.canvas.width = this.square.clientWidth * 2;
-        this.canvas.style.position = 'fixed';
+        //positionを親要素の左上を原点とする。親要素にrelaticeがついていることに依存している。
+        this.canvas.style.position = 'absolute';
         this.canvas.style.outline = 'none';
         this.canvas.style.top = `${
             (this.square.clientHeight - this.canvas.height) / 2
