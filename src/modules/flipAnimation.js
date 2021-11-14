@@ -134,7 +134,8 @@ class FlipAnimation {
 
         const sleep = (msec) =>
             new Promise((resolve) => setTimeout(resolve, msec));
-        await sleep(ThreeConfig.sleepTime); //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
+        //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
+        await sleep(ThreeConfig.sleepTime); 
     }
     remove() {
         this.canvas.remove();
