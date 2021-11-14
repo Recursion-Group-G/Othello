@@ -42,6 +42,7 @@
 import Vue from 'vue';
 import FlipAnimation from '@/modules/flipAnimation';
 import router from '../router';
+import Config from '../config';
 
 export default Vue.extend({
     name: 'Game',
@@ -83,11 +84,11 @@ export default Vue.extend({
         },
         saveLocalStorage: function () {
             let tableJsonDecoded = JSON.stringify(this.table);
-            localStorage.setItem('table', tableJsonDecoded);
+            localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
         },
         getLocalStorage: function () {
-            let jsonTable = localStorage.getItem('table');
-            this.localStorageTable = (jsonTable)? JSON.parse(jsonTable): '';
+            let jsonTable = localStorage.getItem(Config.localStorage.table);
+            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : '';
             console.log(this.localStorageTable);
         },
         clearLocalStorage: function () {

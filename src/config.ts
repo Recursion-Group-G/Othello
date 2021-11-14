@@ -33,6 +33,9 @@ interface Config {
             [key: string]: number;
         };
     };
+    localStorage: {
+        [key: string]: string;
+    };
 }
 
 const config: Config = {
@@ -81,6 +84,9 @@ const config: Config = {
             skip: 1,
             roundover: 2,
         },
+    },
+    localStorage: {
+        table: 'table',
     },
 };
 
