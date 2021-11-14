@@ -14,12 +14,12 @@ class BoardBuilder {
         this.squares = [];
     }
 
-    setSize(size: Size): BoardBuilder {
+    public setSize(size: Size): BoardBuilder {
         this.size = size;
         return this;
     }
 
-    setSquares(): BoardBuilder {
+    public setSquares(): BoardBuilder {
         let squares : Square[][] = [];
         for(let y : number = 0; y < this.size.y; y++){
             let squareX : Square[] = [];
@@ -50,11 +50,11 @@ class BoardBuilder {
         return this;
     }
 
-    build(): Board {
+    public build(): Board {
         return new Board(this.size, this.squares);
     }
 
-    reset(): void {
+    public reset(): void {
         this.size = {x: 0, y: 0};
         this.squares = [];
     }
