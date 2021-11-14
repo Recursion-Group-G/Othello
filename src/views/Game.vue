@@ -43,6 +43,7 @@ import Vue from 'vue';
 import FlipAnimation from '@/modules/flipAnimation';
 import router from '../router';
 import Config from '../config';
+import Table from '@/models/table';
 
 export default Vue.extend({
     name: 'Game',
@@ -58,12 +59,13 @@ export default Vue.extend({
         },
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
-        localStorageTable: {},
+        localStorageTable: {} as Table,
     }),
     created: function () {
-        //今は画面遷移しないようにコメントアウト
-        // this.validateTable();
         this.getLocalStorage();
+        //今は画面遷移しないようにコメントアウト
+        // this.validateLocalStorage();
+        // this.validateTable();
         this.saveLocalStorage();
     },
     computed: {
@@ -82,14 +84,24 @@ export default Vue.extend({
             )
                 router.push('/');
         },
+        getLocalStorage: function () {
+            let jsonTable = localStorage.getItem(Config.localStorage.table);
+            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
+            console.log(this.localStorageTable);
+        },
+        validateLocalStorage: function () {
+            //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
+            if (Object.keys(this.localStorageTable).length) {
+                if (
+                    !this.localStorageTable.players ||
+                    !this.localStorageTable.board
+                )
+                    router.push('/');
+            }
+        },
         saveLocalStorage: function () {
             let tableJsonDecoded = JSON.stringify(this.table);
             localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
-        },
-        getLocalStorage: function () {
-            let jsonTable = localStorage.getItem(Config.localStorage.table);
-            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : '';
-            console.log(this.localStorageTable);
         },
         clearLocalStorage: function () {
             localStorage.clear();
