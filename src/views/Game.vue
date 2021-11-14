@@ -86,7 +86,8 @@ export default Vue.extend({
             localStorage.setItem('table', tableJsonDecoded);
         },
         getLocalStorage: function () {
-            this.localStorageTable = JSON.parse(localStorage.getItem('table'));
+            let jsonTable = localStorage.getItem('table');
+            this.localStorageTable = (jsonTable)? JSON.parse(jsonTable): '';
             console.log(this.localStorageTable);
         },
         clearLocalStorage: function () {
