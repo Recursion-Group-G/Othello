@@ -20,7 +20,9 @@
                                     :id="`${i}-${j}`"
                                     class="board-square"
                                     @click="clickToFlip(`${i}-${j}`)"
-                                ></div>
+                                >
+                                    <Stone />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50,10 +52,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import FlipAnimation from '@/modules/flipAnimation';
+import Stone from '@/components/Stone.vue';
 
 export default Vue.extend({
     name: 'Game',
-    components: {},
+    components: {
+        Stone,
+    },
     data: () => ({
         //後でconfig.tsに移行する
         board: {

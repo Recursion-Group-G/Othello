@@ -7,7 +7,7 @@
         elevation="12"
         color="#000000"
     ></v-sheet> -->
-    <div class="size-fill d-flex justify-center align-center"  >
+    <div class="size-fill d-flex justify-center align-center">
         <v-sheet
             class="mx-auto transition-swing rounded-circle stone-style"
             elevation="12"
@@ -18,19 +18,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Player from '@/models/player'
-import Stone from '@/models/stone'
+import Player from '@/models/player';
+import Stone from '@/models/stone';
 
 export default Vue.extend({
-    props:{
+    props: {
         // stone:Stone | null,
         // isVisible:Boolean,
     },
-    data(){
-        return{
-            color: "#000000"
-        }
-    }
+    data() {
+        return {
+            color: '#000000',
+        };
+    },
 });
 </script>
 
@@ -40,7 +40,7 @@ export default Vue.extend({
     height: 100%;
 }
 
-.stone-style{
+.stone-style {
     width: 90%;
     height: 90%;
     color: aquamarine;

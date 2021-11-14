@@ -71,10 +71,10 @@ class FlipAnimation {
             othelloStoneGeometry,
             frontMaterial
         );
-        frontCylinder.position.y = height/4;
+        frontCylinder.position.y = height / 4;
 
         const backCylinder = new THREE.Mesh(othelloStoneGeometry, backMaterial);
-        backCylinder.position.y = -height/4;
+        backCylinder.position.y = -height / 4;
 
         this.othelloStone = new THREE.Group();
         this.othelloStone.add(frontCylinder);
@@ -89,7 +89,11 @@ class FlipAnimation {
          */
         const spotLight = new THREE.SpotLight(0xffffff);
         spotLight.castShadow = true;
-        spotLight.position.set(...Object.keys(ThreeConfig.light.position).map(p=>ThreeConfig.light.position[p]));
+        spotLight.position.set(
+            ...Object.keys(ThreeConfig.light.position).map(
+                (p) => ThreeConfig.light.position[p]
+            )
+        );
         spotLight.shadow.mapSize.width = 2048;
         spotLight.shadow.mapSize.height = 2048;
         this.scene.add(spotLight);
@@ -122,9 +126,11 @@ class FlipAnimation {
             }
 
             if (this.othelloStone.rotation.z < rotationZ - Math.PI / 2) {
-                this.othelloStone.position.z += ThreeConfig.othelloStone.jumpPower;
+                this.othelloStone.position.z +=
+                    ThreeConfig.othelloStone.jumpPower;
             } else {
-                this.othelloStone.position.z -= ThreeConfig.othelloStone.jumpPower;
+                this.othelloStone.position.z -=
+                    ThreeConfig.othelloStone.jumpPower;
             }
             this.othelloStone.rotation.z += 0.05;
             requestId = requestAnimationFrame(animate);
@@ -135,7 +141,7 @@ class FlipAnimation {
         const sleep = (msec) =>
             new Promise((resolve) => setTimeout(resolve, msec));
         //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
-        await sleep(ThreeConfig.sleepTime); 
+        await sleep(ThreeConfig.sleepTime);
     }
     remove() {
         this.canvas.remove();
