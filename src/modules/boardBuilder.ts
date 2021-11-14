@@ -25,6 +25,18 @@ class BoardBuilder {
     }
 
     public createSquares(): BoardBuilder {
+        /**　squares[y][x]
+         *   (0,0)
+         *   *____________
+         *   |__|__|__|__|
+         *   |__|__|__|__|
+         *   |__|__|__|__|
+         *   |__|__|__|__|
+         *   |__|__|__|__|
+         *                *
+         *               (max,max)
+         */
+
         let squares : Square[][] = [];
         for(let y : number = 0; y < this.size.y; y++){
             let squareX : Square[] = [];
@@ -53,7 +65,7 @@ class BoardBuilder {
                 if(canInsertButtom) curr.bottom = this.squares[y + 1][x];
                 if(canInsertLeft) curr.left = this.squares[y][x - 1];
 
-                
+
                 const canInsertTopRight = x < this.size.x - 1 && y > 0;
                 const canInsertTopLeft = x > 0 && y > 0;
                 const canInsertBottomRight = x < this.size.x - 1 && y < this.size.y - 1;
