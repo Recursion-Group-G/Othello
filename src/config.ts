@@ -1,4 +1,4 @@
-import Config from "./interfaces/config";
+import Config from './interfaces/config';
 
 const config: Config = {
     top: {

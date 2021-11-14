@@ -1,9 +1,5 @@
 import Stone from './stone';
-
-interface Point {
-    x: number;
-    y: number;
-}
+import Point from '../interfaces/point';
 
 class Square {
     point: Point;
