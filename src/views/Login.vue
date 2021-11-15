@@ -4,72 +4,78 @@
             <v-col cols="10" sm="6" md="4">
                 <h1 class="page-title">Select Mode</h1>
                 <!--Select Mode-->
-                <v-select
-                    class="mt-10"
-                    v-model="selectedMode"
-                    :items="modes"
-                    item-text="modeString"
-                    item-value="modeName"
-                    label="Game Mode"
-                    return-object
-                    :rules="modeRules"
-                    required
-                ></v-select>
-                <!--Player-->
-                <div v-if="isPvPMode">
-                    <div v-for="(player, index) in players" :key="index">
-                        <!--v-form確認中
-                        <v-form
-                            ref="form"
-                            lazy-validation
-                        > -->
+                <v-form ref="form" lazy-validation>
+                    <v-select
+                        class="mt-10"
+                        v-model="selectedMode"
+                        :items="modes"
+                        item-text="modeString"
+                        item-value="modeName"
+                        label="Game Mode"
+                        return-object
+                        :rules="modeRules"
+                        required
+                    ></v-select>
+                    <!--Player-->
+                    <div v-if="isPvPMode">
+                        <div v-for="(player, index) in players" :key="index">
+                            <v-text-field
+                                class="mt-10"
+                                v-model="player.name"
+                                :counter="nameCounter"
+                                :label="`Name (Player${index + 1})`"
+                                :rules="nameRules"
+                                required
+                            ></v-text-field>
+                            <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
+                            <v-select
+                                v-model="player.color"
+                                :items="colors"
+                                item-text="name"
+                                item-value="obj"
+                                :label="`Color (Player${index + 1})`"
+                                :rules="colorRules"
+                                required
+                            ></v-select>
+                        </div>
+                    </div>
+                    <!--Modeの選択なし、PvCモードの時は一つの表示-->
+                    <div v-else>
                         <v-text-field
                             class="mt-10"
-                            v-model="player.name"
+                            v-model="players[playerIndex].name"
                             :counter="nameCounter"
-                            :label="`Name (Player${index + 1})`"
+                            :label="`Name (Player${playerIndex + 1})`"
                             :rules="nameRules"
                             required
                         ></v-text-field>
                         <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
                         <v-select
-                            v-model="player.color"
-                            :items="colors"
+                            v-model="players[playerIndex].color"
                             item-text="name"
                             item-value="obj"
-                            :label="`Color (Player${index + 1})`"
+                            :items="colors"
+                            :label="`Color (Player${playerIndex + 1})`"
                             :rules="colorRules"
                             required
                         ></v-select>
-                        <!--v-form確認中
-                        </v-form>
-                        -->
                     </div>
-                </div>
-                <!--Modeの選択なし、PvCモードの時は一つの表示-->
-                <div v-else>
-                    <v-text-field
-                        class="mt-10"
-                        v-model="players[playerIndex].name"
-                        :counter="nameCounter"
-                        :label="`Name (Player${playerIndex + 1})`"
-                        :rules="nameRules"
-                        required
-                    ></v-text-field>
-                    <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
-                    <v-select
-                        v-model="players[playerIndex].color"
-                        item-text="name"
-                        item-value="obj"
-                        :items="colors"
-                        :label="`Color (Player${playerIndex + 1})`"
-                        :rules="colorRules"
-                        required
-                    ></v-select>
-                </div>
-
+                </v-form>
                 <!-- Game Start button -->
-                <v-row class="d-flex justify-center mt-10 white--text">
+                <!-- router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意-->
+                <v-row
+                    class="d-flex justify-center mt-10 white--text"
+                    v-if="checkValidation"
+                >
+                    <v-btn
+                        @click="doValidation"
+                        color="deep-purple accent-3 white--text"
+                    >
+                        Game Start
+                    </v-btn>
+                </v-row>
+
+                <v-row class="d-flex justify-center mt-10 white--text" v-else>
                     <router-link
                         @click.native="sendPlayers"
                         to="/game"
@@ -137,8 +143,6 @@ export default Vue.extend({
 
     methods: {
         sendPlayers() {
-            //(this.$refs.form as any).validate()
-            //作成中のためコメントアウト
             const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
             if (this.isPvCMode) {
                 this.switchCpuPlayer(this.players[cpuIndex]);
@@ -181,6 +185,54 @@ export default Vue.extend({
             else return {}; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
             */
         },
+
+        doValidation(): void {
+            (this.$refs.form as any).validate();
+        },
+
+        checkValidationPlayerName(): boolean {
+            const playerIndex: number = Config.player.playerIndex;
+            const pvcIndex: number = Config.top.modeIndexPvC;
+            if (
+                this.selectedMode.modeName ===
+                Config.top.modes[pvcIndex].modeName
+            ) {
+                return this.players[playerIndex].name === '';
+            } else {
+                for (let player in this.players) {
+                    if (this.players[player].name === '') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        },
+
+        checkValidationPlayerColor(): boolean {
+            const playerIndex: number = Config.player.playerIndex;
+            const pvcIndex: number = Config.top.modeIndexPvC;
+            if (
+                this.selectedMode.modeName ===
+                Config.top.modes[pvcIndex].modeName
+            ) {
+                /*
+                this.players[playerIndex].color.codeの指定の場合、this.players[playerIndex].colorはStoneになり直接アクセス不可
+                this.players[playerIndex].color.color.codeの指定の場合、未選択時と選択時で動作が異なる
+                未選択時：this.players[playerIndex].color.color.codeは
+                選択時：this.players[playerIndex].color.color.codeでアクセスが出来なくなってしまう
+                this.players[playerIndex].color.codeの指定だと先に進まなくなるため一旦仮で設定
+                (this.players[playerIndex].colorだとColor未選択時でも次の画面に進める)
+                */
+                return this.players[playerIndex].color.code === '';
+            } else {
+                for (let player in this.players) {
+                    if (this.players[player].color.code === '') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        },
     },
 
     computed: {
@@ -196,6 +248,14 @@ export default Vue.extend({
             return (
                 this.selectedMode.modeName ===
                 Config.top.modes[playerIndex].modeName
+            );
+        },
+        //router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意
+        checkValidation(): boolean {
+            return (
+                this.selectedMode.modeName === '' ||
+                this.checkValidationPlayerName() ||
+                this.checkValidationPlayerColor()
             );
         },
     },
