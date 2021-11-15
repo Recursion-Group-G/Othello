@@ -53,7 +53,7 @@ class BoardBuilder {
     public linkSquaresNode(): BoardBuilder {
         for(let y : number = 0; y < this.size.y; y++){
             for(let x : number = 0; x < this.size.x; x++){
-                let curr : Square = this.squares[y][x];
+                const curr : Square = this.squares[y][x];
 
                 //currから見た方向
                 const top : number= y - 1;
