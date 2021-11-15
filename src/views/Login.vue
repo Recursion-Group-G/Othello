@@ -8,7 +8,7 @@
                     <v-select
                         class="mt-10"
                         v-model="selectedMode"
-                        :items="Config.modes"
+                        :items="modes"
                         label="Game Mode"
                         return-object
                         :rules="modeRules"
@@ -41,37 +41,31 @@
                     <div v-else>
                         <v-text-field
                             class="mt-10"
-                            v-model="players[Config.player.PlayerIndex].name"
+                            v-model="players[Config.player.playerIndex].name"
                             :counter="Config.nameCounter"
                             :label="`Name (Player${
-                                Config.player.PlayerIndex + 1
+                                Config.player.playerIndex + 1
                             })`"
                             :rules="nameRules"
                             required
                         ></v-text-field>
                         <v-select
-                            v-model="players[Config.player.PlayerIndex].color"
+                            v-model="players[Config.player.playerIndex].color"
                             :items="colors"
                             item-text="name"
                             item-value="obj"
                             :label="`Color (Player${
-                                Config.player.PlayerIndex + 1
+                                Config.player.playerIndex + 1
                             })`"
                             :rules="colorRules"
                             required
                         ></v-select>
                     </div>
                 </v-form>
-                <v-row class="d-flex justify-center mt-10 white--text" v-else>
-                    <router-link
-                        @click.native="sendPlayers"
-                        to="/game"
-                        class="button-link"
-                    >
-                        <v-btn color="deep-purple accent-3 white--text">
+                <v-row class="d-flex justify-center mt-10 white--text" >
+                        <v-btn color="deep-purple accent-3 white--text" @click="redirect">
                             Game Start
                         </v-btn>
-                    </router-link>
                 </v-row>
             </v-col>
         </v-row>
@@ -89,6 +83,7 @@ export default Vue.extend({
         return {
             Config: Config,
             selectedMode: '',
+            modes: Object.keys(Config.modes).map(mode => Config.modes[mode]),
             colors: Object.keys(Config.stone.color).map((colorString) => {
                 return {
                     name: colorString,
@@ -125,10 +120,8 @@ export default Vue.extend({
         },
 
         judgeCpuColor(): Color {
-            const color: Color | null = this.players[Config.player.playerIndex].color;
-            if (color == null) {
-                return Config.stone.color.black;
-            } else if (color.id === Config.stone.color.white.id) {
+            const color: Color = this.players[Config.player.playerIndex].color;
+            if (color.id === Config.stone.color.white.id) {
                 return Config.stone.color.black;
             } else {
                 return Config.stone.color.white;
@@ -139,44 +132,49 @@ export default Vue.extend({
             (this.$refs.form as any).validate();
         },
 
-        // checkValidationPlayerName(): boolean {
-        //     const playerIndex: number = Config.player.playerIndex;
-        //     const indexModePvC: number = Config.indexModePvC;
-        //     if (
-        //         this.selectedMode ===
-        //         Config.modes[indexModePvC]
-        //     ) {
-        //         return this.players[playerIndex].name === '';
-        //     } else {
-        //         for (let player in this.players) {
-        //             if (this.players[player].name === '') {
-        //                 return true;
-        //             }
-        //         }
-        //         return false;
-        //     }
-        // },
-        // checkValidationPlayerColor(): boolean {
-        //     const playerIndex: number = Config.player.playerIndex;
-        //     if (this.isPvCMode) {
-        //         /*
-        //         this.players[playerIndex].color.codeの指定の場合、this.players[playerIndex].colorはStoneになり直接アクセス不可
-        //         this.players[playerIndex].color.color.codeの指定の場合、未選択時と選択時で動作が異なる
-        //         未選択時：this.players[playerIndex].color.color.codeは
-        //         選択時：this.players[playerIndex].color.color.codeでアクセスが出来なくなってしまう
-        //         this.players[playerIndex].color.codeの指定だと先に進まなくなるため一旦仮で設定
-        //         (this.players[playerIndex].colorだとColor未選択時でも次の画面に進める)
-        //         */
-        //         return this.players[playerIndex].color.code === '';
-        //     } else {
-        //         for (let player in this.players) {
-        //             if (this.players[player].color.code === '') {
-        //                 return true;
-        //             }
-        //         }
-        //         return false;
-        //     }
-        // },
+        checkValidationPlayerName(): boolean {
+            const playerIndex: number = Config.player.playerIndex;
+            const indexModePvC: number = Config.indexModePvC;
+            if (
+                this.selectedMode ===
+                Config.modes.PvC
+            ) {
+                return this.players[playerIndex].name === '';
+            } else {
+                for (let player in this.players) {
+                    if (this.players[player].name === '') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        },
+        checkValidationPlayerColor(): boolean {
+            const playerIndex: number = Config.player.playerIndex;
+            if (this.isPvCMode) {
+                return this.players[playerIndex].color.code === '';
+            } else {
+                for (let player in this.players) {
+                    if (this.players[player].color.code === '') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        },
+        redirect(): void {
+            if (this.checkValidation()){
+                this.sendPlayers()
+                this.$router.push('/game');
+            }
+        },
+        checkValidation(): boolean {
+            return (
+                this.selectedMode === '' ||
+                this.checkValidationPlayerName() ||
+                this.checkValidationPlayerColor()
+            );
+        },
     },
 
     computed: {
@@ -186,14 +184,6 @@ export default Vue.extend({
         isPvPMode(): boolean {
             return this.selectedMode === Config.modes.PvP;
         },
-        //router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意
-        // checkValidation(): boolean {
-        //     return (
-        //         this.selectedMode === '' ||
-        //         this.checkValidationPlayerName() ||
-        //         this.checkValidationPlayerColor()
-        //     );
-        // },
     },
 });
 </script>

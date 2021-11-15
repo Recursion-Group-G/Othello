@@ -1,9 +1,10 @@
 import Color from '@/interfaces/color';
-import Config from '@/config'
+import Config from '@/config';
+
 class Player {
     name: string;
     score: number;
-    color: Color ;
+    color: Color;
     isCpu: boolean;
 
     constructor() {
