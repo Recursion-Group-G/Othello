@@ -1,6 +1,5 @@
-import Color from "./color";
-import Size from "./size";
-
+import Color from './color';
+import Size from './size';
 
 interface Config {
     top: {
@@ -8,14 +7,14 @@ interface Config {
     };
     stone: {
         color: {
-            [key: string]: Color
+            [key: string]: Color;
         };
     };
     board: {
-        size: Size
+        size: Size;
     };
     square: {
-        size: Size
+        size: Size;
     };
     player: {
         number: {
