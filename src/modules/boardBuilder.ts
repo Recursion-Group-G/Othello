@@ -38,9 +38,13 @@ class BoardBuilder {
          */
 
         let squares : Square[][] = [];
-        for(let y : number = 0; y < this.size.y; y++){
+
+        const indexOutOfX : number = this.size.x - 1;
+        const indexOutOfY : number = this.size.y - 1;
+
+        for(let y : number = 0; y <= indexOutOfY; y++){
             let squareX : Square[] = [];
-            for(let x : number = 0; x < this.size.x; x++){
+            for(let x : number = 0; x <= indexOutOfX; x++){
                 squareX.push(new Square({x: x, y: y}));
             }
             squares.push(squareX);
@@ -50,37 +54,31 @@ class BoardBuilder {
         return this;
     }
 
-    public linkSquaresNode(): BoardBuilder {
-        for(let y : number = 0; y < this.size.y; y++){
-            for(let x : number = 0; x < this.size.x; x++){
+    public linkSquaresNode(): BoardBuilder {    
+        const indexOutOfX : number = this.size.x - 1;
+        const indexOutOfY : number = this.size.y - 1;
+
+        for(let y : number = 0; y <= indexOutOfY; y++){
+            for(let x : number = 0; x <= indexOutOfX; x++){
                 const curr : Square = this.squares[y][x];
 
                 //currから見た方向
-                const top : number= y - 1;
+                const top : number = y - 1;
                 const right : number = x + 1;
                 const left : number = x - 1;
                 const bottom : number = y + 1;
                 
-                const canInsertTop : boolean = y > 0;
-                const canInsertRight : boolean = x < this.size.x - 1;
-                const canInsertButtom : boolean = y < this.size.y - 1;
-                const canInsertLeft : boolean = x > 0;
                 //縦横4方向の連結
-                if(canInsertTop) curr.top = this.squares[top][x];
-                if(canInsertRight) curr.right = this.squares[y][right];
-                if(canInsertButtom) curr.bottom = this.squares[bottom][x];
-                if(canInsertLeft) curr.left = this.squares[y][left];
+                if(y > 0)           curr.top = this.squares[top][x];
+                if(x < indexOutOfX) curr.right = this.squares[y][right];
+                if(y < indexOutOfY) curr.bottom = this.squares[bottom][x];
+                if(x > 0)           curr.left = this.squares[y][left];
 
-
-                const canInsertTopRight : boolean = x < this.size.x - 1 && y > 0;
-                const canInsertTopLeft : boolean = x > 0 && y > 0;
-                const canInsertBottomRight : boolean = x < this.size.x - 1 && y < this.size.y - 1;
-                const canInsertBottomLeft : boolean = x > 0 && y < this.size.y - 1;
                 //斜め4方向の連結
-                if(canInsertTopRight) curr.topRight = this.squares[top][right];
-                if(canInsertTopLeft) curr.topLeft = this.squares[top][left];
-                if(canInsertBottomRight) curr.bottomRight = this.squares[bottom][right];
-                if(canInsertBottomLeft) curr.bottomLeft = this.squares[bottom][left];
+                if(x < indexOutOfX && y > 0)           curr.topRight = this.squares[top][right];
+                if(x > 0           && y > 0)           curr.topLeft = this.squares[top][left];
+                if(x < indexOutOfX && y < indexOutOfY) curr.bottomRight = this.squares[bottom][right];
+                if(x > 0           && y < indexOutOfY) curr.bottomLeft = this.squares[bottom][left];
             }
         }
         return this;
