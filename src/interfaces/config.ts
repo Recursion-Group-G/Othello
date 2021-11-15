@@ -28,7 +28,7 @@ interface Config {
         phase: {
             [key: string]: number;
         };
-    }; 
+    };
     localStorage: {
         [key: string]: string;
     };

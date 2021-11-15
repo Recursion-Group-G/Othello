@@ -9,8 +9,12 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
-                    <div v-for="i in board.size.row" :key="i" class="d-flex">
-                        <div v-for="j in board.size.col" :key="j">
+                    <div
+                        v-for="i in table.board.size.x"
+                        :key="i"
+                        class="d-flex"
+                    >
+                        <div v-for="j in table.board.size.y" :key="j">
                             <div
                                 :id="`${i}-${j}`"
                                 class="board-square"
@@ -44,6 +48,8 @@ import FlipAnimation from '@/modules/flipAnimation';
 import router from '../router';
 import Config from '../config';
 import Table from '@/models/table';
+import BoardBuilder from '../modules/boardBuilder';
+import Board from '../models/board';
 
 export default Vue.extend({
     name: 'Game',
@@ -51,12 +57,7 @@ export default Vue.extend({
     components: {},
     data: () => ({
         //後でconfig.tsに移行する
-        board: {
-            size: {
-                row: 8,
-                col: 8,
-            },
-        },
+        board: {},
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
         localStorageTable: {} as Table,
@@ -67,6 +68,8 @@ export default Vue.extend({
         // this.validateLocalStorage();
         // this.validateTable();
         this.saveLocalStorage();
+        let board = this.createBoard();
+        this.setBoardOnTable(board);
     },
     computed: {
         //スマホの画面判定
@@ -105,6 +108,19 @@ export default Vue.extend({
         },
         clearLocalStorage: function () {
             localStorage.clear();
+        },
+        createBoard(): Board {
+            let boardBuilder = new BoardBuilder();
+            boardBuilder.setSize({
+                x: Config.board.size.x,
+                y: Config.board.size.y,
+            });
+            boardBuilder.createSquares();
+            boardBuilder.linkSquaresNode();
+            return boardBuilder.build();
+        },
+        setBoardOnTable(board: Board) {
+            this.table.board = board;
         },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
