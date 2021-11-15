@@ -8,7 +8,7 @@
                     <v-select
                         class="mt-10"
                         v-model="selectedMode"
-                        :items="modes"
+                        :items="Config.top.modes"
                         item-text="modeString"
                         item-value="modeName"
                         label="Game Mode"
@@ -22,7 +22,7 @@
                             <v-text-field
                                 class="mt-10"
                                 v-model="player.name"
-                                :counter="nameCounter"
+                                :counter="Config.top.nameCounter"
                                 :label="`Name (Player${index + 1})`"
                                 :rules="nameRules"
                                 required
@@ -43,18 +43,22 @@
                     <div v-else>
                         <v-text-field
                             class="mt-10"
-                            v-model="players[playerIndex].name"
-                            :counter="nameCounter"
-                            :label="`Name (Player${playerIndex + 1})`"
+                            v-model="players[Config.player.PlayerIndex].name"
+                            :counter="Config.top.nameCounter"
+                            :label="`Name (Player${
+                                Config.player.PlayerIndex + 1
+                            })`"
                             :rules="nameRules"
                             required
                         ></v-text-field>
                         <v-select
-                            v-model="players[playerIndex].color"
+                            v-model="players[Config.player.PlayerIndex].color"
                             :items="colors"
                             item-text="name"
                             item-value="obj"
-                            :label="`Color (Player${playerIndex + 1})`"
+                            :label="`Color (Player${
+                                Config.player.PlayerIndex + 1
+                            })`"
                             :rules="colorRules"
                             required
                         ></v-select>
@@ -93,22 +97,20 @@
 import Vue from 'vue';
 import Player from '../models/player';
 import Config from '../config';
-import Color from '../models/stone';
+import Color from '../interfaces/color';
 
 export default Vue.extend({
     name: 'Login',
     data() {
         return {
+            Config: Config,
             selectedMode: { modeString: '', modeName: '' },
-            modes: Config.top.modes,
-
             colors: Object.keys(Config.stone.color).map((colorString) => {
                 return {
                     name: colorString,
                     obj: Config.stone.color[colorString],
                 };
             }),
-
             players: new Array(Config.player.number.min)
                 .fill({})
                 .map(
@@ -120,22 +122,13 @@ export default Vue.extend({
                             false
                         )
                 ),
-
-            cpuPlayerName: Config.player.cpuName,
-
-            nameCounter: Config.top.nameCounter,
-
-            playerIndex: Config.player.playerIndex,
-
             modeRules: [(v: any) => !!v.modeName || 'Mode is required'],
-
             nameRules: [
                 (v: any) => !!v || 'Name is required',
                 (v: any) =>
                     v.length <= Config.top.nameCounter ||
                     `Name must be less than ${Config.top.nameCounter} characters`,
             ],
-
             colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
     },
@@ -150,7 +143,7 @@ export default Vue.extend({
         },
 
         switchCpuPlayer(player: Player) {
-            player.name = this.cpuPlayerName;
+            player.name = Config.player.cpuName;
             player.color = this.judgeCpuColor();
             player.isCpu = true;
         },
