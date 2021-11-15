@@ -2,12 +2,12 @@ import Color from './color';
 import Size from './size';
 
 interface Config {
-    top: {
-        modes: { [key: string]: string }[];
-        nameCounter: number;
-        indexModePvP: 0;
-        indexModePvC: 1;
+    modes: {
+        [key: string]: string;
     };
+    nameCounter: number;
+    indexModePvP: 0;
+    indexModePvC: 1;
     stone: {
         color: {
             [key: string]: Color;

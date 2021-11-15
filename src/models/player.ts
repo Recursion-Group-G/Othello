@@ -1,4 +1,4 @@
-import Color from './stone';
+import Color from '@/interfaces/color';
 
 class Player {
     name: string;

@@ -8,9 +8,7 @@
                     <v-select
                         class="mt-10"
                         v-model="selectedMode"
-                        :items="Config.top.modes"
-                        item-text="modeString"
-                        item-value="modeName"
+                        :items="Config.modes"
                         label="Game Mode"
                         return-object
                         :rules="modeRules"
@@ -22,7 +20,7 @@
                             <v-text-field
                                 class="mt-10"
                                 v-model="player.name"
-                                :counter="Config.top.nameCounter"
+                                :counter="Config.nameCounter"
                                 :label="`Name (Player${index + 1})`"
                                 :rules="nameRules"
                                 required
@@ -44,7 +42,7 @@
                         <v-text-field
                             class="mt-10"
                             v-model="players[Config.player.PlayerIndex].name"
-                            :counter="Config.top.nameCounter"
+                            :counter="Config.nameCounter"
                             :label="`Name (Player${
                                 Config.player.PlayerIndex + 1
                             })`"
@@ -64,20 +62,6 @@
                         ></v-select>
                     </div>
                 </v-form>
-                <!-- Game Start button -->
-                <!-- router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意-->
-                <v-row
-                    class="d-flex justify-center mt-10 white--text"
-                    v-if="checkValidation"
-                >
-                    <v-btn
-                        @click="doValidation"
-                        color="deep-purple accent-3 white--text"
-                    >
-                        Game Start
-                    </v-btn>
-                </v-row>
-
                 <v-row class="d-flex justify-center mt-10 white--text" v-else>
                     <router-link
                         @click.native="sendPlayers"
@@ -104,7 +88,7 @@ export default Vue.extend({
     data() {
         return {
             Config: Config,
-            selectedMode: { modeString: '', modeName: '' },
+            selectedMode: '',
             colors: Object.keys(Config.stone.color).map((colorString) => {
                 return {
                     name: colorString,
@@ -114,12 +98,12 @@ export default Vue.extend({
             players: new Array(Config.player.number.min)
                 .fill({})
                 .map(() => new Player()),
-            modeRules: [(v: any) => !!v.modeName || 'Mode is required'],
+            modeRules: [(v: any) => !!v || 'Mode is required'],
             nameRules: [
                 (v: any) => !!v || 'Name is required',
                 (v: any) =>
-                    v.length <= Config.top.nameCounter ||
-                    `Name must be less than ${Config.top.nameCounter} characters`,
+                    v.length <= Config.nameCounter ||
+                    `Name must be less than ${Config.nameCounter} characters`,
             ],
             colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
@@ -136,107 +120,80 @@ export default Vue.extend({
 
         switchCpuPlayer(player: Player) {
             player.name = Config.player.cpuName;
-            player.color = this.judgeCpuColor();
+            // player.color = this.judgeCpuColor();
             player.isCpu = true;
         },
 
         judgeCpuColor(): Color {
-            /*
-            Property 'color' is missing in type '{ code: string; id: number; }' but required in type 'Stone'.
-            修正予定コードでは上記メッセージが出るため、一旦仮のコード。StoneのInterfaceディレクトリ作成が必要
-            */
-            const color = this.players[Config.player.playerIndex].color.color;
-            if (color.id === Config.stone.color.white.id) {
-                return new Color({
-                    code: Config.stone.color.black.code,
-                    id: Config.stone.color.black.id,
-                });
-            } else if (color.id === Config.stone.color.black.id) {
-                return new Color({
-                    code: Config.stone.color.white.code,
-                    id: Config.stone.color.white.id,
-                });
-            } else return new Color({ code: '', id: 0 }); //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
-
-            /* 修正予定コード
-            const color: Color = this.players[Config.player.playerIndex].color;
-            if (color.id === Config.stone.color.white.id){
+            const color: Color | null = this.players[Config.player.playerIndex].color;
+            if (color == null) {
                 return Config.stone.color.black;
-            }
-            else if (color.id === Config.stone.color.black.id){
+            } else if (color.id === Config.stone.color.white.id) {
+                return Config.stone.color.black;
+            } else {
                 return Config.stone.color.white;
             }
-            else return {}; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
-            */
         },
 
         doValidation(): void {
             (this.$refs.form as any).validate();
         },
 
-        checkValidationPlayerName(): boolean {
-            const playerIndex: number = Config.player.playerIndex;
-            const indexModePvC: number = Config.top.indexModePvC;
-            if (
-                this.selectedMode.modeName ===
-                Config.top.modes[indexModePvC].modeName
-            ) {
-                return this.players[playerIndex].name === '';
-            } else {
-                for (let player in this.players) {
-                    if (this.players[player].name === '') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        },
-        checkValidationPlayerColor(): boolean {
-            const playerIndex: number = Config.player.playerIndex;
-            if (this.isPvCMode) {
-                /*
-                this.players[playerIndex].color.codeの指定の場合、this.players[playerIndex].colorはStoneになり直接アクセス不可
-                this.players[playerIndex].color.color.codeの指定の場合、未選択時と選択時で動作が異なる
-                未選択時：this.players[playerIndex].color.color.codeは
-                選択時：this.players[playerIndex].color.color.codeでアクセスが出来なくなってしまう
-                this.players[playerIndex].color.codeの指定だと先に進まなくなるため一旦仮で設定
-                (this.players[playerIndex].colorだとColor未選択時でも次の画面に進める)
-                */
-                return this.players[playerIndex].color.code === '';
-            } else {
-                for (let player in this.players) {
-                    if (this.players[player].color.code === '') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        },
+        // checkValidationPlayerName(): boolean {
+        //     const playerIndex: number = Config.player.playerIndex;
+        //     const indexModePvC: number = Config.indexModePvC;
+        //     if (
+        //         this.selectedMode ===
+        //         Config.modes[indexModePvC]
+        //     ) {
+        //         return this.players[playerIndex].name === '';
+        //     } else {
+        //         for (let player in this.players) {
+        //             if (this.players[player].name === '') {
+        //                 return true;
+        //             }
+        //         }
+        //         return false;
+        //     }
+        // },
+        // checkValidationPlayerColor(): boolean {
+        //     const playerIndex: number = Config.player.playerIndex;
+        //     if (this.isPvCMode) {
+        //         /*
+        //         this.players[playerIndex].color.codeの指定の場合、this.players[playerIndex].colorはStoneになり直接アクセス不可
+        //         this.players[playerIndex].color.color.codeの指定の場合、未選択時と選択時で動作が異なる
+        //         未選択時：this.players[playerIndex].color.color.codeは
+        //         選択時：this.players[playerIndex].color.color.codeでアクセスが出来なくなってしまう
+        //         this.players[playerIndex].color.codeの指定だと先に進まなくなるため一旦仮で設定
+        //         (this.players[playerIndex].colorだとColor未選択時でも次の画面に進める)
+        //         */
+        //         return this.players[playerIndex].color.code === '';
+        //     } else {
+        //         for (let player in this.players) {
+        //             if (this.players[player].color.code === '') {
+        //                 return true;
+        //             }
+        //         }
+        //         return false;
+        //     }
+        // },
     },
 
     computed: {
         isPvCMode(): boolean {
-            const indexModePvC: number = Config.top.indexModePvC;
-            return (
-                this.selectedMode.modeName ===
-                Config.top.modes[indexModePvC].modeName
-            );
+            return this.selectedMode === Config.modes.PvC;
         },
         isPvPMode(): boolean {
-            const indexModePvP: number = Config.top.indexModePvP;
-            return (
-                this.selectedMode.modeName ===
-                Config.top.modes[indexModePvP].modeName
-            );
+            return this.selectedMode === Config.modes.PvP;
         },
         //router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意
-        checkValidation(): boolean {
-            return (
-                this.selectedMode.modeName === '' ||
-                this.checkValidationPlayerName() ||
-                this.checkValidationPlayerColor()
-            );
-        },
+        // checkValidation(): boolean {
+        //     return (
+        //         this.selectedMode === '' ||
+        //         this.checkValidationPlayerName() ||
+        //         this.checkValidationPlayerColor()
+        //     );
+        // },
     },
 });
 </script>
