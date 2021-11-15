@@ -39,7 +39,6 @@ const config: Config = {
             min: 2,
             max: 2,
         },
-        initialScore: 2,
         playerIndex: 0, //CPUモードだったときのPlayer Index
         cpuIndex: 1,
         cpuName: 'CPU',

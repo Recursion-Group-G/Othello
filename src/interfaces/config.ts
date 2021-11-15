@@ -23,7 +23,6 @@ interface Config {
         number: {
             [key: string]: number;
         };
-        initialScore: number;
         playerIndex: number;
         cpuIndex: number;
         cpuName: string;

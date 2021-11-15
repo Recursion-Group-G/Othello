@@ -113,15 +113,7 @@ export default Vue.extend({
             }),
             players: new Array(Config.player.number.min)
                 .fill({})
-                .map(
-                    () =>
-                        new Player(
-                            '',
-                            Config.player.initialScore,
-                            new Color({ code: '', id: 0 }),
-                            false
-                        )
-                ),
+                .map(() => new Player()),
             modeRules: [(v: any) => !!v.modeName || 'Mode is required'],
             nameRules: [
                 (v: any) => !!v || 'Name is required',
@@ -199,7 +191,6 @@ export default Vue.extend({
                 return false;
             }
         },
-
         checkValidationPlayerColor(): boolean {
             const playerIndex: number = Config.player.playerIndex;
             if (this.isPvCMode) {
