@@ -23,7 +23,7 @@ class Square {
     constructor(point: Point) {
         this.point = point;
         this.stone = null;
-        this.isEmpty = false;
+        this.isEmpty = true;
 
         this.top = null;
         this.right = null;
