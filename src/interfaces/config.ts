@@ -12,9 +12,7 @@ interface Config {
         };
     };
     board: {
-        size: {
-            [key: string]: number;
-        };
+        size: Size
     };
     square: {
         size: Size

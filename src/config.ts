@@ -21,14 +21,14 @@ const config: Config = {
     },
     board: {
         size: {
-            row: 8,
-            col: 8,
+            x: 8,
+            y: 8,
         },
     },
     square: {
         size: {
-            row: 8,
-            col: 8,
+            x: 8,
+            y: 8,
         },
     },
     player: {
