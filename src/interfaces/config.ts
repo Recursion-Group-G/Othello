@@ -5,9 +5,6 @@ interface Config {
     modes: {
         [key: string]: string;
     };
-    nameCounter: number;
-    indexModePvP: 0;
-    indexModePvC: 1;
     stone: {
         color: {
             [key: string]: Color;
@@ -20,6 +17,12 @@ interface Config {
         size: Size;
     };
     player: {
+        validation: {
+            name: {
+                min: number
+                max: number
+            },
+        }
         number: {
             [key: string]: number;
         };

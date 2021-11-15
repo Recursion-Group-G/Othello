@@ -6,13 +6,15 @@
                 <!--Select Mode-->
                 <v-form ref="form" lazy-validation>
                     <v-select
+                        label="Game Mode"
                         class="mt-10"
                         v-model="selectedMode"
                         :items="modes"
-                        label="Game Mode"
-                        return-object
                         :rules="modeRules"
+                        return-object
                         required
+                        @change="modeChanged($event)"
+
                     ></v-select>
                     <!--Player-->
                     <div v-if="isPvPMode">
@@ -97,8 +99,11 @@ export default Vue.extend({
             nameRules: [
                 (v: any) => !!v || 'Name is required',
                 (v: any) =>
-                    v.length <= Config.nameCounter ||
+                    v.length <= Config.player.validation.name.max ||
                     `Name must be less than ${Config.nameCounter} characters`,
+                (v: any) =>
+                    v.length >= Config.player.validation.name.min ||
+                    `Name must be more than ${Config.nameCounter} characters`,
             ],
             colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
@@ -106,17 +111,8 @@ export default Vue.extend({
 
     methods: {
         sendPlayers() {
-            const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
-            if (this.isPvCMode) {
-                this.switchCpuPlayer(this.players[cpuIndex]);
-            }
+            const cpuIndex: number = Config.player.cpuIndex;
             this.$emit('playersData', this.players);
-        },
-
-        switchCpuPlayer(player: Player) {
-            player.name = Config.player.cpuName;
-            // player.color = this.judgeCpuColor();
-            player.isCpu = true;
         },
 
         judgeCpuColor(): Color {
@@ -175,6 +171,18 @@ export default Vue.extend({
                 this.checkValidationPlayerColor()
             );
         },
+        modeChanged(event: string): void{
+            //cpuのカラーが被ってないかどうかは別の場所で判断するのでここで変更を加える必要はない。
+            switch(event){
+                case Config.modes.PvP:
+                    this.players[Config.player.cpuIndex].name = ''
+                    this.players[Config.player.cpuIndex].isCpu = false
+                case Config.modes.PvC:
+                    this.players[Config.player.cpuIndex].name = Config.Player.cpuName
+                    this.players[Config.player.cpuIndex].isCpu = true
+                default: return;
+            }
+        }
     },
 
     computed: {

@@ -5,9 +5,6 @@ const config: Config = {
         PvP: 'Player VS Player',
         PvC: 'Player VS CPU',
     },
-    nameCounter: 10, //プレイヤーの最大入力文字数
-    indexModePvP: 0, //top.modes[{}]からmodeNameのstringを探すためのIndex
-    indexModePvC: 1, //top.modes[{}]からmodeNameのstringを探すためのIndex
     stone: {
         color: {
             black: {
@@ -33,6 +30,12 @@ const config: Config = {
         },
     },
     player: {
+        validation: {
+            name: {
+                min: 2,
+                max: 10
+            },
+        },
         number: {
             min: 2,
             max: 2,
