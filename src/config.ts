@@ -2,8 +2,8 @@ interface Config {
     top: {
         modes: { [key: string]: string }[];
         nameCounter: number;
-        modeIndexPvP: number;
-        modeIndexPvC: number;
+        indexModePvP: number;
+        indexModePvC: number;
     };
     stone: {
         color: {
@@ -46,8 +46,8 @@ const config: Config = {
             { modeString: 'Player VS CPU', modeName: 'PvC' },
         ],
         nameCounter: 10, //プレイヤーの最大入力文字数
-        modeIndexPvP: 0, //top.modes[{}]からmodeNameのstringを探すためのIndex
-        modeIndexPvC: 1, //top.modes[{}]からmodeNameのstringを探すためのIndex
+        indexModePvP: 0, //top.modes[{}]からmodeNameのstringを探すためのIndex
+        indexModePvC: 1, //top.modes[{}]からmodeNameのstringを探すためのIndex
     },
     stone: {
         color: {

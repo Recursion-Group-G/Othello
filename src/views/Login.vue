@@ -49,12 +49,11 @@
                             :rules="nameRules"
                             required
                         ></v-text-field>
-                        <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
                         <v-select
                             v-model="players[playerIndex].color"
+                            :items="colors"
                             item-text="name"
                             item-value="obj"
-                            :items="colors"
                             :label="`Color (Player${playerIndex + 1})`"
                             :rules="colorRules"
                             required
@@ -192,10 +191,10 @@ export default Vue.extend({
 
         checkValidationPlayerName(): boolean {
             const playerIndex: number = Config.player.playerIndex;
-            const pvcIndex: number = Config.top.modeIndexPvC;
+            const indexModePvC: number = Config.top.indexModePvC;
             if (
                 this.selectedMode.modeName ===
-                Config.top.modes[pvcIndex].modeName
+                Config.top.modes[indexModePvC].modeName
             ) {
                 return this.players[playerIndex].name === '';
             } else {
@@ -210,11 +209,7 @@ export default Vue.extend({
 
         checkValidationPlayerColor(): boolean {
             const playerIndex: number = Config.player.playerIndex;
-            const pvcIndex: number = Config.top.modeIndexPvC;
-            if (
-                this.selectedMode.modeName ===
-                Config.top.modes[pvcIndex].modeName
-            ) {
+            if (this.isPvCMode) {
                 /*
                 this.players[playerIndex].color.codeの指定の場合、this.players[playerIndex].colorはStoneになり直接アクセス不可
                 this.players[playerIndex].color.color.codeの指定の場合、未選択時と選択時で動作が異なる
@@ -237,17 +232,17 @@ export default Vue.extend({
 
     computed: {
         isPvCMode(): boolean {
-            const cpuIndex: number = Config.player.cpuIndex;
+            const indexModePvC: number = Config.top.indexModePvC;
             return (
                 this.selectedMode.modeName ===
-                Config.top.modes[cpuIndex].modeName
+                Config.top.modes[indexModePvC].modeName
             );
         },
         isPvPMode(): boolean {
-            const playerIndex: number = Config.player.playerIndex;
+            const indexModePvP: number = Config.top.indexModePvP;
             return (
                 this.selectedMode.modeName ===
-                Config.top.modes[playerIndex].modeName
+                Config.top.modes[indexModePvP].modeName
             );
         },
         //router-linkに飛んだあとに@clickが反応してしまうため、checkValidationを別に用意
