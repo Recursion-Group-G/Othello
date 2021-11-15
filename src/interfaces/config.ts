@@ -1,13 +1,14 @@
+import Color from "./color";
+import Size from "./size";
+
+
 interface Config {
     top: {
         modes: { [key: string]: string }[];
     };
     stone: {
         color: {
-            [key: string]: {
-                code: string;
-                id: number;
-            };
+            [key: string]: Color
         };
     };
     board: {
@@ -16,9 +17,7 @@ interface Config {
         };
     };
     square: {
-        size: {
-            [key: string]: number;
-        };
+        size: Size
     };
     player: {
         number: {
