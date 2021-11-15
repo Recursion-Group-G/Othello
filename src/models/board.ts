@@ -1,8 +1,5 @@
 import Square from './square';
-interface Size {
-    x: number;
-    y: number;
-}
+import Size from '../interfaces/size';
 
 class Board {
     size: Size;
