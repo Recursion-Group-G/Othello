@@ -1,11 +1,11 @@
 <template>
     <!-- Boardを作成するモジュールとGmaeページでBoardを元に作成されるゲームボードが実装されたら使うコード -->
-    <!-- <div class="size-fill d-flex justify-center align-center"  v-if="stone !== null" > -->
+    <!-- <div v-if="!isEmpty()" class="size-fill d-flex justify-center align-center"   > -->
     <!-- <v-sheet
         v-if="isVisible"
         class="mx-auto transition-swing rounded-circle stone-style"
         elevation="12"
-        color="#000000"
+        color="stone.color.code"
     ></v-sheet> -->
     <div class="size-fill d-flex justify-center align-center">
         <v-sheet
@@ -28,9 +28,16 @@ export default Vue.extend({
     },
     data() {
         return {
-            color: '#000000',
+            //本来はStone自体を受け取り、その状態(null or Colorがある)によってStoneコンポーネントの色も変わる。
+            //今は仮で黒に
+            color: Config.stone.color.black.code,
         };
     },
+    methods:{
+        // isEmpty(): boolean{
+        //     return this.stone === null;
+        // }
+    }
 });
 </script>
 
