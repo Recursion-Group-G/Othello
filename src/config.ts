@@ -33,7 +33,7 @@ const config: Config = {
         validation: {
             name: {
                 min: 2,
-                max: 10
+                max: 10,
             },
         },
         number: {

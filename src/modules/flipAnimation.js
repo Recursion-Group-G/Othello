@@ -14,12 +14,8 @@ class FlipAnimation {
         this.canvas.width = this.square.clientWidth * 2;
         this.canvas.style.position = 'fixed';
         this.canvas.style.outline = 'none';
-        this.canvas.style.top = `${
-            (this.square.clientHeight - this.canvas.height) / 2
-        }px`;
-        this.canvas.style.left = `${
-            (this.square.clientWidth - this.canvas.width) / 2
-        }px`;
+        this.canvas.style.top = `${(this.square.clientHeight - this.canvas.height) / 2}px`;
+        this.canvas.style.left = `${(this.square.clientWidth - this.canvas.width) / 2}px`;
 
         /**
          * Scene
@@ -50,12 +46,7 @@ class FlipAnimation {
          * Stone
          */
         const height = 0.13;
-        const othelloStoneGeometry = new THREE.CylinderGeometry(
-            1,
-            1,
-            height,
-            50
-        );
+        const othelloStoneGeometry = new THREE.CylinderGeometry(1, 1, height, 50);
 
         const frontMaterial = new THREE.MeshPhongMaterial({
             color: fromColor,
@@ -66,10 +57,7 @@ class FlipAnimation {
             // wireframe: true,
         });
 
-        const frontCylinder = new THREE.Mesh(
-            othelloStoneGeometry,
-            frontMaterial
-        );
+        const frontCylinder = new THREE.Mesh(othelloStoneGeometry, frontMaterial);
         frontCylinder.position.y = height / 2;
 
         const backCylinder = new THREE.Mesh(othelloStoneGeometry, backMaterial);
@@ -134,8 +122,7 @@ class FlipAnimation {
 
         animate();
 
-        const sleep = (msec) =>
-            new Promise((resolve) => setTimeout(resolve, msec));
+        const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
         await sleep(1200); //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
     }
     remove() {

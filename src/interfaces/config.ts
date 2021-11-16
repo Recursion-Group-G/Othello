@@ -19,10 +19,10 @@ interface Config {
     player: {
         validation: {
             name: {
-                min: number
-                max: number
-            },
-        }
+                min: number;
+                max: number;
+            };
+        };
         number: {
             [key: string]: number;
         };

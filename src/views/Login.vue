@@ -14,7 +14,6 @@
                         return-object
                         required
                         @change="modeChanged($event)"
-
                     ></v-select>
                     <!--Player-->
                     <div v-if="isPvPMode">
@@ -45,9 +44,7 @@
                             class="mt-10"
                             v-model="players[Config.player.playerIndex].name"
                             :counter="Config.nameCounter"
-                            :label="`Name (Player${
-                                Config.player.playerIndex + 1
-                            })`"
+                            :label="`Name (Player${Config.player.playerIndex + 1})`"
                             :rules="nameRules"
                             required
                         ></v-text-field>
@@ -56,18 +53,16 @@
                             :items="colors"
                             item-text="name"
                             item-value="obj"
-                            :label="`Color (Player${
-                                Config.player.playerIndex + 1
-                            })`"
+                            :label="`Color (Player${Config.player.playerIndex + 1})`"
                             :rules="colorRules"
                             required
                         ></v-select>
                     </div>
                 </v-form>
-                <v-row class="d-flex justify-center mt-10 white--text" >
-                        <v-btn color="deep-purple accent-3 white--text" @click="redirect">
-                            Game Start
-                        </v-btn>
+                <v-row class="d-flex justify-center mt-10 white--text">
+                    <v-btn color="deep-purple accent-3 white--text" @click="redirect">
+                        Game Start
+                    </v-btn>
                 </v-row>
             </v-col>
         </v-row>
@@ -85,25 +80,23 @@ export default Vue.extend({
         return {
             Config: Config,
             selectedMode: '',
-            modes: Object.keys(Config.modes).map(mode => Config.modes[mode]),
+            modes: Object.keys(Config.modes).map((mode) => Config.modes[mode]),
             colors: Object.keys(Config.stone.color).map((colorString) => {
                 return {
                     name: colorString,
                     obj: Config.stone.color[colorString],
                 };
             }),
-            players: new Array(Config.player.number.min)
-                .fill({})
-                .map(() => new Player()),
+            players: new Array(Config.player.number.min).fill({}).map(() => new Player()),
             modeRules: [(v: any) => !!v || 'Mode is required'],
             nameRules: [
                 (v: any) => !!v || 'Name is required',
                 (v: any) =>
                     v.length <= Config.player.validation.name.max ||
-                    `Name must be less than ${Config.nameCounter} characters`,
+                    `Name must be less than ${Config.player.validation.name.max} characters`,
                 (v: any) =>
                     v.length >= Config.player.validation.name.min ||
-                    `Name must be more than ${Config.nameCounter} characters`,
+                    `Name must be more than ${Config.player.validation.name.min} characters`,
             ],
             colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
@@ -130,11 +123,7 @@ export default Vue.extend({
 
         checkValidationPlayerName(): boolean {
             const playerIndex: number = Config.player.playerIndex;
-            const indexModePvC: number = Config.indexModePvC;
-            if (
-                this.selectedMode ===
-                Config.modes.PvC
-            ) {
+            if (this.selectedMode === Config.modes.PvC) {
                 return this.players[playerIndex].name === '';
             } else {
                 for (let player in this.players) {
@@ -159,8 +148,8 @@ export default Vue.extend({
             }
         },
         redirect(): void {
-            if (this.checkValidation()){
-                this.sendPlayers()
+            if (this.checkValidation()) {
+                this.sendPlayers();
                 this.$router.push('/game');
             }
         },
@@ -171,18 +160,22 @@ export default Vue.extend({
                 this.checkValidationPlayerColor()
             );
         },
-        modeChanged(event: string): void{
+        modeChanged(event: string): void {
             //cpuのカラーが被ってないかどうかは別の場所で判断するのでここで変更を加える必要はない。
-            switch(event){
+            const cpuIndex = Config.player.cpuIndex;
+            switch (event) {
                 case Config.modes.PvP:
-                    this.players[Config.player.cpuIndex].name = ''
-                    this.players[Config.player.cpuIndex].isCpu = false
+                    this.players[cpuIndex].name = '';
+                    this.players[cpuIndex].isCpu = false;
+                    break;
                 case Config.modes.PvC:
-                    this.players[Config.player.cpuIndex].name = Config.Player.cpuName
-                    this.players[Config.player.cpuIndex].isCpu = true
-                default: return;
+                    this.players[cpuIndex].name = Config.player.cpuName;
+                    this.players[cpuIndex].isCpu = true;
+                    break;
+                default:
+                    return;
             }
-        }
+        },
     },
 
     computed: {

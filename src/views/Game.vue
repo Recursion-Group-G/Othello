@@ -10,11 +10,7 @@
                 <v-row class="d-flex justify-center my-3">
                     <!-- Board -->
                     <div>
-                        <div
-                            v-for="i in board.size.row"
-                            :key="i"
-                            class="d-flex"
-                        >
+                        <div v-for="i in board.size.row" :key="i" class="d-flex">
                             <div v-for="j in board.size.col" :key="j">
                                 <div
                                     :id="`${i}-${j}`"
@@ -28,10 +24,7 @@
             </v-container>
             <!-- Players下部 -->
             <v-container>
-                <v-row
-                    class="d-flex space-between text-center mb-5"
-                    v-if="!isXs"
-                >
+                <v-row class="d-flex space-between text-center mb-5" v-if="!isXs">
                     <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
                     <v-col v-for="k in players" :key="k">
                         <h2 class="player-font">{{ k }}: 2</h2>
