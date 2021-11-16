@@ -1,39 +1,4 @@
-interface Config {
-    top: {
-        modes: { [key: string]: string }[];
-    };
-    stone: {
-        color: {
-            [key: string]: {
-                code: string;
-                id: number;
-            };
-        };
-    };
-    board: {
-        size: {
-            [key: string]: number;
-        };
-    };
-    square: {
-        size: {
-            [key: string]: number;
-        };
-    };
-    player: {
-        number: {
-            [key: string]: number;
-        };
-        initialScore: number;
-        playerIndex: number;
-        cpuIndex: number;
-    };
-    table: {
-        phase: {
-            [key: string]: number;
-        };
-    };
-}
+import Config from './interfaces/config';
 
 const config: Config = {
     top: {
@@ -56,14 +21,14 @@ const config: Config = {
     },
     board: {
         size: {
-            row: 8,
-            col: 8,
+            x: 8,
+            y: 8,
         },
     },
     square: {
         size: {
-            row: 8,
-            col: 8,
+            x: 8,
+            y: 8,
         },
     },
     player: {
@@ -81,6 +46,9 @@ const config: Config = {
             skip: 1,
             roundover: 2,
         },
+    },
+    localStorage: {
+        table: 'table',
     },
 };
 

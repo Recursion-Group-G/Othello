@@ -1,9 +1,5 @@
 import Stone from './stone';
-
-interface Point {
-    x: number;
-    y: number;
-}
+import Point from '../interfaces/point';
 
 class Square {
     point: Point;
@@ -23,7 +19,7 @@ class Square {
     constructor(point: Point) {
         this.point = point;
         this.stone = null;
-        this.isEmpty = false;
+        this.isEmpty = true;
 
         this.top = null;
         this.right = null;

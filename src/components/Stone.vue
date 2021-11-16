@@ -20,7 +20,7 @@
 import Vue from 'vue';
 import Player from '@/models/player';
 import Stone from '@/models/stone';
-
+import Config from '@/config';
 export default Vue.extend({
     props: {
         // stone:Stone | null,
@@ -33,11 +33,11 @@ export default Vue.extend({
             color: Config.stone.color.black.code,
         };
     },
-    methods:{
+    methods: {
         // isEmpty(): boolean{
         //     return this.stone === null;
         // }
-    }
+    },
 });
 </script>
 
