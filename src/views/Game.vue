@@ -3,7 +3,7 @@
         <v-container class="d-flex justify-center text-center mt-5">
             <!-- Players上部(スマホの時のみ表示) -->
             <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
-            <h2 v-if="isXs" class="player-font" >{{ players[1] }}: 2</h2>
+            <h2 v-if="isXs" class="player-font">{{ players[1] }}: 2</h2>
         </v-container>
 
         <v-container class="board">
@@ -20,7 +20,9 @@
                                 :id="`${i}-${j}`"
                                 class="board-square"
                                 @click="clickToFlip(`${i}-${j}`)"
-                            ></div>
+                            >
+                                <Stone />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,11 +55,14 @@ import Config from '../config';
 import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
+import Stone from '@/components/Stone.vue';
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
-    components: {},
+    components: {
+        Stone,
+    },
     data: () => ({
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
@@ -145,21 +150,16 @@ export default Vue.extend({
     width: 90px;
     height: 90px;
 
-    /* color: #ffffff; */
     cursor: pointer;
-    /* transition: all 0.2s; */
+    transition: all 0.2s;
     gap: 20px;
-    border-radius: 0px;
-    /* backdrop-filterが
-    ないと近くの中に収まらないけど
-    あると重たくなってレートが遅くなるので
-    0pxにしておく */
-    backdrop-filter: blur(0px);
     background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
     border-bottom: 6px rgba(40, 40, 40, 0.35) solid;
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
+
+    position: relative;
 }
 
 /* テスト用に一旦コメントアウト */
