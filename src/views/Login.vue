@@ -103,11 +103,6 @@ export default Vue.extend({
     },
 
     methods: {
-        sendPlayers() {
-            const cpuIndex: number = Config.player.cpuIndex;
-            this.$emit('playersData', this.players);
-        },
-
         judgeCpuColor(): Color {
             const color: Color = this.players[Config.player.playerIndex].color;
             if (color.id === Config.stone.color.white.id) {
@@ -117,8 +112,8 @@ export default Vue.extend({
             }
         },
 
-        doValidation(): void {
-            (this.$refs.form as any).validate();
+        validate(): boolean {
+            return (this.$refs.form as any).validate();
         },
 
         checkValidationPlayerName(): boolean {
@@ -147,12 +142,6 @@ export default Vue.extend({
                 return false;
             }
         },
-        redirect(): void {
-            if (this.checkValidation()) {
-                this.sendPlayers();
-                this.$router.push('/game');
-            }
-        },
         checkValidation(): boolean {
             return (
                 this.selectedMode === '' ||
@@ -175,6 +164,15 @@ export default Vue.extend({
                 default:
                     return;
             }
+        },
+        redirect(): void {
+            if (this.validate()) {
+                this.sendPlayers();
+                this.$router.push('/game');
+            }
+        },
+        sendPlayers() {
+            this.$emit('playersData', this.players);
         },
     },
 
