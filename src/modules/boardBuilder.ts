@@ -1,9 +1,6 @@
 import Square from '../models/square';
 import Board from '../models/board';
-interface Size {
-    x: number;
-    y: number;
-}
+import Size from '../interfaces/size';
 
 class BoardBuilder {
     private size: Size;

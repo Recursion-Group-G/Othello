@@ -1,71 +1,77 @@
 <template>
-    <v-app>
-        <v-content class="v-content">
-            <v-container class="d-flex justify-center text-center mt-5">
-                <!-- Players上部(スマホの時のみ表示) -->
-                <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
-                <h2 class="player-font" v-if="isXs">{{ players[1] }}: 2</h2>
-            </v-container>
-            <v-container class="board">
-                <v-row class="d-flex justify-center my-3">
-                    <!-- Board -->
-                    <div>
-                        <div
-                            v-for="i in board.size.row"
-                            :key="i"
-                            class="d-flex"
-                        >
-                            <div v-for="j in board.size.col" :key="j">
-                                <div
-                                    :id="`${i}-${j}`"
-                                    class="board-square"
-                                    @click="clickToFlip(`${i}-${j}`)"
-                                ></div>
-                            </div>
+    <div class="v-content">
+        <v-container class="d-flex justify-center text-center mt-5">
+            <!-- Players上部(スマホの時のみ表示) -->
+            <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
+            <h2 v-if="isXs" class="player-font" >{{ players[1] }}: 2</h2>
+        </v-container>
+
+        <v-container class="board">
+            <v-row class="d-flex justify-center my-3">
+                <!-- Board -->
+                <div>
+                    <div
+                        v-for="i in table.board.size.x"
+                        :key="i"
+                        class="d-flex"
+                    >
+                        <div v-for="j in table.board.size.y" :key="j">
+                            <div
+                                :id="`${i}-${j}`"
+                                class="board-square"
+                                @click="clickToFlip(`${i}-${j}`)"
+                            ></div>
                         </div>
                     </div>
-                </v-row>
-            </v-container>
-            <!-- Players下部 -->
-            <v-container>
-                <v-row
-                    class="d-flex space-between text-center mb-5"
-                    v-if="!isXs"
-                >
-                    <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
-                    <v-col v-for="k in players" :key="k">
-                        <h2 class="player-font">{{ k }}: 2</h2>
-                    </v-col>
-                </v-row>
-                <v-row class="d-flex space-between text-center mb-5" v-else>
-                    <v-col>
-                        <h2 class="player-font">{{ players[0] }}: 2</h2>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-content>
-    </v-app>
+                </div>
+            </v-row>
+        </v-container>
+
+        <!-- Players下部 -->
+        <v-container>
+            <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
+                <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
+                <v-col v-for="k in players" :key="k">
+                    <h2 class="player-font">{{ k }}: 2</h2>
+                </v-col>
+            </v-row>
+
+            <v-row v-else class="d-flex space-between text-center mb-5">
+                <v-col>
+                    <h2 class="player-font">{{ players[0] }}: 2</h2>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import FlipAnimation from '@/modules/flipAnimation';
+import router from '../router';
+import Config from '../config';
+import Table from '@/models/table';
+import BoardBuilder from '../modules/boardBuilder';
+import Board from '../models/board';
 
 export default Vue.extend({
     name: 'Game',
+    props: ['table'],
     components: {},
     data: () => ({
-        //後でconfig.tsに移行する
-        board: {
-            size: {
-                row: 8,
-                col: 8,
-            },
-        },
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
+        localStorageTable: {} as Table,
     }),
-
+    created: function () {
+        this.getLocalStorage();
+        //今は画面遷移しないようにコメントアウト
+        // this.validateLocalStorage();
+        // this.validateTable();
+        this.saveLocalStorage();
+        let board = this.createBoard();
+        this.setBoardOnTable(board);
+    },
     computed: {
         //スマホの画面判定
         isXs() {
@@ -73,6 +79,50 @@ export default Vue.extend({
         },
     },
     methods: {
+        validateTable: function () {
+            //必要な情報がnullであればトップページへ画面遷移
+            if (
+                this.table == null ||
+                this.table.players == null ||
+                this.table.board == null
+            )
+                router.push('/');
+        },
+        getLocalStorage: function () {
+            let jsonTable = localStorage.getItem(Config.localStorage.table);
+            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
+            console.log(this.localStorageTable);
+        },
+        validateLocalStorage: function () {
+            //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
+            if (Object.keys(this.localStorageTable).length) {
+                if (
+                    !this.localStorageTable.players ||
+                    !this.localStorageTable.board
+                )
+                    router.push('/');
+            }
+        },
+        saveLocalStorage: function () {
+            let tableJsonDecoded = JSON.stringify(this.table);
+            localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
+        },
+        clearLocalStorage: function () {
+            localStorage.clear();
+        },
+        createBoard(): Board {
+            let boardBuilder = new BoardBuilder();
+            boardBuilder.setSize({
+                x: Config.board.size.x,
+                y: Config.board.size.y,
+            });
+            boardBuilder.createSquares();
+            boardBuilder.linkSquaresNode();
+            return boardBuilder.build();
+        },
+        setBoardOnTable(board: Board) {
+            this.table.board = board;
+        },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
             const animation = new FlipAnimation(id, '#ffffff', '#000000');
