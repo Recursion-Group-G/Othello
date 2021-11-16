@@ -3,8 +3,9 @@
         <v-container class="d-flex justify-center text-center mt-5">
             <!-- Players上部(スマホの時のみ表示) -->
             <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
-            <h2 class="player-font" v-if="isXs">{{ players[1] }}: 2</h2>
+            <h2 v-if="isXs" class="player-font" >{{ players[1] }}: 2</h2>
         </v-container>
+
         <v-container class="board">
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
@@ -25,15 +26,17 @@
                 </div>
             </v-row>
         </v-container>
+
         <!-- Players下部 -->
         <v-container>
-            <v-row class="d-flex space-between text-center mb-5" v-if="!isXs">
+            <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
                 <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
                 <v-col v-for="k in players" :key="k">
                     <h2 class="player-font">{{ k }}: 2</h2>
                 </v-col>
             </v-row>
-            <v-row class="d-flex space-between text-center mb-5" v-else>
+
+            <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
                     <h2 class="player-font">{{ players[0] }}: 2</h2>
                 </v-col>
@@ -56,8 +59,6 @@ export default Vue.extend({
     props: ['table'],
     components: {},
     data: () => ({
-        //後でconfig.tsに移行する
-        board: {},
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
         localStorageTable: {} as Table,
