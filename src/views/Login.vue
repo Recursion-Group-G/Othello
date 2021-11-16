@@ -13,7 +13,6 @@
                         :rules="modeRules"
                         return-object
                         required
-                        @change="modeChanged($event)"
                     ></v-select>
                     <!--Player-->
                     <div v-if="isPvPMode">
@@ -26,16 +25,6 @@
                                 :rules="nameRules"
                                 required
                             ></v-text-field>
-                            <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
-                            <v-select
-                                v-model="player.color"
-                                :items="colors"
-                                item-text="name"
-                                item-value="obj"
-                                :label="`Color (Player${index + 1})`"
-                                :rules="colorRules"
-                                required
-                            ></v-select>
                         </div>
                     </div>
                     <!--Modeの選択なし、PvCモードの時は一つの表示-->
@@ -48,19 +37,27 @@
                             :rules="nameRules"
                             required
                         ></v-text-field>
-                        <v-select
-                            v-model="players[Config.player.playerIndex].color"
-                            :items="colors"
-                            item-text="name"
-                            item-value="obj"
-                            :label="`Color (Player${Config.player.playerIndex + 1})`"
-                            :rules="colorRules"
-                            required
-                        ></v-select>
+                    </div>
+
+                    <div>
+                        <v-radio-group v-model="firstPlayerIndex" @change="setPlayersColor($event)">
+                             <p>First Player</p>
+                            <v-radio
+                                v-for="(player, index) in players"
+                                :key="index"
+                                :label="`Player${index+1}`"
+                                :value="index"
+                            ></v-radio>
+                            <v-radio 
+                                :label="`Random`"
+                                :value="-1"
+                            ></v-radio>
+
+                        </v-radio-group>
                     </div>
                 </v-form>
                 <v-row class="d-flex justify-center mt-10 white--text">
-                    <v-btn color="deep-purple accent-3 white--text" @click="redirect">
+                    <v-btn color="deep-purple accent-3 white--text" @click="redirect()">
                         Game Start
                     </v-btn>
                 </v-row>
@@ -80,13 +77,8 @@ export default Vue.extend({
         return {
             Config: Config,
             selectedMode: '',
+            firstPlayerIndex: 0,
             modes: Object.keys(Config.modes).map((mode) => Config.modes[mode]),
-            colors: Object.keys(Config.stone.color).map((colorString) => {
-                return {
-                    name: colorString,
-                    obj: Config.stone.color[colorString],
-                };
-            }),
             players: new Array(Config.player.number.min).fill({}).map(() => new Player()),
             modeRules: [(v: any) => !!v || 'Mode is required'],
             nameRules: [
@@ -98,24 +90,32 @@ export default Vue.extend({
                     v.length >= Config.player.validation.name.min ||
                     `Name must be more than ${Config.player.validation.name.min} characters`,
             ],
-            colorRules: [(v: any) => !!v.code || 'Color is required'],
         };
     },
 
     methods: {
-        judgeCpuColor(): Color {
-            const color: Color = this.players[Config.player.playerIndex].color;
-            if (color.id === Config.stone.color.white.id) {
-                return Config.stone.color.black;
-            } else {
-                return Config.stone.color.white;
-            }
+        setPlayerColor(index: number, color: Color){
+            this.players[index].color = color;
         },
+        setPlayersColor(event: number): void{
+            const player : Player | null =  this.players[event]
 
+            //二人しかいない場合が前提
+            if(player === null){
+                const ramdomIndex = Math.floor(Math.random() * this.players.length);
+                this.setPlayersColor(ramdomIndex);
+                return;
+            }
+            
+            const otherPlayerIndex = (event + 1) %  this.players.length;
+
+            this.setPlayerColor(event, Config.stone.color.black);
+            this.setPlayerColor(otherPlayerIndex, Config.stone.color.white);
+
+        },
         validate(): boolean {
             return (this.$refs.form as any).validate();
         },
-
         checkValidationPlayerName(): boolean {
             const playerIndex: number = Config.player.playerIndex;
             if (this.selectedMode === Config.modes.PvC) {
@@ -129,41 +129,11 @@ export default Vue.extend({
                 return false;
             }
         },
-        checkValidationPlayerColor(): boolean {
-            const playerIndex: number = Config.player.playerIndex;
-            if (this.isPvCMode) {
-                return this.players[playerIndex].color.code === '';
-            } else {
-                for (let player in this.players) {
-                    if (this.players[player].color.code === '') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        },
         checkValidation(): boolean {
             return (
                 this.selectedMode === '' ||
-                this.checkValidationPlayerName() ||
-                this.checkValidationPlayerColor()
+                this.checkValidationPlayerName()
             );
-        },
-        modeChanged(event: string): void {
-            //cpuのカラーが被ってないかどうかは別の場所で判断するのでここで変更を加える必要はない。
-            const cpuIndex = Config.player.cpuIndex;
-            switch (event) {
-                case Config.modes.PvP:
-                    this.players[cpuIndex].name = '';
-                    this.players[cpuIndex].isCpu = false;
-                    break;
-                case Config.modes.PvC:
-                    this.players[cpuIndex].name = Config.player.cpuName;
-                    this.players[cpuIndex].isCpu = true;
-                    break;
-                default:
-                    return;
-            }
         },
         redirect(): void {
             if (this.validate()) {
