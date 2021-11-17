@@ -66,13 +66,13 @@ export default Vue.extend({
             firstPlayerIndex: 0,
             modes: Object.keys(Config.modes).map((mode) => Config.modes[mode]),
             players: new Array(Config.player.number.min).fill({}).map(() => new Player()),
-            modeRules: [(v: any) => (!!v || v != '') || 'Mode is required'],
+            modeRules: [(v: string) => !!v || 'Mode is required'],
             nameRules: [
-                (v: any) => !!v || 'Name is required',
-                (v: any) =>
+                (v: string) => !!v || 'Name is required',
+                (v: string) =>
                     v.length <= Config.player.validation.name.max ||
                     `Name must be less than ${Config.player.validation.name.max} characters`,
-                (v: any) =>
+                (v: string) =>
                     v.length >= Config.player.validation.name.min ||
                     `Name must be more than ${Config.player.validation.name.min} characters`,
             ],
@@ -80,20 +80,25 @@ export default Vue.extend({
     },
 
     methods: {
-        log():void{
-            console.log(this.players);
+        log(): void {
+            // console.log(this.players);
         },
-        modeChange(event: string): void{
-            const lastPlayer = this.players[this.players.length-1];
+        modeChange(event: string): void {
+            const lastPlayer = this.players[this.players.length - 1];
 
-            switch(event){
-                case Config.modes.PvP: lastPlayer.isCpu = false; return;
-                case Config.modes.PvC: lastPlayer.isCpu = true; return;
-                default: return;
+            switch (event) {
+                case Config.modes.PvP:
+                    lastPlayer.isCpu = false;
+                    return;
+                case Config.modes.PvC:
+                    lastPlayer.isCpu = true;
+                    return;
+                default:
+                    return;
             }
         },
-        shufflePlayers(): void{
-            for(var i = (this.players.length - 1); 0 < i; i--){
+        shufflePlayers(): void {
+            for (var i = this.players.length - 1; 0 < i; i--) {
                 var r = Math.floor(Math.random() * (i + 1));
 
                 var tmp = this.players[i];
@@ -101,20 +106,20 @@ export default Vue.extend({
                 this.players[r] = tmp;
             }
         },
-        setPlayersColor(): void{
+        setPlayersColor(): void {
             this.shufflePlayers();
-            const colorStrings : string[] = Object.keys(Config.stone.color);
+            const colorStrings: string[] = Object.keys(Config.stone.color);
 
             for (let i = 0; i < this.players.length; i++) {
                 const player: Player = this.players[i];
-                const colorString : string = colorStrings[i]
+                const colorString: string = colorStrings[i];
                 const color: Color = Config.stone.color[colorString];
 
                 player.color = color;
             }
         },
         validate(): boolean {
-            return (this.$refs.form as any).validate();
+            return (this.$refs.form as Vue & { validate: () => boolean }).validate();
         },
         redirect(): void {
             this.setPlayersColor();
