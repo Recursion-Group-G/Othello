@@ -11,20 +11,18 @@
                 <!-- Board -->
                 <div>
                     <div
-                        v-for="i in table.board.size.x"
-                        :key="i - 1"
+                        v-for="(row, rowIndex) in table.board.squares"
+                        :key="rowIndex"
                         class="d-flex"
                     >
-                        <div v-for="j in table.board.size.y" :key="j">
+                        <div v-for="(square, colIndex) in row" :key="colIndex">
                             <div
-                                :id="`${i - 1}-${j - 1}`"
+                                :id="`${square.point.x}-${square.point.y}`"
                                 class="board-square"
-                                @click="clickToFlip(`${i - 1}-${j - 1}`)"
+                                @click="clickToFlip(`${square.point.x}-${square.point.y}`)"
                             >
                                 <Stone
-                                    :stone="
-                                        table.board.squares[i - 1][j - 1].stone
-                                    "
+                                    :stone="square.stone"
                                     :isVisible="false"
                                 />
                             </div>
