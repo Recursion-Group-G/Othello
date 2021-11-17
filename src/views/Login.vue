@@ -13,6 +13,7 @@
                         :rules="modeRules"
                         return-object
                         required
+                        @change="modeChange($event)"
                     ></v-select>
                     <!--Player-->
                     <div v-if="isPvPMode">
@@ -38,23 +39,6 @@
                             required
                         ></v-text-field>
                     </div>
-
-                    <div>
-                        <v-radio-group v-model="firstPlayerIndex" @change="setPlayersColor($event)">
-                             <p>First Player</p>
-                            <v-radio
-                                v-for="(player, index) in players"
-                                :key="index"
-                                :label="`Player${index+1}`"
-                                :value="index"
-                            ></v-radio>
-                            <v-radio 
-                                :label="`Random`"
-                                :value="-1"
-                            ></v-radio>
-
-                        </v-radio-group>
-                    </div>
                 </v-form>
                 <v-row class="d-flex justify-center mt-10 white--text">
                     <v-btn color="deep-purple accent-3 white--text" @click="redirect()">
@@ -63,6 +47,7 @@
                 </v-row>
             </v-col>
         </v-row>
+        <button @click="log()">logggg</button>
     </div>
 </template>
 <script lang="ts">
@@ -80,7 +65,7 @@ export default Vue.extend({
             firstPlayerIndex: 0,
             modes: Object.keys(Config.modes).map((mode) => Config.modes[mode]),
             players: new Array(Config.player.number.min).fill({}).map(() => new Player()),
-            modeRules: [(v: any) => !!v || 'Mode is required'],
+            modeRules: [(v: any) => (!!v || v != '') || 'Mode is required'],
             nameRules: [
                 (v: any) => !!v || 'Name is required',
                 (v: any) =>
@@ -94,48 +79,44 @@ export default Vue.extend({
     },
 
     methods: {
-        setPlayerColor(index: number, color: Color){
-            this.players[index].color = color;
+        log():void{
+            console.log(this.players);
         },
-        setPlayersColor(event: number): void{
-            const player : Player | null =  this.players[event]
+        modeChange(event: string): void{
+            const lastPlayer = this.players[this.players.length-1];
 
-            //二人しかいない場合が前提
-            if(player === null){
-                const ramdomIndex = Math.floor(Math.random() * this.players.length);
-                this.setPlayersColor(ramdomIndex);
-                return;
+            switch(event){
+                case Config.modes.PvP: lastPlayer.isCpu = false; return;
+                case Config.modes.PvC: lastPlayer.isCpu = true; return;
+                default: return;
             }
-            
-            const otherPlayerIndex = (event + 1) %  this.players.length;
+        },
+        shufflePlayers(): void{
+            for(var i = (this.players.length - 1); 0 < i; i--){
+                var r = Math.floor(Math.random() * (i + 1));
 
-            this.setPlayerColor(event, Config.stone.color.black);
-            this.setPlayerColor(otherPlayerIndex, Config.stone.color.white);
+                var tmp = this.players[i];
+                this.players[i] = this.players[r];
+                this.players[r] = tmp;
+            }
+        },
+        setPlayersColor(): void{
+            this.shufflePlayers();
+            const colorStrings : string[] = Object.keys(Config.stone.color);
 
+            for (let i = 0; i < this.players.length; i++) {
+                const player: Player = this.players[i];
+                const colorString : string = colorStrings[i]
+                const color: Color = Config.stone.color[colorString];
+
+                player.color = color;
+            }
         },
         validate(): boolean {
             return (this.$refs.form as any).validate();
         },
-        checkValidationPlayerName(): boolean {
-            const playerIndex: number = Config.player.playerIndex;
-            if (this.selectedMode === Config.modes.PvC) {
-                return this.players[playerIndex].name === '';
-            } else {
-                for (let player in this.players) {
-                    if (this.players[player].name === '') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        },
-        checkValidation(): boolean {
-            return (
-                this.selectedMode === '' ||
-                this.checkValidationPlayerName()
-            );
-        },
         redirect(): void {
+            this.setPlayersColor();
             if (this.validate()) {
                 this.sendPlayers();
                 this.$router.push('/game');
