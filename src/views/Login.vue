@@ -47,7 +47,8 @@
                 </v-row>
             </v-col>
         </v-row>
-        <button @click="log()">logggg</button>
+        <!-- デバッグ用 -->
+        <!-- <button @click="log()">logggg</button> -->
     </div>
 </template>
 <script lang="ts">
