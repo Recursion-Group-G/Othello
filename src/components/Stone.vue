@@ -1,42 +1,29 @@
 <template>
-    <!-- Boardを作成するモジュールとGmaeページでBoardを元に作成されるゲームボードが実装されたら使うコード -->
-    <!-- <div v-if="!isEmpty()" class="size-fill d-flex justify-center align-center"   > -->
-    <!-- <v-sheet
-        v-if="isVisible"
-        class="mx-auto transition-swing rounded-circle stone-style"
-        elevation="12"
-        color="stone.color.code"
-    ></v-sheet> -->
-    <div class="size-fill d-flex justify-center align-center">
+    <div v-if="!isEmpty()" class="size-fill d-flex justify-center align-center">
         <v-sheet
+            v-if="isVisible"
             class="mx-auto transition-swing rounded-circle stone-style"
             elevation="12"
-            :color="color"
+            color="stone.color.code"
         ></v-sheet>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Player from '@/models/player';
 import Stone from '@/models/stone';
-import Config from '@/config';
 export default Vue.extend({
     props: {
-        // stone:Stone | null,
-        // isVisible:Boolean,
+        stone: Stone,
+        isVisible: Boolean,
     },
     data() {
-        return {
-            //本来はStone自体を受け取り、その状態(null or Colorがある)によってStoneコンポーネントの色も変わる。
-            //今は仮で黒に
-            color: Config.stone.color.black.code,
-        };
+        return {};
     },
     methods: {
-        // isEmpty(): boolean{
-        //     return this.stone === null;
-        // }
+        isEmpty(): boolean {
+            return this.stone === null;
+        },
     },
 });
 </script>

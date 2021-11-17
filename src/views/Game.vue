@@ -21,7 +21,7 @@
                                 class="board-square"
                                 @click="clickToFlip(`${i}-${j}`)"
                             >
-                                <Stone />
+                                <Stone :stone="null" :isVisible="false" />
                             </div>
                         </div>
                     </div>
