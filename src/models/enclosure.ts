@@ -1,11 +1,11 @@
 import Square from '@/models/square'
 
-class Enclosure {
-    private data: Square;
-    private next: Enclosure | null;
-    private prev: Enclosure | null;
+class Enclosure { 
+    data: Square | null;
+    next: Enclosure | null;
+    prev: Enclosure | null;
 
-    public constructor(data: Square){
+    constructor(data: Square){
         this.next = null;
         this.prev = null;
         this.data = data;
