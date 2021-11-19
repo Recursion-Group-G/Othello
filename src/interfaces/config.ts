@@ -35,6 +35,9 @@ interface Config {
             [key: string]: number;
         };
     };
+    localStorage: {
+        [key: string]: string;
+    };
 }
 
 export default Config;

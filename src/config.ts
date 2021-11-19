@@ -51,6 +51,9 @@ const config: Config = {
             roundover: 2,
         },
     },
+    localStorage: {
+        table: 'table',
+    },
 };
 
 export default config;
