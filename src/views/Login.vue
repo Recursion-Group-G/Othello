@@ -4,132 +4,141 @@
             <v-col cols="10" sm="6" md="4">
                 <h1 class="page-title">Select Mode</h1>
                 <!--Select Mode-->
-                <v-select
-                    class="mt-10"
-                    v-model="selectedMode"
-                    :items="modes"
-                    item-text="modeString"
-                    item-value="modeName"
-                    label="Game Mode"
-                    return-object
-                ></v-select>
-                <!--Player-->
-                <div v-for="(player, index) in players" :key="index">
-                    <v-text-field
-                        class="mt-10"
-                        v-model="player.name"
-                        :counter="10"
-                        :label="`Name (Player${index + 1})`"
-                        required
-                    ></v-text-field>
-                    <!--後ほどプレイヤー毎の選択により連動するselectに変更-->
+                <v-form ref="form" lazy-validation>
                     <v-select
-                        v-model="player.color"
-                        :items="colors"
-                        item-text="name"
-                        item-value="obj"
-                        :label="`Color (Player${index + 1})`"
+                        label="Game Mode"
+                        class="mt-10"
+                        v-model="selectedMode"
+                        :items="modes"
+                        :rules="modeRules"
+                        return-object
+                        required
+                        @change="modeChange($event)"
                     ></v-select>
-                </div>
-                <!-- Game Start button -->
+                    <!--Player-->
+                    <div v-if="isPvPMode">
+                        <div v-for="(player, index) in players" :key="index">
+                            <v-text-field
+                                class="mt-10"
+                                v-model="player.name"
+                                :counter="Config.nameCounter"
+                                :label="`Name (Player${index + 1})`"
+                                :rules="nameRules"
+                                required
+                            ></v-text-field>
+                        </div>
+                    </div>
+                    <!--Modeの選択なし、PvCモードの時は一つの表示-->
+                    <div v-else>
+                        <v-text-field
+                            class="mt-10"
+                            v-model="players[Config.player.playerIndex].name"
+                            :counter="Config.nameCounter"
+                            :label="`Name (Player${Config.player.playerIndex + 1})`"
+                            :rules="nameRules"
+                            required
+                        ></v-text-field>
+                    </div>
+                </v-form>
                 <v-row class="d-flex justify-center mt-10 white--text">
-                    <router-link to="/game" class="button-link">
-                        <v-btn
-                            @click="sendPlayers"
-                            dark
-                            large
-                            color="deep-purple"
-                        >
-                            Game Start
-                        </v-btn>
-                    </router-link>
+                    <v-btn color="deep-purple accent-3 white--text" @click="redirect()">
+                        Game Start
+                    </v-btn>
                 </v-row>
             </v-col>
         </v-row>
+        <!-- デバッグ用 -->
+        <!-- <button @click="log()">logggg</button> -->
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue';
 import Player from '../models/player';
 import Config from '../config';
-import Color from '../models/stone';
+import Color from '../interfaces/color';
 
 export default Vue.extend({
     name: 'Login',
     data() {
         return {
-            selectedMode: { modeString: '', modeName: '' },
-            modes: Config.top.modes,
-
-            colors: Object.keys(Config.stone.color).map((colorString) => {
-                return {
-                    name: colorString,
-                    obj: Config.stone.color[colorString],
-                };
-            }),
-
-            players: new Array(Config.player.number.min)
-                .fill({})
-                .map(
-                    () =>
-                        new Player(
-                            '',
-                            Config.player.initialScore,
-                            new Color({ code: '', id: 0 }),
-                            false
-                        )
-                ),
-
-            cpuPlayerName: 'CPU',
+            Config: Config,
+            selectedMode: '',
+            firstPlayerIndex: 0,
+            modes: Object.keys(Config.modes).map((mode) => Config.modes[mode]),
+            players: new Array(Config.player.number.min).fill({}).map(() => new Player()),
+            modeRules: [(v: string) => !!v || 'Mode is required'],
+            nameRules: [
+                (v: string) => !!v || 'Name is required',
+                (v: string) =>
+                    v.length <= Config.player.validation.name.max ||
+                    `Name must be less than ${Config.player.validation.name.max} characters`,
+                (v: string) =>
+                    v.length >= Config.player.validation.name.min ||
+                    `Name must be more than ${Config.player.validation.name.min} characters`,
+            ],
         };
     },
 
     methods: {
-        sendPlayers() {
-            const cpuIndex: number = Config.player.cpuIndex; //ConfigにCPUがどこになるのかIndex追加
-            if (
-                this.selectedMode.modeName ===
-                Config.top.modes[cpuIndex].modeName
-            ) {
-                this.switchCpuPlayer(this.players[cpuIndex]);
+        log(): void {
+            // console.log(this.players);
+        },
+        modeChange(event: string): void {
+            const lastPlayer = this.players[this.players.length - 1];
+
+            switch (event) {
+                case Config.modes.PvP:
+                    lastPlayer.isCpu = false;
+                    return;
+                case Config.modes.PvC:
+                    lastPlayer.isCpu = true;
+                    return;
+                default:
+                    return;
             }
+        },
+        shufflePlayers(): void {
+            for (var i = this.players.length - 1; 0 < i; i--) {
+                var r = Math.floor(Math.random() * (i + 1));
+
+                var tmp = this.players[i];
+                this.players[i] = this.players[r];
+                this.players[r] = tmp;
+            }
+        },
+        setPlayersColor(): void {
+            this.shufflePlayers();
+            const colorStrings: string[] = Object.keys(Config.stone.color);
+
+            for (let i = 0; i < this.players.length; i++) {
+                const player: Player = this.players[i];
+                const colorString: string = colorStrings[i];
+                const color: Color = Config.stone.color[colorString];
+
+                player.color = color;
+            }
+        },
+        validate(): boolean {
+            return (this.$refs.form as Vue & { validate: () => boolean }).validate();
+        },
+        redirect(): void {
+            this.setPlayersColor();
+            if (this.validate()) {
+                this.sendPlayers();
+                this.$router.push('/game');
+            }
+        },
+        sendPlayers() {
             this.$emit('playersData', this.players);
         },
+    },
 
-        switchCpuPlayer(player: Player) {
-            player.name = this.cpuPlayerName;
-            player.color = this.judgeCpuColor();
-            player.isCpu = true;
+    computed: {
+        isPvCMode(): boolean {
+            return this.selectedMode === Config.modes.PvC;
         },
-
-        judgeCpuColor(): Color {
-            /*
-            Property 'color' is missing in type '{ code: string; id: number; }' but required in type 'Stone'.
-            修正予定コードでは上記メッセージが出るため、一旦仮のコード。StoneのInterfaceディレクトリ作成が必要
-            */
-            const color = this.players[Config.player.playerIndex].color.color;
-            if (color.id === Config.stone.color.white.id) {
-                return new Color({
-                    code: Config.stone.color.black.code,
-                    id: Config.stone.color.black.id,
-                });
-            } else if (color.id === Config.stone.color.black.id) {
-                return new Color({
-                    code: Config.stone.color.white.code,
-                    id: Config.stone.color.white.id,
-                });
-            } else return new Color({ code: '', id: 0 }); //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
-
-            /* 修正予定コード
-            const color: Color = this.players[Config.player.playerIndex].color;
-            if (color.id === Config.stone.color.white.id){
-                return Config.stone.color.black;
-            }
-            else if (color.id === Config.stone.color.black.id){
-                return Config.stone.color.white;
-            }
-            else return {}; //nullにするとplayer.colorにもnullの型指定追加が必要なので一旦初期値にしてます。どこかでエラー処理を書いた方がいいかもしれないです。
-            */
+        isPvPMode(): boolean {
+            return this.selectedMode === Config.modes.PvP;
         },
     },
 });

@@ -5,11 +5,7 @@
                 <h1 class="top mb-10">Othello</h1>
                 <div class="d-flex justify-center">
                     <router-link to="/login" class="button-link">
-                        <v-btn
-                            class="deep-purple accent-3 white--text"
-                            depressed
-                            elevation="24"
-                        >
+                        <v-btn class="deep-purple accent-3 white--text" depressed elevation="24">
                             Start
                         </v-btn>
                     </router-link>

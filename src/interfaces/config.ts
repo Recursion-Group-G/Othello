@@ -2,8 +2,8 @@ import Color from './color';
 import Size from './size';
 
 interface Config {
-    top: {
-        modes: { [key: string]: string }[];
+    modes: {
+        [key: string]: string;
     };
     stone: {
         color: {
@@ -17,12 +17,18 @@ interface Config {
         size: Size;
     };
     player: {
+        validation: {
+            name: {
+                min: number;
+                max: number;
+            };
+        };
         number: {
             [key: string]: number;
         };
-        initialScore: number;
         playerIndex: number;
         cpuIndex: number;
+        cpuName: string;
     };
     table: {
         phase: {

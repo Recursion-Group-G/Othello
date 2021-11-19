@@ -16,12 +16,8 @@ class FlipAnimation {
         //positionを親要素の左上を原点とする。親要素にrelativeがついていることに依存している。
         this.canvas.style.position = 'absolute';
         this.canvas.style.outline = 'none';
-        this.canvas.style.top = `${
-            (this.square.clientHeight - this.canvas.height) / 2
-        }px`;
-        this.canvas.style.left = `${
-            (this.square.clientWidth - this.canvas.width) / 2
-        }px`;
+        this.canvas.style.top = `${(this.square.clientHeight - this.canvas.height) / 2}px`;
+        this.canvas.style.left = `${(this.square.clientWidth - this.canvas.width) / 2}px`;
 
         /**
          * Scene
@@ -51,6 +47,7 @@ class FlipAnimation {
         /**
          * Stone
          */
+
         const height = ThreeConfig.othelloStone.height;
         const othelloStoneGeometry = new THREE.CylinderGeometry(
             1,
@@ -58,7 +55,6 @@ class FlipAnimation {
             height / 2,
             50
         );
-
         const frontMaterial = new THREE.MeshPhongMaterial({
             color: fromColor,
             // wireframe: true,
@@ -67,7 +63,7 @@ class FlipAnimation {
             color: toColor,
             // wireframe: true,
         });
-
+      
         const frontCylinder = new THREE.Mesh(
             othelloStoneGeometry,
             frontMaterial

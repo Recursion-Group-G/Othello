@@ -35,20 +35,21 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+export default Vue.extend({
     data: () => ({
         isVisible: true,
     }),
     methods: {
-        openModal: function () {
+        openModal(): void {
             this.isVisible = true;
         },
-        closeModal: function () {
+        closeModal(): void {
             this.isVisible = false;
         },
     },
-};
+});
 </script>
 
 <style>

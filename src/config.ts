@@ -1,11 +1,9 @@
 import Config from './interfaces/config';
 
 const config: Config = {
-    top: {
-        modes: [
-            { modeString: 'Player VS Player', modeName: 'PvP' },
-            { modeString: 'Player VS CPU', modeName: 'PvC' },
-        ],
+    modes: {
+        PvP: 'Player VS Player',
+        PvC: 'Player VS CPU',
     },
     stone: {
         color: {
@@ -32,13 +30,19 @@ const config: Config = {
         },
     },
     player: {
+        validation: {
+            name: {
+                min: 2,
+                max: 10,
+            },
+        },
         number: {
             min: 2,
             max: 2,
         },
-        initialScore: 2,
         playerIndex: 0, //CPUモードだったときのPlayer Index
         cpuIndex: 1,
+        cpuName: 'CPU',
     },
     table: {
         phase: {
