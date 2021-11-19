@@ -1,14 +1,17 @@
+import Color from '@/interfaces/color';
+import Config from '@/config';
+
 class Player {
     name: string;
     score: number;
-    color: string;
+    color: Color;
     isCpu: boolean;
 
-    constructor(name: string, score: number, color: string, isCpu: boolean) {
-        this.name = name;
-        this.score = score;
-        this.color = color;
-        this.isCpu = isCpu;
+    constructor() {
+        this.name = '';
+        this.score = 0;
+        this.color = Config.stone.color.black;
+        this.isCpu = false;
     }
 }
 

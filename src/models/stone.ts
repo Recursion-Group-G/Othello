@@ -1,7 +1,4 @@
-interface Color {
-    code: string;
-    id: number;
-}
+import Color from '../interfaces/color';
 
 class Stone {
     color: Color;
