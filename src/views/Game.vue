@@ -19,12 +19,12 @@
                             <div
                                 :id="`${square.point.x}-${square.point.y}`"
                                 class="board-square"
-                                @click="clickToFlip(`${square.point.x}-${square.point.y}`)"
+                                @click="putStone(square)"
                             >
-                                <Stone
+                                <!-- <Stone
                                     :stone="square.stone"
                                     :isVisible="false"
-                                />
+                                /> -->
                             </div>
                         </div>
                     </div>
@@ -59,16 +59,20 @@ import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
 import Stone from '@/components/Stone.vue';
+import Square from '@/models/square';
+import Player from '@/models/player';
+// import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
-        Stone,
+        // Stone,
     },
     data: () => ({
         //仮のPlayer配列
         players: ['Player1', 'Player2'],
+        currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
     }),
     created: function () {
@@ -89,11 +93,7 @@ export default Vue.extend({
     methods: {
         validateTable: function () {
             //必要な情報がnullであればトップページへ画面遷移
-            if (
-                this.table == null ||
-                this.table.players == null ||
-                this.table.board == null
-            )
+            if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
         getLocalStorage: function () {
@@ -104,10 +104,7 @@ export default Vue.extend({
         validateLocalStorage: function () {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
-                if (
-                    !this.localStorageTable.players ||
-                    !this.localStorageTable.board
-                )
+                if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
         },
@@ -131,11 +128,34 @@ export default Vue.extend({
         setBoardOnTable(board: Board) {
             this.table.board = board;
         },
+        putStone: function (square: Square) {
+            square.stone = new Stone(this.currentPlayer.color);
+            this.flipStonesAllDirections(square);
+            // this.enclosureController.updateFromSquare(square)//enclosureを更新
+            this.table.turnCounter += 1;
+            this.turnChange();
+        },
+        flipStonesAllDirections: function (square: Square) {
+            this.flipStonesOneDirections(square, 'top'); //*8
+            //石をひっくり返す
+        },
+        flipStonesOneDirections(square: Square, direction: keyof Square) {
+            square[direction];
+            this.clickToFlip(`${square.point.x}-${square.point.y}`);
+        },
         clickToFlip: async function (id: string) {
             //とりあえず黒から白へ
             const animation = new FlipAnimation(id, '#ffffff', '#000000');
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
+        },
+        turnChange: function () {
+            let index = this.table.turnCounter % this.table.players.length;
+            this.currentPlayer = this.table.players[index];
+            //this.dicitions = this.enclosureController.getPlayersDicisions(this.currentPlayer)//未作成のメソッド//プレイヤーが置ける場所のみを配列か連結リストかで返す。
+            //あとはプレイヤーが置ける場所を変えたり
+            //そこにあるもの以外を置けなくしたりする
+            //turnChange内に書くのではなくputStoneから呼び出す？
         },
     },
 });
