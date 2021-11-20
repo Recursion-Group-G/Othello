@@ -5,15 +5,13 @@ import Enclosure from '@/models/enclosure';
 class EnclosureController {
     private head: Enclosure | null;
     private hashmap: { [key: string]: Enclosure | null };
-    private enclosures: Enclosure[];
-
-    public constructor(board: Board) {
+    
+    public constructor() {
         this.head = null;
-        this.hashmap = this.createHashmapFromSquare(board);
-        this.enclosures = [];
+        this.hashmap = {};
     }
 
-    //Boardからhashmapを作成
+    //Boardからすべての座標がnullのhashmapを作成//後で消すかも
     public createHashmapFromSquare(
         board: Board
     ): { [key: string]: Enclosure | null } {
@@ -40,86 +38,76 @@ class EnclosureController {
         const bottomRightSquare: Square =
             board.squares[initialPoint + 1][initialPoint + 1];
 
-        this.checkAllDirectionsFromSquare(board, topLeftSquare);
-        this.checkAllDirectionsFromSquare(board, topRightSquare);
-        this.checkAllDirectionsFromSquare(board, bottomLeftSquare);
-        this.checkAllDirectionsFromSquare(board, bottomRightSquare);
-
+        this.updateFromSquare(topLeftSquare);
+        this.updateFromSquare(topRightSquare);
+        this.updateFromSquare(bottomLeftSquare);
+        this.updateFromSquare(bottomRightSquare)
         return this;
     }
 
-    //Squareから8方向検索
-    public checkAllDirectionsFromSquare(
-        board: Board,
-        square: Square
-    ): EnclosureController {
-        const topX: number = square.point.x;
-        const topY: number = square.point.y - 1;
-        this.createEnclosure(board.squares[topX][topY]);
-
-        const leftX: number = square.point.x - 1;
-        const leftY: number = square.point.y;
-        this.createEnclosure(board.squares[leftX][leftY]);
-
-        const rightX: number = square.point.x + 1;
-        const rightY: number = square.point.y;
-        this.createEnclosure(board.squares[rightX][rightY]);
-
-        const bottomX: number = square.point.x;
-        const bottomY: number = square.point.y + 1;
-        this.createEnclosure(board.squares[bottomX][bottomY]);
-
-        const topLeftX: number = square.point.x - 1;
-        const topLeftY: number = square.point.y - 1;
-        this.createEnclosure(board.squares[topLeftX][topLeftY]);
-
-        const topRightX: number = square.point.x + 1;
-        const topRightY: number = square.point.y - 1;
-        this.createEnclosure(board.squares[topRightX][topRightY]);
-
-        const bottomLeftX: number = square.point.x - 1;
-        const bottomLeftY: number = square.point.y + 1;
-        this.createEnclosure(board.squares[bottomLeftX][bottomLeftY]);
-
-        const bottomRightX: number = square.point.x + 1;
-        const bottomRightY: number = square.point.y + 1;
-        this.createEnclosure(board.squares[bottomRightX][bottomRightY]);
-
-        return this;
+    public addEnclosure(square: Square): void {
+        const enclosure: Enclosure = new Enclosure(square);
+        if(this.head === null) this.head = enclosure;
+        this.head.prev = enclosure;
+        enclosure.next = this.head;
+        this.head = enclosure;
+        //hashmap追加
+        this.hashmap[square.id] = enclosure;
     }
 
-    //Squareに石がなくてhashmapに座標のEnclosureがない場合作成
-    public createEnclosure(square: Square): EnclosureController {
-        if (square.isEmpty && this.hashmap[square.id] === null) {
-            const newEnclosure: Enclosure = new Enclosure(square);
-            this.hashmap[square.id] = newEnclosure;
-            this.enclosures.push(newEnclosure);
+    public removeEnclosure(square: Square): void {
+        if(this.head === null) return;
+        if(square === this.head.data) this.popFrontEnclosure();
+        const enclosure: Enclosure | null = this.hashmap[square.id];
+        //nullの表示エラー回避
+        if(enclosure === null || enclosure.prev === null || enclosure.next === null) return;
+        enclosure.prev.next = enclosure.next;
+        enclosure.next.prev = enclosure.prev;
+        //hashmapから削除
+        delete this.hashmap[square.id];
+        //this.hashmap[square.id] === nullをどこかの判定で使う場合
+        //this.hashmap[square.id] = null;
+    }
+
+    private popFrontEnclosure(): void{
+        this.head = this.head != null ? this.head.next : null; //nullの表示エラー回避
+        if(this.head != null) this.head.prev = null; //nullの表示エラー回避
+    }
+
+    public getEnclosure(square: Square): Enclosure | null {
+        return this.hashmap[square.id];
+    }
+
+    public updateFromSquare(square: Square): void{
+        const isPresentInHashmap = (square: Square) => {
+            return this.hashmap[square.id] != undefined;
         }
-        return this;
-    }
-
-    //Enclosurs内すべてのEnclosureを連結
-    public linkEnclosureAll(enclosures: Enclosure[]): EnclosureController {
-        const firstEnclosure: Enclosure = enclosures[0];
-        this.head = firstEnclosure;
-        let curr: Enclosure = this.head;
-        for (let i = 1; i < enclosures.length; i++) {
-            curr.next = enclosures[i];
-            curr.next.prev = curr;
-            curr = curr.next;
+        const isStoneEmpty = (square: Square) => {
+            return square.isEmpty;
         }
-        //最後に最初のEnclosureと連結
-        curr.next = firstEnclosure;
-        curr.next.prev = curr;
+        const updateSquare = (square: Square) => {
+            //hashmapにEnclosureがなくSquareに石がない場合
+            if(!isPresentInHashmap(square) && isStoneEmpty(square)) {
+                this.addEnclosure(square);
+            }
+            //hashmapにEnclosureがあってSquareに石がある場合
+            else if(isPresentInHashmap(square) && !isStoneEmpty(square)) {
+                this.removeEnclosure(square);
+            }
+        }
+        updateSquare(square);
+        //8方向にアップデート
+        //nullの表示エラー回避
+        if(square.top != null) updateSquare(square.top); 
+        if(square.left != null) updateSquare(square.left)
+        if(square.right != null) updateSquare(square.right)
+        if(square.bottom != null) updateSquare(square.bottom)
 
-        return this;
+        if(square.topLeft != null) updateSquare(square.topLeft);
+        if(square.topRight != null) updateSquare(square.topRight);
+        if(square.bottomLeft != null) updateSquare(square.bottomLeft);
+        if(square.bottomRight != null) updateSquare(square.bottomRight);
     }
-
-    static removeEnclosure(square: Square): void {}
-
-    static addEnclosure(square: Square): void {}
-
-    static getEnclosure(square: Square): void {}
 }
 
 export default EnclosureController;

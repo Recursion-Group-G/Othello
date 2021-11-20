@@ -34,7 +34,7 @@ class Square {
     }
 
     createId(point: Point): string {
-        return String(point.x) + String(point.y);
+        return String(point.x) + '-' + String(point.y);
     }
 }
 
