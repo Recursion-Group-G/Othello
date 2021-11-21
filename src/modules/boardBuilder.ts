@@ -24,7 +24,7 @@ class BoardBuilder {
         return this;
     }
 
-    public setEnclosure(enclosureController: EnclosureController){
+    public setEnclosure(enclosureController: EnclosureController) {
         this.enclosureController = enclosureController;
     }
 
