@@ -38,6 +38,9 @@ interface Config {
     localStorage: {
         [key: string]: string;
     };
+    direction: {
+        [key: string]: string;
+    }
 }
 
 export default Config;
