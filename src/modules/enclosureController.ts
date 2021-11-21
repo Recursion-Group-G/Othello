@@ -37,11 +37,11 @@ class EnclosureController {
     }
 
     private deleteEnclosure(enclosure: Enclosure): void {
-        // nodeがheadの場合
+        // Enclosureがheadの場合
         if (enclosure.prev === null) this.popFrontEnclosure();
-        // nodeが末尾の場合
+        // Enclosureが末尾の場合
         else if (enclosure.next === null) this.popEnclosure();
-        //nodeが真ん中の場合
+        // Enclosureが真ん中の場合
         else if (enclosure.prev != null && enclosure.next != null) {
             //nullの表示エラー回避
             enclosure.prev.next = enclosure.next;
@@ -63,19 +63,19 @@ class EnclosureController {
         if (this.tail != null) this.tail.next = null; //nullの表示エラー回避
     }
 
-    //localStorateからのデータ復旧head
+    //localStorageからのデータ復旧head
     public setHead(head: Enclosure | null): EnclosureController {
         this.head = head;
         return this;
     }
 
-    //localStorateからのデータ復旧tail
+    //localStorageからのデータ復旧tail
     public setTail(tail: Enclosure | null): EnclosureController {
         this.tail = tail;
         return this;
     }
 
-    //localStorateからのデータ復旧hashmap
+    //localStorageからのデータ復旧hashmap
     public setHashMap(hashmap: {
         [key: string]: Enclosure;
     }): EnclosureController {
