@@ -21,10 +21,7 @@
                                 class="board-square"
                                 @click="putStone(square)"
                             >
-                                <StoneView
-                                    :stone="square.stone"
-                                    v-if="square.stone"
-                                />
+                                <StoneView :stone="square.stone" v-if="square.stone" />
                             </div>
                         </div>
                     </div>
@@ -131,24 +128,56 @@ export default Vue.extend({
         },
         putStone: function (square: Square) {
             square.stone = new Stone(this.currentPlayer.color);
-            this.flipStonesAllDirections(square);
-            // this.enclosureController.updateFromSquare(square)//enclosureを更新
             this.table.turnCounter += 1;
             this.turnChange();
+            this.flipStonesAllDirections(square);
+            // this.enclosureController.updateFromSquare(square)//enclosureを更新
         },
         flipStonesAllDirections: function (square: Square) {
-            this.flipStonesOneDirections(square, 'top'); //*8
-            //石をひっくり返す
+            let filipCounter = 0;
+            filipCounter += this.flipStonesOneDirections(square, 'top');
+            filipCounter += this.flipStonesOneDirections(square, 'right');
+            filipCounter += this.flipStonesOneDirections(square, 'bottom');
+            filipCounter += this.flipStonesOneDirections(square, 'left');
+            filipCounter += this.flipStonesOneDirections(square, 'topRight');
+            filipCounter += this.flipStonesOneDirections(square, 'topLeft');
+            filipCounter += this.flipStonesOneDirections(square, 'bottomRight');
+            filipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
         },
         flipStonesOneDirections(square: Square, direction: keyof Square) {
-            square[direction];
-            this.flipStoneAnimation(square);
+            let flipSquare: Square[] = [];
+            let searchSquare: Square | null = square[direction];
+            if (square === null || square.stone === null) return 0;
+            while (
+                searchSquare !== null &&
+                searchSquare.stone !== null &&
+                searchSquare.stone.color.id !== square.stone.color.id
+            ) {
+                flipSquare.push(searchSquare);
+                searchSquare = searchSquare[direction];
+            }
+
+            if (
+                flipSquare.length > 0 &&
+                searchSquare !== null &&
+                searchSquare.stone !== null &&
+                searchSquare.stone.color.id === square.stone.color.id
+            ) {
+                for (let i = 0; i < flipSquare.length; i++) {
+                    flipSquare[i].stone.color = square.stone.color;
+                    this.flipStoneAnimation(flipSquare[i]);
+                }
+            } else flipSquare = [];
+
+            return flipSquare.length;
         },
         flipStoneAnimation: async function (square: Square) {
             //とりあえず黒から白へ
-            // const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, '#000000', '#ffffff');
-            const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, square.stone.color.code, this.currentPlayer.color.code);
-            // const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, '#ffffff', '#000000');
+            const animation = new FlipAnimation(
+                `${square.point.x}-${square.point.y}`,
+                this.currentPlayer.color.code,
+                square.stone.color.code
+            );
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
         },
