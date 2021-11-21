@@ -21,10 +21,10 @@
                                 class="board-square"
                                 @click="putStone(square)"
                             >
-                                <!-- <Stone
+                                <StoneView
                                     :stone="square.stone"
-                                    :isVisible="false"
-                                /> -->
+                                    v-if="square.stone"
+                                />
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,8 @@ import Config from '../config';
 import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
-import Stone from '@/components/Stone.vue';
+import StoneView from '@/components/Stone.vue';
+import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
 // import func from 'vue-temp/vue-editor-bridge';
@@ -67,7 +68,7 @@ export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
-        // Stone,
+        StoneView,
     },
     data: () => ({
         //仮のPlayer配列
@@ -141,11 +142,13 @@ export default Vue.extend({
         },
         flipStonesOneDirections(square: Square, direction: keyof Square) {
             square[direction];
-            this.clickToFlip(`${square.point.x}-${square.point.y}`);
+            this.flipStoneAnimation(square);
         },
-        clickToFlip: async function (id: string) {
+        flipStoneAnimation: async function (square: Square) {
             //とりあえず黒から白へ
-            const animation = new FlipAnimation(id, '#ffffff', '#000000');
+            // const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, '#000000', '#ffffff');
+            const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, square.stone.color.code, this.currentPlayer.color.code);
+            // const animation = new FlipAnimation(`${square.point.x}-${square.point.y}`, '#ffffff', '#000000');
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
         },
