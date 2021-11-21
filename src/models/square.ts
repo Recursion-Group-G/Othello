@@ -5,6 +5,7 @@ class Square {
     point: Point;
     stone: Stone | null;
     isEmpty: boolean;
+    id: string;
 
     top: Square | null;
     right: Square | null;
@@ -20,6 +21,7 @@ class Square {
         this.point = point;
         this.stone = null;
         this.isEmpty = true;
+        this.id = this.createId(point);
 
         this.top = null;
         this.right = null;
@@ -29,6 +31,10 @@ class Square {
         this.topLeft = null;
         this.bottomRight = null;
         this.bottomLeft = null;
+    }
+
+    createId(point: Point): string {
+        return String(point.x) + '-' + String(point.y);
     }
 }
 
