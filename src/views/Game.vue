@@ -72,6 +72,7 @@ export default Vue.extend({
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
+        flipCounter: 0 as number,
     }),
     created: function () {
         this.getLocalStorage();
@@ -128,25 +129,28 @@ export default Vue.extend({
         },
         putStone: function (square: Square) {
             square.stone = new Stone(this.currentPlayer.color);
+            this.flipStonesAllDirections(square);
+            this.currentPlayer.score += 1;
+            this.updateScore();
             this.table.turnCounter += 1;
             this.turnChange();
-            this.flipStonesAllDirections(square);
             // this.enclosureController.updateFromSquare(square)//enclosureを更新
         },
         flipStonesAllDirections: function (square: Square) {
-            let filipCounter = 0;
-            filipCounter += this.flipStonesOneDirections(square, 'top');
-            filipCounter += this.flipStonesOneDirections(square, 'right');
-            filipCounter += this.flipStonesOneDirections(square, 'bottom');
-            filipCounter += this.flipStonesOneDirections(square, 'left');
-            filipCounter += this.flipStonesOneDirections(square, 'topRight');
-            filipCounter += this.flipStonesOneDirections(square, 'topLeft');
-            filipCounter += this.flipStonesOneDirections(square, 'bottomRight');
-            filipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
+            //1方向ずつ石をひっくり返す
+            this.flipCounter += this.flipStonesOneDirections(square, 'top');
+            this.flipCounter += this.flipStonesOneDirections(square, 'right');
+            this.flipCounter += this.flipStonesOneDirections(square, 'bottom');
+            this.flipCounter += this.flipStonesOneDirections(square, 'left');
+            this.flipCounter += this.flipStonesOneDirections(square, 'topRight');
+            this.flipCounter += this.flipStonesOneDirections(square, 'topLeft');
+            this.flipCounter += this.flipStonesOneDirections(square, 'bottomRight');
+            this.flipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
         },
         flipStonesOneDirections(square: Square, direction: keyof Square) {
+            //1方向の石をひっくり返す
             let flipSquare: Square[] = [];
-            let searchSquare: Square | null = square[direction];
+            let searchSquare: Square = square[direction];
             if (square === null || square.stone === null) return 0;
             while (
                 searchSquare !== null &&
@@ -164,19 +168,20 @@ export default Vue.extend({
                 searchSquare.stone.color.id === square.stone.color.id
             ) {
                 for (let i = 0; i < flipSquare.length; i++) {
-                    flipSquare[i].stone.color = square.stone.color;
                     this.flipStoneAnimation(flipSquare[i]);
+                    flipSquare[i].stone.color = square.stone.color;
                 }
             } else flipSquare = [];
 
             return flipSquare.length;
         },
         flipStoneAnimation: async function (square: Square) {
-            //とりあえず黒から白へ
+            //石をひっくり返すアニメーション
+            if (square.stone === null) return;
             const animation = new FlipAnimation(
                 `${square.point.x}-${square.point.y}`,
-                this.currentPlayer.color.code,
-                square.stone.color.code
+                square.stone.color.code,
+                this.currentPlayer.color.code
             );
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
@@ -188,6 +193,13 @@ export default Vue.extend({
             //あとはプレイヤーが置ける場所を変えたり
             //そこにあるもの以外を置けなくしたりする
             //turnChange内に書くのではなくputStoneから呼び出す？
+        },
+        updateScore: function () {
+            const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
+            const nextPlayer = this.table.players[nextPlayerIndex];
+            this.currentPlayer.score += this.flipCounter;
+            nextPlayer.score -= this.flipCounter;
+            this.flipCounter = 0;
         },
     },
 });
