@@ -90,28 +90,28 @@ export default Vue.extend({
         },
     },
     methods: {
-        validateTable: function () {
+        validateTable: function ():void {
             //必要な情報がnullであればトップページへ画面遷移
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
-        getLocalStorage: function () {
+        getLocalStorage: function ():void{
             let jsonTable = localStorage.getItem(Config.localStorage.table);
             this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
             console.log(this.localStorageTable);
         },
-        validateLocalStorage: function () {
+        validateLocalStorage: function ():void {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
         },
-        saveLocalStorage: function () {
+        saveLocalStorage: function ():void {
             let tableJsonDecoded = JSON.stringify(this.table);
             localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
         },
-        clearLocalStorage: function () {
+        clearLocalStorage: function ():void {
             localStorage.clear();
         },
         createBoard(): Board {
@@ -124,10 +124,10 @@ export default Vue.extend({
             boardBuilder.linkSquaresNode();
             return boardBuilder.build();
         },
-        setBoardOnTable(board: Board) {
+        setBoardOnTable(board: Board):void {
             this.table.board = board;
         },
-        putStone: function (square: Square) {
+        putStone: function (square: Square):void {
             square.stone = new Stone(this.currentPlayer.color);
             this.flipStonesAllDirections(square);
             this.currentPlayer.score += 1;
@@ -136,7 +136,7 @@ export default Vue.extend({
             this.turnChange();
             // this.enclosureController.updateFromSquare(square)//enclosureを更新
         },
-        flipStonesAllDirections: function (square: Square) {
+        flipStonesAllDirections: function (square: Square):void {
             //1方向ずつ石をひっくり返す
             this.flipCounter += this.flipStonesOneDirections(square, 'top');
             this.flipCounter += this.flipStonesOneDirections(square, 'right');
@@ -147,10 +147,10 @@ export default Vue.extend({
             this.flipCounter += this.flipStonesOneDirections(square, 'bottomRight');
             this.flipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
         },
-        flipStonesOneDirections(square: Square, direction: keyof Square) {
+        flipStonesOneDirections(square: Square, direction: keyof Square):number {
             //1方向の石をひっくり返す
             let flipSquare: Square[] = [];
-            let searchSquare: Square = square[direction];
+            let searchSquare: Square | null= square[direction];
             if (square === null || square.stone === null) return 0;
             while (
                 searchSquare !== null &&
@@ -175,7 +175,7 @@ export default Vue.extend({
 
             return flipSquare.length;
         },
-        flipStoneAnimation: async function (square: Square) {
+        flipStoneAnimation: async function (square: Square):Promise<void> {
             //石をひっくり返すアニメーション
             if (square.stone === null) return;
             const animation = new FlipAnimation(
@@ -186,7 +186,7 @@ export default Vue.extend({
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
         },
-        turnChange: function () {
+        turnChange: function ():void{
             let index = this.table.turnCounter % this.table.players.length;
             this.currentPlayer = this.table.players[index];
             //this.dicitions = this.enclosureController.getPlayersDicisions(this.currentPlayer)//未作成のメソッド//プレイヤーが置ける場所のみを配列か連結リストかで返す。
@@ -194,7 +194,7 @@ export default Vue.extend({
             //そこにあるもの以外を置けなくしたりする
             //turnChange内に書くのではなくputStoneから呼び出す？
         },
-        updateScore: function () {
+        updateScore: function ():void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
             const nextPlayer = this.table.players[nextPlayerIndex];
             this.currentPlayer.score += this.flipCounter;
