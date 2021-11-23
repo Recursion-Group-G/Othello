@@ -2,9 +2,9 @@ import Square from '@/models/square';
 import Enclosure from '@/models/enclosure';
 
 class EnclosureController {
-    private head: Enclosure | null;
-    private tail: Enclosure | null;
-    private hashmap: { [key: string]: Enclosure };
+    public head: Enclosure | null;
+    public tail: Enclosure | null;
+    public hashmap: { [key: string]: Enclosure };
 
     public constructor() {
         this.head = null;
@@ -76,9 +76,7 @@ class EnclosureController {
     }
 
     //localStorageからのデータ復旧hashmap
-    public setHashMap(hashmap: {
-        [key: string]: Enclosure;
-    }): EnclosureController {
+    public setHashMap(hashmap: { [key: string]: Enclosure }): EnclosureController {
         this.hashmap = hashmap;
         return this;
     }

@@ -6,6 +6,7 @@ class Square {
     stone: Stone | null;
     isEmpty: boolean;
     id: string;
+    isAllowedToPlace: boolean;
 
     top: Square | null;
     right: Square | null;
@@ -22,6 +23,7 @@ class Square {
         this.stone = null;
         this.isEmpty = true;
         this.id = this.createId(point);
+        this.isAllowedToPlace = false;
 
         this.top = null;
         this.right = null;
