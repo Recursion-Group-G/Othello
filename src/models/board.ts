@@ -7,11 +7,7 @@ class Board {
     squares: Square[][];
     enclosureController: EnclosureController;
 
-    constructor(
-        size: Size,
-        squares: Square[][],
-        enclosureController: EnclosureController
-    ) {
+    constructor(size: Size, squares: Square[][], enclosureController: EnclosureController) {
         this.size = size;
         this.squares = squares;
         this.enclosureController = enclosureController;

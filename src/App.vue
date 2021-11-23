@@ -1,10 +1,7 @@
 <template>
     <v-app>
         <v-main>
-            <router-view
-                @playersData="setPlayer"
-                :table="this.table"
-            ></router-view>
+            <router-view @playersData="setPlayer" :table="this.table"></router-view>
         </v-main>
     </v-app>
 </template>

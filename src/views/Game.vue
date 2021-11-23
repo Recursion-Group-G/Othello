@@ -21,10 +21,7 @@
                                 class="board-square"
                                 @click="clickToFlip(`${square.point.x}-${square.point.y}`)"
                             >
-                                <Stone
-                                    :stone="square.stone"
-                                    :isVisible="false"
-                                />
+                                <Stone :stone="square.stone" :isVisible="false" />
                             </div>
                         </div>
                     </div>
@@ -89,11 +86,7 @@ export default Vue.extend({
     methods: {
         validateTable: function () {
             //必要な情報がnullであればトップページへ画面遷移
-            if (
-                this.table == null ||
-                this.table.players == null ||
-                this.table.board == null
-            )
+            if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
         getLocalStorage: function () {
@@ -104,10 +97,7 @@ export default Vue.extend({
         validateLocalStorage: function () {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
-                if (
-                    !this.localStorageTable.players ||
-                    !this.localStorageTable.board
-                )
+                if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
         },

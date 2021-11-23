@@ -63,7 +63,7 @@ const config: Config = {
         topRight: 'topRight',
         bottomLeft: 'bottomLeft',
         bottomRight: 'bottomRight',
-    }
+    },
 };
 
 export default config;

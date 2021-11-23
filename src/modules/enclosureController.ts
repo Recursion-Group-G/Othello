@@ -76,9 +76,7 @@ class EnclosureController {
     }
 
     //localStorageからのデータ復旧hashmap
-    public setHashMap(hashmap: {
-        [key: string]: Enclosure;
-    }): EnclosureController {
+    public setHashMap(hashmap: { [key: string]: Enclosure }): EnclosureController {
         this.hashmap = hashmap;
         return this;
     }
