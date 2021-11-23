@@ -2,7 +2,7 @@
     <div class="v-content">
         <v-container class="d-flex justify-center text-center mt-5">
             <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{k.score}}</h2>
+            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
         </v-container>
 
         <v-container class="board">
@@ -32,13 +32,13 @@
         <v-container>
             <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
                 <v-col v-for="k in table.players" :key="k.name">
-                    <h2 class="player-font">{{ k.name }}: {{k.score}}</h2>
+                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">{{ table.players[0].name }}: {{k.score}}</h2>
+                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
         </v-container>

@@ -7,7 +7,7 @@ import EnclosureController from '/enclosureController';
 class BoardBuilder {
     private size: Size;
     private squares: Square[][];
-    private enclosureController: EnclosureController | null ;
+    private enclosureController: EnclosureController | null;
 
     public constructor() {
         this.size = { x: 0, y: 0 };
@@ -25,7 +25,7 @@ class BoardBuilder {
         return this;
     }
 
-    public setEnclosureController(enclosureController: EnclosureController): BoardBuilder{
+    public setEnclosureController(enclosureController: EnclosureController): BoardBuilder {
         this.enclosureController = enclosureController;
         return this;
     }
