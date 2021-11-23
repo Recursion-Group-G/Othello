@@ -2,6 +2,7 @@ import Square from './square';
 import Size from '../interfaces/size';
 import EnclosureController from '../modules/enclosureController';
 
+
 class Board {
     size: Size;
     squares: Square[][];
