@@ -59,6 +59,9 @@ import StoneView from '@/components/Stone.vue';
 import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
+import checkAllowedSquares from '@/modules/checkAllowedSquares';
+import EnclosureController from '@/modules/enclosureController';
+import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -82,6 +85,8 @@ export default Vue.extend({
         this.saveLocalStorage();
         let board = this.createBoard();
         this.setBoardOnTable(board);
+        this.currentPlayer = this.table.players[0];
+        this.initialGame();
     },
     computed: {
         //スマホの画面判定
@@ -122,10 +127,38 @@ export default Vue.extend({
             });
             boardBuilder.createSquares();
             boardBuilder.linkSquaresNode();
+            boardBuilder.setEnclosureController(new EnclosureController());
             return boardBuilder.build();
         },
         setBoardOnTable(board: Board):void {
             this.table.board = board;
+        },
+        initialGame():void {
+            //石を4個最初に置く
+            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
+            //isEmptyをtrueに変更
+            this.table.board.squares[3][3].isEmpty = false;
+            this.table.board.squares[4][4].isEmpty = false;
+            this.table.board.squares[3][4].isEmpty = false;
+            this.table.board.squares[4][3].isEmpty = false;
+            //初期のEnclosure追加
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][3]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][4]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][3]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][4]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][5]);
+            //EnclosureControllerの中で石が置ける場所を確認
+            CheckAllowedSquares.searchAllowedSquares(this.currentPlayer, this.table.board.enclosureController);
         },
         putStone: function (square: Square):void {
             square.stone = new Stone(this.currentPlayer.color);
