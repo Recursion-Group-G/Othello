@@ -54,6 +54,16 @@ const config: Config = {
     localStorage: {
         table: 'table',
     },
+    direction: {
+        top: 'top',
+        left: 'left',
+        right: 'right',
+        bottom: 'bottom',
+        topLeft: 'topLeft',
+        topRight: 'topRight',
+        bottomLeft: 'bottomLeft',
+        bottomRight: 'bottomRight',
+    },
 };
 
 export default config;
