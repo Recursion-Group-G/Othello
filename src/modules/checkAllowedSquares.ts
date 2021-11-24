@@ -87,45 +87,54 @@ class CheckAllowedSquares {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.top;
                 }
+                break;
             }
             case Config.direction.left: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.left;
                 }
+                break;
             }
             case Config.direction.right: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.right;
                 }
+                break;
             }
             case Config.direction.bottom: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottom;
                 }
+                break;
             }
             case Config.direction.topLeft: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topLeft;
                 }
+                break;
             }
             case Config.direction.topRight: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topRight;
                 }
+                break;
             }
             case Config.direction.bottomLeft: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomLeft;
                 }
+                break;
             }
             case Config.direction.bottomRight: {
                 while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomRight;
                 }
+                break;
             }
             //もし合致する色がないときはメッセージ
             default:
                 console.log('The direction should be in Config.direction.');
+                break;
         }
 
         //石の色がPlayerの色と同じ場合は石を置けるのでその方向をtrueにする
