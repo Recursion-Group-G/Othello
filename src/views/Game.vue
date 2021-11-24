@@ -59,7 +59,7 @@ import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
 import Stone from '@/components/Stone.vue';
-import LocalStorage from '../modules/localStrage';
+import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
