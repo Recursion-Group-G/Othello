@@ -84,42 +84,42 @@ class CheckAllowedSquares {
         //方向を判断して石の色が同じか、石が置かれていない場所まで探索
         switch (direction) {
             case Config.direction.top: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.top;
                 }
             }
             case Config.direction.left: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.left;
                 }
             }
             case Config.direction.right: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.right;
                 }
             }
             case Config.direction.bottom: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottom;
                 }
             }
             case Config.direction.topLeft: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topLeft;
                 }
             }
             case Config.direction.topRight: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topRight;
                 }
             }
             case Config.direction.bottomLeft: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomLeft;
                 }
             }
             case Config.direction.bottomRight: {
-                while (curr != null && (isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomRight;
                 }
             }
@@ -129,7 +129,7 @@ class CheckAllowedSquares {
         }
 
         //石の色がPlayerの色と同じ場合は石を置けるのでその方向をtrueにする
-        if (curr != null && isSameColor(curr)) {
+        if (curr != null && square != null && isSameColor(curr) && !isSameColor(square)) {
             this.allDirections[direction] = true;
         }
     }
