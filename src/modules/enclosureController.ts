@@ -28,6 +28,26 @@ class EnclosureController {
         this.hashmap[square.id] = enclosure;
     }
 
+    public addEnclosures(square: Square): void {
+        const directions = [
+            'top',
+            'right',
+            'bottom',
+            'left',
+            'topRight',
+            'topLeft',
+            'bottomRight',
+            'bottomLeft',
+        ];
+        for (let i = 0; i < directions.length; i++) {
+            const target = square[directions[i]];
+            if (target !== null && target.stone === null && !this.hashmap[target.id]) {
+                this.addEnclosure(target);
+            }
+            this.removeEnclosure(square);
+        }
+    }
+
     public removeEnclosure(square: Square): void {
         if (!this.hashmap[square.id]) return;
         const enclosure: Enclosure = this.hashmap[square.id];

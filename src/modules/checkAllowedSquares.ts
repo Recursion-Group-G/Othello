@@ -39,6 +39,7 @@ class CheckAllowedSquares {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
             }
             iterator = iterator.next;
+            this.resetAllDirections();
         }
     }
 
@@ -84,49 +85,49 @@ class CheckAllowedSquares {
         //方向を判断して石の色が同じか、石が置かれていない場所まで探索
         switch (direction) {
             case Config.direction.top: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.top;
                 }
                 break;
             }
             case Config.direction.left: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null &&  (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.left;
                 }
                 break;
             }
             case Config.direction.right: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.right;
                 }
                 break;
             }
             case Config.direction.bottom: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottom;
                 }
                 break;
             }
             case Config.direction.topLeft: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topLeft;
                 }
                 break;
             }
             case Config.direction.topRight: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.topRight;
                 }
                 break;
             }
             case Config.direction.bottomLeft: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomLeft;
                 }
                 break;
             }
             case Config.direction.bottomRight: {
-                while (curr != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+                while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
                     curr = curr.bottomRight;
                 }
                 break;
@@ -166,6 +167,15 @@ class CheckAllowedSquares {
             }
             iterator = iterator.next;
         }
+        //allDirectionsの初期化
+        for (const key in this.allDirections) {
+            if (this.allDirections[key]) {
+                this.allDirections[key] = false;
+            }
+        }
+    }
+
+    public static resetAllDirections() {
         //allDirectionsの初期化
         for (const key in this.allDirections) {
             if (this.allDirections[key]) {
