@@ -39,7 +39,8 @@ class CheckAllowedSquares {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
             }
             iterator = iterator.next;
-            this.resetAfterChangingIterator();
+            //iteratorが次のポインタに移動した後、allDirectionsをリセット
+            this.resetAllDirections();
         }
     }
 
@@ -199,16 +200,10 @@ class CheckAllowedSquares {
             }
             iterator = iterator.next;
         }
-        //allDirectionsの初期化
-        for (const key in this.allDirections) {
-            if (this.allDirections[key]) {
-                this.allDirections[key] = false;
-            }
-        }
+        this.resetAllDirections();
     }
 
-    //iteratorが次のポインタに移動した後、allDirectionsをリセット
-    private static resetAfterChangingIterator(): void {
+    private static resetAllDirections(): void {
         //allDirectionsの初期化
         for (const key in this.allDirections) {
             if (this.allDirections[key]) {
