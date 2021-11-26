@@ -54,6 +54,7 @@ import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
 import Stone from '@/components/Stone.vue';
+import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
@@ -65,11 +66,11 @@ export default Vue.extend({
         localStorageTable: {} as Table,
     }),
     created: function () {
-        this.getLocalStorage();
+        this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        this.saveLocalStorage();
+        LocalStorage.saveTable(this.table);
         let board = this.createBoard();
         this.setBoardOnTable(board);
     },
@@ -85,24 +86,12 @@ export default Vue.extend({
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
-        getLocalStorage: function () {
-            let jsonTable = localStorage.getItem(Config.localStorage.table);
-            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
-            console.log(this.localStorageTable);
-        },
         validateLocalStorage: function () {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
-        },
-        saveLocalStorage: function () {
-            let tableJsonDecoded = JSON.stringify(this.table);
-            localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
-        },
-        clearLocalStorage: function () {
-            localStorage.clear();
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
