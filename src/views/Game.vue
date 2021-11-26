@@ -185,51 +185,56 @@ export default Vue.extend({
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
-            const directionCache: { [key: string]: boolean } = CheckAllowedSquares.returnDirectionCache();
+            const directionCache: {
+                [key: string]: boolean;
+            } = CheckAllowedSquares.returnDirectionCache();
             for (let direction in directionCache) {
-                if(directionCache.direction) {
+                if (directionCache.direction) {
                     switch (direction) {
                         case Config.direction.top: {
-                            this.flipOneDirection(square, "top");
+                            this.flipOneDirection(square, 'top');
                             break;
                         }
                         case Config.direction.left: {
-                            this.flipOneDirection(square, "left");
+                            this.flipOneDirection(square, 'left');
                             break;
                         }
                         case Config.direction.right: {
-                            this.flipOneDirection(square, "right");
+                            this.flipOneDirection(square, 'right');
                             break;
                         }
                         case Config.direction.bottom: {
-                            this.flipOneDirection(square, "bottom");
+                            this.flipOneDirection(square, 'bottom');
                             break;
                         }
                         case Config.direction.topLeft: {
-                            this.flipOneDirection(square, "topLeft");
+                            this.flipOneDirection(square, 'topLeft');
                             break;
                         }
                         case Config.direction.topRight: {
-                            this.flipOneDirection(square, "topRight");
+                            this.flipOneDirection(square, 'topRight');
                             break;
                         }
                         case Config.direction.bottomLeft: {
-                            this.flipOneDirection(square, "bottomLeft");
+                            this.flipOneDirection(square, 'bottomLeft');
                             break;
                         }
                         case Config.direction.bottomRight: {
-                            this.flipOneDirection(square, "bottomRight");
+                            this.flipOneDirection(square, 'bottomRight');
                             break;
                         }
                     }
                 }
-
             }
         },
         flipOneDirection(square: Square, direction: keyof Direction) {
-          let iterator: Square | null = square[direction];
+            let iterator: Square | null = square[direction];
             //currentPlayerと違う色が続くまで石をひっくり返し続ける
-            while(iterator !== null && iterator.stone !== null && iterator.stone.color.id !== this.currentPlayer.color.id){
+            while (
+                iterator !== null &&
+                iterator.stone !== null &&
+                iterator.stone.color.id !== this.currentPlayer.color.id
+            ) {
                 this.flipStoneAnimation(iterator);
                 iterator.stone.color = this.currentPlayer.color;
                 this.flipCounter += 1;

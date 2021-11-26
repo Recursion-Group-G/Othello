@@ -1,4 +1,4 @@
-import Square from "@/models/square";
+import Square from '@/models/square';
 
 interface direction {
     top: Square | null;
