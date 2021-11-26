@@ -2,17 +2,16 @@ import Square from '../models/square';
 import Board from '../models/board';
 import EnclosureController from './enclosureController';
 import Size from '../interfaces/size';
-import EnclosureController from '/enclosureController';
 
 class BoardBuilder {
     private size: Size;
     private squares: Square[][];
-    private enclosureController: EnclosureController | null;
+    private enclosureController: EnclosureController;
 
     public constructor() {
         this.size = { x: 0, y: 0 };
         this.squares = [];
-        this.enclosureController = null;
+        this.enclosureController = new EnclosureController();
     }
 
     public setSize(size: Size): BoardBuilder {
@@ -105,7 +104,7 @@ class BoardBuilder {
     public reset(): BoardBuilder {
         this.size = { x: 0, y: 0 };
         this.squares = [];
-        this.enclosureController = null;
+        this.enclosureController = new EnclosureController();
         return this;
     }
 }
