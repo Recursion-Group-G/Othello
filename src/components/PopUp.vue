@@ -3,7 +3,7 @@
         <div id="popup" v-show="isVisible">
             <v-card id="content" class="d-flex justify-center">
                 <div>
-                    <h1 class="text-center">XX is Winner</h1>
+                    <h1 class="text-center">`${this.returnWinner()}`</h1>
 
                     <v-row>
                         <v-col cols="12" sm="6">
@@ -41,6 +41,13 @@ export default Vue.extend({
     data: () => ({
         isVisible: true,
     }),
+
+    props: {
+        table: {
+            type: Object,
+        },
+    },
+
     methods: {
         openModal(): void {
             this.isVisible = true;
@@ -48,6 +55,19 @@ export default Vue.extend({
         closeModal(): void {
             this.isVisible = false;
         },
+        returnWinner(): string {
+            if (this.table.players[0].score === this.table.players[1].score) {
+                return 'Tie Breaker';
+            } else {
+                return this.table.players[0].score > this.table.players[1].score
+                    ? this.table.players[0].name + ' is Winner'
+                    : this.table.players[1].name + ' is Winner';
+            }
+        },
+ 
+    },
+
+    computed: {
     },
 });
 </script>
