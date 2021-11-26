@@ -3,30 +3,31 @@
         <div id="popup" v-show="isVisible">
             <v-card id="content" class="d-flex justify-center">
                 <div>
-                    <h1 class="text-center">`${this.returnWinner()}`</h1>
-
+                    <!--test-->
+                    <h1 class="text-center"> test </h1>
+                    <!--
+                    <h1 class="text-center">{{this.returnWinner()}}</h1>
+                    -->
                     <v-row>
                         <v-col cols="12" sm="6">
-                            <router-link to="/top">
-                                <v-btn
-                                    class="deep-purple accent-3 white--text"
-                                    elevation="24"
-                                    block
-                                >
-                                    Top
-                                </v-btn>
-                            </router-link>
+                            <v-btn
+                                class="deep-purple accent-3 white--text"
+                                elevation="24"
+                                block
+                                @click="redirectTop()"
+                            >
+                                Top
+                            </v-btn>
                         </v-col>
                         <v-col cols="12" sm="6">
-                            <router-link to="/game">
-                                <v-btn
-                                    class="deep-purple accent-3 white--text"
-                                    elevation="24"
-                                    block
-                                >
-                                    Retry
-                                </v-btn>
-                            </router-link>
+                            <v-btn
+                                class="deep-purple accent-3 white--text"
+                                elevation="24"
+                                block
+                                @click="redirectGame()"
+                            >
+                                Retry
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </div>
@@ -39,7 +40,7 @@
 import Vue from 'vue';
 export default Vue.extend({
     name: 'PopUp',
-    
+
     data: () => ({
         isVisible: true,
     }),
@@ -66,7 +67,13 @@ export default Vue.extend({
                     : this.table.players[1].name + ' is Winner';
             }
         },
- 
+        redirectTop(): void {
+            this.$router.push('/');
+        },
+
+        redirectGame(): void {
+            this.$router.push('/game');
+        },
     },
 
     computed: {

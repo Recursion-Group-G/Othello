@@ -42,7 +42,16 @@
                 </v-col>
             </v-row>
         </v-container>
-        <PopUp :table=this.table />
+        <PopUp :table=this.table v-if="isGameFinished" />
+        <!-- for test-->
+        <div>
+            <v-btn
+                tile
+                @click="isFinished = true"
+            >
+            test
+            </v-btn>
+        </div>
     </div>
 </template>
 
@@ -66,6 +75,8 @@ export default Vue.extend({
     },
     data: () => ({
         localStorageTable: {} as Table,
+        //test
+        isFinished: false,
     }),
     created: function () {
         this.getLocalStorage();
@@ -82,7 +93,7 @@ export default Vue.extend({
             return this.$vuetify.breakpoint.name === 'xs';
         },
         isGameFinished(): boolean {
-            return true;
+            return this.isFinished;
         }
     },
     methods: {
