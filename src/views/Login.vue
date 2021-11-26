@@ -49,6 +49,7 @@
         </v-row>
         <!-- デバッグ用 -->
         <!-- <button @click="log()">logggg</button> -->
+        <PopUp :table=this.table />
     </div>
 </template>
 <script lang="ts">
@@ -56,9 +57,15 @@ import Vue from 'vue';
 import Player from '../models/player';
 import Config from '../config';
 import Color from '../interfaces/color';
+import PopUp from '../components/PopUp.vue'
 
 export default Vue.extend({
     name: 'Login',
+    
+    components: {
+        PopUp,
+    },
+
     data() {
         return {
             Config: Config,
@@ -141,6 +148,9 @@ export default Vue.extend({
         isPvPMode(): boolean {
             return this.selectedMode === Config.modes.PvP;
         },
+        isGameFinished(): boolean {
+            return true;
+        }
     },
 });
 </script>
