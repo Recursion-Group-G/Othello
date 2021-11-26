@@ -42,6 +42,7 @@
                 </v-col>
             </v-row>
         </v-container>
+        <PopUp :table=this.table />
     </div>
 </template>
 
@@ -54,12 +55,14 @@ import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
 import Stone from '@/components/Stone.vue';
+import PopUp from '../components/PopUp.vue'
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
         Stone,
+        PopUp,
     },
     data: () => ({
         localStorageTable: {} as Table,
@@ -78,6 +81,9 @@ export default Vue.extend({
         isXs() {
             return this.$vuetify.breakpoint.name === 'xs';
         },
+        isGameFinished(): boolean {
+            return true;
+        }
     },
     methods: {
         validateTable: function () {
