@@ -10,6 +10,10 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
+                    <div>
+                        <!-- テスト表示 -->
+                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                    </div>
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -94,6 +98,10 @@ export default Vue.extend({
         //スマホの画面判定
         isXs() {
             return this.$vuetify.breakpoint.name === 'xs';
+        },
+        //プレイヤーターンの色テスト表示
+        currentPlayerColor(): string {
+            return this.currentPlayer.color.id === 0 ? 'Black' : 'White';
         },
     },
     methods: {
@@ -189,56 +197,18 @@ export default Vue.extend({
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
-            /*
-            const directionCache: {
-                [key: string]: boolean;
-            } = CheckAllowedSquares.returnDirectionCache();
-            */
-            if (square.allowedDirections === undefined) return;
+            if (square.allowedDirections === undefined) return; //エラー回避
             let directionCache: AllowedDirections = square.allowedDirections;
 
             for (let direction in directionCache.allDirections) {
                 if (directionCache.allDirections[direction]) {
-                    switch (direction) {
-                        case Config.direction.top: {
-                            this.flipOneDirection(square, 'top');
-                            break;
-                        }
-                        case Config.direction.left: {
-                            this.flipOneDirection(square, 'left');
-                            break;
-                        }
-                        case Config.direction.right: {
-                            this.flipOneDirection(square, 'right');
-                            break;
-                        }
-                        case Config.direction.bottom: {
-                            this.flipOneDirection(square, 'bottom');
-                            break;
-                        }
-                        case Config.direction.topLeft: {
-                            this.flipOneDirection(square, 'topLeft');
-                            break;
-                        }
-                        case Config.direction.topRight: {
-                            this.flipOneDirection(square, 'topRight');
-                            break;
-                        }
-                        case Config.direction.bottomLeft: {
-                            this.flipOneDirection(square, 'bottomLeft');
-                            break;
-                        }
-                        case Config.direction.bottomRight: {
-                            this.flipOneDirection(square, 'bottomRight');
-                            break;
-                        }
-                    }
+                    this.flipOneDirection(square, direction as keyof Direction);
                 }
             }
         },
+
         flipOneDirection(square: Square, direction: keyof Direction) {
             let iterator: Square | null = square[direction];
-            const stringDirection: string = direction;
             //currentPlayerと違う色が続くまで石をひっくり返し続ける
             while (
                 iterator !== null &&
@@ -247,41 +217,7 @@ export default Vue.extend({
             ) {
                 this.flipStone(iterator, this.currentPlayer.color);
                 this.flipCounter += 1;
-
-                switch (stringDirection) {
-                    case Config.direction.top: {
-                        iterator = iterator.top;
-                        break;
-                    }
-                    case Config.direction.left: {
-                        iterator = iterator.left;
-                        break;
-                    }
-                    case Config.direction.right: {
-                        iterator = iterator.right;
-                        break;
-                    }
-                    case Config.direction.bottom: {
-                        iterator = iterator.bottom;
-                        break;
-                    }
-                    case Config.direction.topLeft: {
-                        iterator = iterator.topLeft;
-                        break;
-                    }
-                    case Config.direction.topRight: {
-                        iterator = iterator.topRight;
-                        break;
-                    }
-                    case Config.direction.bottomLeft: {
-                        iterator = iterator.bottomLeft;
-                        break;
-                    }
-                    case Config.direction.bottomRight: {
-                        iterator = iterator.bottomRight;
-                        break;
-                    }
-                }
+                iterator = iterator[direction];
             }
         },
         flipStone: async function (square: Square, toColor: Color): Promise<void> {
