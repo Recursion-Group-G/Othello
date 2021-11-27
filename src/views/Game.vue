@@ -9,6 +9,10 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
+                    <div>
+                        <!-- テスト表示 -->
+                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                    </div>
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -18,9 +22,9 @@
                             <div
                                 :id="`${square.point.x}-${square.point.y}`"
                                 class="board-square"
-                                @click="clickToFlip(`${square.point.x}-${square.point.y}`)"
+                                @click="putStone(square)"
                             >
-                                <Stone :stone="square.stone" :isVisible="false" />
+                                <StoneView :stone="square.stone" v-if="square.stone" />
                             </div>
                         </div>
                     </div>
@@ -63,30 +67,43 @@ import Config from '../config';
 import Table from '@/models/table';
 import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
-import Stone from '@/components/Stone.vue';
 import PopUp from '../components/PopUp.vue'
-import LocalStorage from '../modules/localStorage';
+import StoneView from '@/components/Stone.vue';
+import Stone from '../models/stone';
+import Square from '@/models/square';
+import Player from '@/models/player';
+import EnclosureController from '@/modules/enclosureController';
+import CheckAllowedSquares from '@/modules/checkAllowedSquares';
+import Direction from '@/interfaces/direction';
+import AllowedDirections from '@/models/allowedDirections';
+// import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
-        Stone,
+        StoneView,
         PopUp,
     },
     data: () => ({
+        //仮のPlayer配列
+        players: ['Player1', 'Player2'],
+        currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
+        flipCounter: 0 as number,
         //test
         isFinished: false,
     }),
     created: function () {
-        this.localStorageTable = LocalStorage.fetchTable();
+        this.localStorageTable = localStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        LocalStorage.saveTable(this.table);
+        localStorage.saveTable(this.table);
         let board = this.createBoard();
         this.setBoardOnTable(board);
+        this.currentPlayer = this.table.players[0];
+        this.initialGame();
     },
     computed: {
         //スマホの画面判定
@@ -95,20 +112,36 @@ export default Vue.extend({
         },
         isGameFinished(): boolean {
             return this.isFinished;
-        }
+        },
+        //プレイヤーターンの色テスト表示
+        currentPlayerColor(): string {
+            return this.currentPlayer.color.id === 0 ? 'Black' : 'White';
+        },
     },
     methods: {
-        validateTable: function () {
+        validateTable: function (): void {
             //必要な情報がnullであればトップページへ画面遷移
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
-        validateLocalStorage: function () {
+        getLocalStorage: function (): void {
+            let jsonTable = localStorage.getItem(Config.localStorage.table);
+            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
+            console.log(this.localStorageTable);
+        },
+        validateLocalStorage: function (): void {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
+        },
+        saveLocalStorage: function (): void {
+            let tableJsonDecoded = JSON.stringify(this.table);
+            localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
+        },
+        clearLocalStorage: function (): void {
+            localStorage.clear();
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
@@ -118,16 +151,115 @@ export default Vue.extend({
             });
             boardBuilder.createSquares();
             boardBuilder.linkSquaresNode();
+            boardBuilder.setEnclosureController(new EnclosureController());
             return boardBuilder.build();
         },
-        setBoardOnTable(board: Board) {
+        setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
-        clickToFlip: async function (id: string) {
-            //とりあえず黒から白へ
-            const animation = new FlipAnimation(id, '#ffffff', '#000000');
+        initialGame(): void {
+            //石を4個最初に置く
+            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
+            //isEmptyをtrueに変更
+            this.table.board.squares[3][3].isEmpty = false;
+            this.table.board.squares[4][4].isEmpty = false;
+            this.table.board.squares[3][4].isEmpty = false;
+            this.table.board.squares[4][3].isEmpty = false;
+            //初期のEnclosure追加
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][3]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][4]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][5]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][2]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][3]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][4]);
+            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][5]);
+            //EnclosureControllerの中で石が置ける場所を確認
+            CheckAllowedSquares.searchAllowedSquares(
+                this.currentPlayer,
+                this.table.board.enclosureController
+            );
+            console.log('stop');
+        },
+        putStone: function (square: Square): void {
+            //石が置ける場所をクリックした場合
+            if (square.isAllowedToPlace) {
+                square.stone = new Stone(this.currentPlayer.color);
+                square.isAllowedToPlace = false;
+                square.isEmpty = false;
+                this.flipAllDirections(square);
+                this.currentPlayer.score += 1;
+                this.updateScore();
+                this.table.turnCounter += 1;
+                this.turnChange();
+                //Enclosureを更新
+                this.table.board.enclosureController.addEnclosures(square);
+                CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
+                CheckAllowedSquares.searchAllowedSquares(
+                    this.currentPlayer,
+                    this.table.board.enclosureController
+                );
+            }
+        },
+        flipAllDirections(square: Square): void {
+            //Squareがひっくり返せる方向を取得
+            if (square.allowedDirections === undefined) return; //エラー回避
+            let directionCache: AllowedDirections = square.allowedDirections;
+
+            for (let direction in directionCache.allDirections) {
+                if (directionCache.allDirections[direction]) {
+                    this.flipOneDirection(square, direction as keyof Direction);
+                }
+            }
+        },
+
+        flipOneDirection(square: Square, direction: keyof Direction) {
+            let iterator: Square | null = square[direction];
+            //currentPlayerと違う色が続くまで石をひっくり返し続ける
+            while (
+                iterator !== null &&
+                iterator.stone !== null &&
+                iterator.stone.color.id !== this.currentPlayer.color.id
+            ) {
+                this.flipStoneAnimation(iterator);
+                iterator.stone.color = this.currentPlayer.color;
+                this.flipCounter += 1;
+                iterator = iterator[direction];
+            }
+        },
+
+        flipStoneAnimation: async function (square: Square): Promise<void> {
+            //石をひっくり返すアニメーション
+            if (square.stone === null) return;
+            const animation = new FlipAnimation(
+                `${square.point.x}-${square.point.y}`,
+                square.stone.color.code,
+                this.currentPlayer.color.code
+            );
             await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
             animation.remove();
+        },
+        turnChange: function (): void {
+            let index = this.table.turnCounter % this.table.players.length;
+            this.currentPlayer = this.table.players[index];
+            //this.dicitions = this.enclosureController.getPlayersDicisions(this.currentPlayer)//未作成のメソッド//プレイヤーが置ける場所のみを配列か連結リストかで返す。
+            //あとはプレイヤーが置ける場所を変えたり
+            //そこにあるもの以外を置けなくしたりする
+            //turnChange内に書くのではなくputStoneから呼び出す？
+        },
+        updateScore: function (): void {
+            const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
+            const nextPlayer = this.table.players[nextPlayerIndex];
+            this.currentPlayer.score += this.flipCounter;
+            nextPlayer.score -= this.flipCounter;
+            this.flipCounter = 0;
         },
     },
 });
