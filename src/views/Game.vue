@@ -63,6 +63,7 @@ import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
+import Color from '@/interfaces/color'
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -136,6 +137,7 @@ export default Vue.extend({
         },
         initialGame(): void {
             //石を4個最初に置く
+            console.log('start')
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
@@ -243,8 +245,7 @@ export default Vue.extend({
                 iterator.stone !== null &&
                 iterator.stone.color.id !== this.currentPlayer.color.id
             ) {
-                this.flipStoneAnimation(iterator);
-                iterator.stone.color = this.currentPlayer.color;
+                this.flipStone(iterator, this.currentPlayer.color);
                 this.flipCounter += 1;
 
                 switch (stringDirection) {
@@ -283,55 +284,20 @@ export default Vue.extend({
                 }
             }
         },
-        // flipStonesAllDirections: function (square: Square): void {
-        //     //1方向ずつ石をひっくり返す
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'top');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'right');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottom');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'left');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'topRight');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'topLeft');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottomRight');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
-        // },
-        // flipStonesOneDirections(square: Square, direction: keyof Square): number {
-        //     //1方向の石をひっくり返す
-        //     let flipSquare: Square[] = [];
-        //     let searchSquare: Square | null = square[direction];
-        //     if (square === null || square.stone === null) return 0;
-        //     while (
-        //         searchSquare !== null &&
-        //         searchSquare.stone !== null &&
-        //         searchSquare.stone.color.id !== square.stone.color.id
-        //     ) {
-        //         flipSquare.push(searchSquare);
-        //         searchSquare = searchSquare[direction];
-        //     }
-
-        //     if (
-        //         flipSquare.length > 0 &&
-        //         searchSquare !== null &&
-        //         searchSquare.stone !== null &&
-        //         searchSquare.stone.color.id === square.stone.color.id
-        //     ) {
-        //         for (let i = 0; i < flipSquare.length; i++) {
-        //             this.flipStoneAnimation(flipSquare[i]);
-        //             flipSquare[i].stone.color = square.stone.color;
-        //         }
-        //     } else flipSquare = [];
-
-        //     return flipSquare.length;
-        // },
-        flipStoneAnimation: async function (square: Square): Promise<void> {
-            //石をひっくり返すアニメーション
+        flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
             const animation = new FlipAnimation(
                 `${square.point.x}-${square.point.y}`,
                 square.stone.color.code,
                 this.currentPlayer.color.code
             );
-            await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
+            const stone = square.stone
+            square.stone = null
+            await animation.flip();
             animation.remove();
+            square.stone = stone
+
+            square.stone.color = toColor
         },
         turnChange: function (): void {
             let index = this.table.turnCounter % this.table.players.length;
