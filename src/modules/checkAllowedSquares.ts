@@ -4,6 +4,7 @@ import EnclosureController from './enclosureController';
 import Enclosure from '@/models/enclosure';
 import Config from '@/config';
 import AllowedDirections from '@/models/allowedDirections';
+import Direction from '@/interfaces/direction';
 
 /*
 checkAllowedSquares
@@ -67,7 +68,11 @@ class CheckAllowedSquares {
         for (const direction in hashmap) {
             //isEmpty === falseの時にその方向を探索、場所を発見した時点で一方向を検索
             if (!hashmap[direction]?.isEmpty) {
-                this.checkOneDirection(hashmap[direction], direction, playerColor);
+                this.checkOneDirection(
+                    hashmap[direction],
+                    direction as keyof Direction,
+                    playerColor
+                );
             }
         }
     }
@@ -75,7 +80,7 @@ class CheckAllowedSquares {
     //1方向のみの検索
     private static checkOneDirection(
         square: Square | null,
-        direction: string,
+        direction: keyof Direction,
         playerColor: string
     ): void {
         let curr: Square | null = square;
@@ -88,92 +93,8 @@ class CheckAllowedSquares {
             return currentSquare.isEmpty;
         };
 
-        //方向を判断して石の色が同じか、石が置かれていない場所まで探索
-        switch (direction) {
-            case Config.direction.top: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.top;
-                }
-                break;
-            }
-            case Config.direction.left: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.left;
-                }
-                break;
-            }
-            case Config.direction.right: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.right;
-                }
-                break;
-            }
-            case Config.direction.bottom: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottom;
-                }
-                break;
-            }
-            case Config.direction.topLeft: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.topLeft;
-                }
-                break;
-            }
-            case Config.direction.topRight: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.topRight;
-                }
-                break;
-            }
-            case Config.direction.bottomLeft: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottomLeft;
-                }
-                break;
-            }
-            case Config.direction.bottomRight: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottomRight;
-                }
-                break;
-            }
-            //もし合致する色がないときはメッセージ
-            default:
-                console.log('The direction should be in Config.direction.');
-                break;
+        while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+            curr = curr[direction];
         }
 
         //石の色がPlayerの色と同じ場合は石を置けるのでその方向をtrueにする
