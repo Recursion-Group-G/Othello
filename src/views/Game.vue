@@ -18,6 +18,7 @@
                             <div
                                 :id="`${square.point.x}-${square.point.y}`"
                                 class="board-square"
+                                v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                                 @click="clickToFlip(`${square.point.x}-${square.point.y}`)"
                             >
                                 <Stone :stone="square.stone" :isVisible="false" />
@@ -131,13 +132,20 @@ export default Vue.extend({
     cursor: pointer;
     transition: all 0.2s;
     gap: 20px;
-    background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
     border-bottom: 6px rgba(40, 40, 40, 0.35) solid;
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
 
     position: relative;
+}
+
+.square-basicColor{
+    background-color: #09c15a;
+}
+
+.square-markColor{
+    background-color: #ffd700;
 }
 
 /* テスト用に一旦コメントアウト */
