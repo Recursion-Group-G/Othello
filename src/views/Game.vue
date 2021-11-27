@@ -62,6 +62,7 @@ import Player from '@/models/player';
 import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import Direction from '@/interfaces/direction';
+import AllowedDirections from '@/models/allowedDirections';
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -191,10 +192,11 @@ export default Vue.extend({
                 [key: string]: boolean;
             } = CheckAllowedSquares.returnDirectionCache();
             */
-            let directionCache: { [key: string]: boolean } = square.allowedDirections;
+            if (square.allowedDirections === undefined) return;
+            let directionCache: AllowedDirections = square.allowedDirections;
 
-            for (let direction in directionCache) {
-                if (directionCache.direction) {
+            for (let direction in directionCache.allDirections) {
+                if (directionCache.allDirections[direction]) {
                     switch (direction) {
                         case Config.direction.top: {
                             this.flipOneDirection(square, 'top');
@@ -234,6 +236,7 @@ export default Vue.extend({
         },
         flipOneDirection(square: Square, direction: keyof Direction) {
             let iterator: Square | null = square[direction];
+            const stringDirection: string = direction;
             //currentPlayerと違う色が続くまで石をひっくり返し続ける
             while (
                 iterator !== null &&
@@ -243,6 +246,41 @@ export default Vue.extend({
                 this.flipStoneAnimation(iterator);
                 iterator.stone.color = this.currentPlayer.color;
                 this.flipCounter += 1;
+
+                switch (stringDirection) {
+                    case Config.direction.top: {
+                        iterator = iterator.top;
+                        break;
+                    }
+                    case Config.direction.left: {
+                        iterator = iterator.left;
+                        break;
+                    }
+                    case Config.direction.right: {
+                        iterator = iterator.right;
+                        break;
+                    }
+                    case Config.direction.bottom: {
+                        iterator = iterator.bottom;
+                        break;
+                    }
+                    case Config.direction.topLeft: {
+                        iterator = iterator.topLeft;
+                        break;
+                    }
+                    case Config.direction.topRight: {
+                        iterator = iterator.topRight;
+                        break;
+                    }
+                    case Config.direction.bottomLeft: {
+                        iterator = iterator.bottomLeft;
+                        break;
+                    }
+                    case Config.direction.bottomRight: {
+                        iterator = iterator.bottomRight;
+                        break;
+                    }
+                }
             }
         },
         // flipStonesAllDirections: function (square: Square): void {

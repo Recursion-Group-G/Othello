@@ -39,7 +39,7 @@ class CheckAllowedSquares {
             if (!this.isSkipped()) {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
                 if (iterator.data != null) {
-                    const allDirections = this.allDirections;
+                    const allDirections = JSON.parse(JSON.stringify(this.allDirections));
                     iterator.data.allowedDirections = new AllowedDirections(allDirections);
                 }
             }
