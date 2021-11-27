@@ -70,6 +70,7 @@ export default Vue.extend({
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
+        this.table = this.localStorageTable;
         LocalStorage.saveTable(this.table);
         let board = this.createBoard();
         this.setBoardOnTable(board);
