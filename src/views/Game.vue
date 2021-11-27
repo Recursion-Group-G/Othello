@@ -67,6 +67,7 @@ import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
+import Color from '@/interfaces/color'
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -144,6 +145,7 @@ export default Vue.extend({
         },
         initialGame(): void {
             //石を4個最初に置く
+            console.log('start')
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
@@ -213,23 +215,25 @@ export default Vue.extend({
                 iterator.stone !== null &&
                 iterator.stone.color.id !== this.currentPlayer.color.id
             ) {
-                this.flipStoneAnimation(iterator);
-                iterator.stone.color = this.currentPlayer.color;
+                this.flipStone(iterator, this.currentPlayer.color);
                 this.flipCounter += 1;
                 iterator = iterator[direction];
             }
         },
-
-        flipStoneAnimation: async function (square: Square): Promise<void> {
-            //石をひっくり返すアニメーション
+        flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
             const animation = new FlipAnimation(
                 `${square.point.x}-${square.point.y}`,
                 square.stone.color.code,
                 this.currentPlayer.color.code
             );
-            await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
+            const stone = square.stone
+            square.stone = null
+            await animation.flip();
             animation.remove();
+            square.stone = stone
+
+            square.stone.color = toColor
         },
         turnChange: function (): void {
             let index = this.table.turnCounter % this.table.players.length;
