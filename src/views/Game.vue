@@ -71,6 +71,7 @@ export default Vue.extend({
         // this.validateLocalStorage();
         // this.validateTable();
         LocalStorage.saveTable(this.table);
+        this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
     },
@@ -92,6 +93,9 @@ export default Vue.extend({
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
+        },
+        setTable(table: Table) {
+            this.table = table;
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
