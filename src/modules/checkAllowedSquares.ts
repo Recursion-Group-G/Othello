@@ -102,7 +102,7 @@ class CheckAllowedSquares {
             this.allDirections[direction] = true;
         }
     }
-    
+
     public static isSquareAbleToPlace(): boolean {
         for (const key in this.allDirections) {
             if (this.allDirections[key]) return false;

@@ -13,6 +13,11 @@
                         <!-- テスト表示 -->
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
+                    <!-- PopUp test-->
+                    <div>
+                        <v-btn tile @click="isFinished = true"> PopUP test </v-btn>
+                    </div>
+
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -25,6 +30,7 @@
                                 @click="putStone(square)"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
+                                <Point v-if="square.isAllowedToPlace" />
                             </div>
                         </div>
                     </div>
@@ -46,16 +52,7 @@
                 </v-col>
             </v-row>
         </v-container>
-        <PopUp :table=this.table v-if="isGameFinished" />
-        <!-- for test-->
-        <div>
-            <v-btn
-                tile
-                @click="isFinished = true"
-            >
-            test
-            </v-btn>
-        </div>
+        <PopUp :table="this.table" @resetIsFinished="isFinished = false" v-if="isGameFinished" />
     </div>
 </template>
 
@@ -69,7 +66,7 @@ import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
 import AllowedDirections from '@/models/allowedDirections';
-import Enclosure from '@/models/enclosure'
+import Enclosure from '@/models/enclosure';
 
 import FlipAnimation from '@/modules/flipAnimation';
 import BoardBuilder from '../modules/boardBuilder';
@@ -79,8 +76,10 @@ import LocalStorage from '@/modules/localStorage';
 
 import Direction from '@/interfaces/direction';
 
-import PopUp from '../components/PopUp.vue'
+import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
+//仮
+import Point from '@/components/Point.vue';
 
 // import func from 'vue-temp/vue-editor-bridge';
 
@@ -90,6 +89,7 @@ export default Vue.extend({
     components: {
         StoneView,
         PopUp,
+        Point,
     },
     data: () => ({
         //仮のPlayer配列
@@ -163,7 +163,6 @@ export default Vue.extend({
         setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
-        
 
         initialGame(): void {
             //石を4個最初に置く
@@ -198,7 +197,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            //if (square.isAllowedToPlace) {
+            if (square.isAllowedToPlace) {
                 square.stone = new Stone(this.currentPlayer.color);
                 square.isAllowedToPlace = false;
                 square.isEmpty = false;
@@ -206,24 +205,12 @@ export default Vue.extend({
                 this.currentPlayer.score += 1;
                 this.updateScore();
                 this.table.turnCounter += 1;
-                
-
-                //プレイヤー全員がスキップしてたらゲーム終了
-                const skippedPlayers = this.table.players.filter((p: Player) => p.isSkipped === true);
-                const isFullToPlace = this.table.board.enclosureController.head == null;
-                if(skippedPlayers.length === this.table.players.length || isFullToPlace){
-                    this.isFinished = true;
-                    return;
-                } 
-
 
                 //Enclosureを更新
                 this.table.board.enclosureController.addEnclosures(square);
 
                 this.turnChange();
-                
-
-            // }
+            }
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
@@ -236,10 +223,10 @@ export default Vue.extend({
                 }
             }
         },
-        isTherePlaceToPut(enclosureController: EnclosureController): boolean {
+        isTherePlaceToPlace(enclosureController: EnclosureController): boolean {
             let iterator: Enclosure | null = enclosureController.head;
             while (iterator != null) {
-                if(iterator.data?.allowedDirections !== undefined){
+                if (iterator.data?.allowedDirections !== undefined) {
                     return true;
                 }
                 iterator = iterator.next;
@@ -280,7 +267,6 @@ export default Vue.extend({
             //そこにあるもの以外を置けなくしたりする
             //turnChange内に書くのではなくputStoneから呼び出す？
 
-
             //プレイヤーの置ける場所を確認
             CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
             CheckAllowedSquares.searchAllowedSquares(
@@ -289,12 +275,30 @@ export default Vue.extend({
             );
 
             //今のプレイヤーが置ける場所がなかったら、スキップ
-            if(!this.isTherePlaceToPut(this.table.board.enclosureController)){
+            if (!this.isTherePlaceToPlace(this.table.board.enclosureController)) {
                 this.currentPlayer.isSkipped = true;
-                this.turnChange()
-            } else { //そのプレイヤーがプレイできたら全員リセット
-                this.table.players.forEach((p: Player) => p.isSkipped = false);
-                console.log(this.table.players);
+                this.table.turnCounter += 1;
+
+                //プレイヤー全員がスキップしてたらゲーム終了
+                const skippedPlayers = this.table.players.filter(
+                    (p: Player) => p.isSkipped === true
+                );
+                const isFullToPlace = this.table.board.enclosureController.head == null;
+                const isScoreZero =
+                    this.table.players[0].score === 0 || this.table.players[1].score === 0;
+                if (
+                    skippedPlayers.length === this.table.players.length ||
+                    isFullToPlace ||
+                    isScoreZero
+                ) {
+                    this.isFinished = true;
+                    return;
+                }
+
+                this.turnChange();
+            } else {
+                //そのプレイヤーがプレイできたら全員リセット
+                this.table.players.forEach((p: Player) => (p.isSkipped = false));
             }
         },
         updateScore: function (): void {

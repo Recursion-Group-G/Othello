@@ -4,7 +4,7 @@
             <v-card id="content" class="d-flex justify-center">
                 <div>
                     <!--test-->
-                    <h1 class="text-center"> test </h1>
+                    <h1 class="text-center">{{ this.returnWinner() }}</h1>
                     <!--
                     <h1 class="text-center">{{this.returnWinner()}}</h1>
                     -->
@@ -68,16 +68,18 @@ export default Vue.extend({
             }
         },
         redirectTop(): void {
+            //ゲームリセット
             this.$router.push('/');
         },
 
         redirectGame(): void {
+            //ゲームリセット
+            this.$emit('resetIsFinished');
             this.$router.push('/game');
         },
     },
 
-    computed: {
-    },
+    computed: {},
 });
 </script>
 

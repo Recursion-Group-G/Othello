@@ -6,7 +6,7 @@ class Player {
     score: number;
     color: Color;
     isCpu: boolean;
-    isSkipped: boolean
+    isSkipped: boolean;
 
     constructor() {
         this.name = '';
