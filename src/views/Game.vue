@@ -198,14 +198,24 @@ export default Vue.extend({
                 this.currentPlayer.score += 1;
                 this.updateScore();
                 this.table.turnCounter += 1;
-                this.turnChange();
-                //Enclosureを更新
-                this.table.board.enclosureController.addEnclosures(square);
-                CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
-                CheckAllowedSquares.searchAllowedSquares(
-                    this.currentPlayer,
-                    this.table.board.enclosureController
-                );
+                
+                const skippedPlayers = this.table.players.filter((p: Player) => p.isSkipped === true);
+                if(skippedPlayers.length === this.table.players.length){
+
+                    this.isFinished = true;
+
+                } else {
+
+                    this.turnChange();
+                    //Enclosureを更新
+                    this.table.board.enclosureController.addEnclosures(square);
+                    CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
+                    CheckAllowedSquares.searchAllowedSquares(
+                        this.currentPlayer,
+                        this.table.board.enclosureController
+                    );
+                    
+                }
             }
         },
         flipAllDirections(square: Square): void {
