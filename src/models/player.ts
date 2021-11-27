@@ -6,12 +6,14 @@ class Player {
     score: number;
     color: Color;
     isCpu: boolean;
+    isSkipped: boolean
 
     constructor() {
         this.name = '';
         this.score = Config.player.initialScore;
         this.color = Config.stone.color.black;
         this.isCpu = false;
+        this.isSkipped = false;
     }
 }
 
