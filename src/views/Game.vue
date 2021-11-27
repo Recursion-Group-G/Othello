@@ -61,21 +61,27 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FlipAnimation from '@/modules/flipAnimation';
 import router from '../router';
 import Config from '../config';
 import Table from '@/models/table';
-import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
-import PopUp from '../components/PopUp.vue'
-import StoneView from '@/components/Stone.vue';
 import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
+import AllowedDirections from '@/models/allowedDirections';
+import Enclosure from '@/models/enclosure'
+
+import FlipAnimation from '@/modules/flipAnimation';
+import BoardBuilder from '../modules/boardBuilder';
 import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
+import LocalStorage from '@/modules/localStorage';
+
 import Direction from '@/interfaces/direction';
-import AllowedDirections from '@/models/allowedDirections';
+
+import PopUp from '../components/PopUp.vue'
+import StoneView from '@/components/Stone.vue';
+
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -95,11 +101,11 @@ export default Vue.extend({
         isFinished: false,
     }),
     created: function () {
-        this.localStorageTable = localStorage.fetchTable();
+        this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        localStorage.saveTable(this.table);
+        LocalStorage.saveTable(this.table);
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
@@ -157,6 +163,8 @@ export default Vue.extend({
         setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
+        
+
         initialGame(): void {
             //石を4個最初に置く
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
@@ -190,7 +198,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (square.isAllowedToPlace) {
+            //if (square.isAllowedToPlace) {
                 square.stone = new Stone(this.currentPlayer.color);
                 square.isAllowedToPlace = false;
                 square.isEmpty = false;
@@ -199,24 +207,23 @@ export default Vue.extend({
                 this.updateScore();
                 this.table.turnCounter += 1;
                 
+
+                //プレイヤー全員がスキップしてたらゲーム終了
                 const skippedPlayers = this.table.players.filter((p: Player) => p.isSkipped === true);
-                if(skippedPlayers.length === this.table.players.length){
-
+                const isFullToPlace = this.table.board.enclosureController.head == null;
+                if(skippedPlayers.length === this.table.players.length || isFullToPlace){
                     this.isFinished = true;
+                    return;
+                } 
 
-                } else {
 
-                    this.turnChange();
-                    //Enclosureを更新
-                    this.table.board.enclosureController.addEnclosures(square);
-                    CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
-                    CheckAllowedSquares.searchAllowedSquares(
-                        this.currentPlayer,
-                        this.table.board.enclosureController
-                    );
-                    
-                }
-            }
+                //Enclosureを更新
+                this.table.board.enclosureController.addEnclosures(square);
+
+                this.turnChange();
+                
+
+            // }
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
@@ -229,7 +236,16 @@ export default Vue.extend({
                 }
             }
         },
-
+        isTherePlaceToPut(enclosureController: EnclosureController): boolean {
+            let iterator: Enclosure | null = enclosureController.head;
+            while (iterator != null) {
+                if(iterator.data?.allowedDirections !== undefined){
+                    return true;
+                }
+                iterator = iterator.next;
+            }
+            return false;
+        },
         flipOneDirection(square: Square, direction: keyof Direction) {
             let iterator: Square | null = square[direction];
             //currentPlayerと違う色が続くまで石をひっくり返し続ける
@@ -263,6 +279,23 @@ export default Vue.extend({
             //あとはプレイヤーが置ける場所を変えたり
             //そこにあるもの以外を置けなくしたりする
             //turnChange内に書くのではなくputStoneから呼び出す？
+
+
+            //プレイヤーの置ける場所を確認
+            CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
+            CheckAllowedSquares.searchAllowedSquares(
+                this.currentPlayer,
+                this.table.board.enclosureController
+            );
+
+            //今のプレイヤーが置ける場所がなかったら、スキップ
+            if(!this.isTherePlaceToPut(this.table.board.enclosureController)){
+                this.currentPlayer.isSkipped = true;
+                this.turnChange()
+            } else { //そのプレイヤーがプレイできたら全員リセット
+                this.table.players.forEach((p: Player) => p.isSkipped = false);
+                console.log(this.table.players);
+            }
         },
         updateScore: function (): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
