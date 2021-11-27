@@ -190,11 +190,6 @@ class CheckAllowedSquares {
         return true;
     }
 
-    //石の返せる方向をGame.vueから呼び出し
-    public static returnDirectionCache(): { [key: string]: boolean } {
-        return this.allDirections;
-    }
-
     //ターンが変わったらIsAllowedSquaresとallDirectionsをリセット
     public static resetAfterTurnOver(enclosureController: EnclosureController): void {
         let iterator: Enclosure | null = enclosureController.head;
