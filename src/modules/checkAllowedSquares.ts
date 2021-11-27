@@ -3,6 +3,7 @@ import Player from '@/models/player';
 import EnclosureController from './enclosureController';
 import Enclosure from '@/models/enclosure';
 import Config from '@/config';
+import AllowedDirections from '@/models/allowedDirections';
 
 /*
 checkAllowedSquares
@@ -34,9 +35,13 @@ class CheckAllowedSquares {
         while (iterator != null) {
             //8方向石が置けるか確認
             this.checkAllDirecstions(iterator, playerColor);
-            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにする
+            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにして、AllowedDirectionsのインスタンス作成
             if (!this.isSkipped()) {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
+                if (iterator.data != null) {
+                    const allDirections = this.allDirections;
+                    iterator.data.allowedDirections = new AllowedDirections(allDirections);
+                }
             }
             iterator = iterator.next;
             //iteratorが次のポインタに移動した後、allDirectionsをリセット
@@ -193,10 +198,12 @@ class CheckAllowedSquares {
     //ターンが変わったらIsAllowedSquaresとallDirectionsをリセット
     public static resetAfterTurnOver(enclosureController: EnclosureController): void {
         let iterator: Enclosure | null = enclosureController.head;
-        //isAlloedToPlaceの初期化
+        //isAlloedToPlaceとallowedDirectionsの初期化
         while (iterator != null) {
             if (iterator.data != null && iterator.data.isAllowedToPlace) {
                 iterator.data.isAllowedToPlace = false;
+                if (iterator.data.allowedDirections != undefined)
+                    delete iterator.data.allowedDirections;
             }
             iterator = iterator.next;
         }

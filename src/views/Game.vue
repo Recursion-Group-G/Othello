@@ -162,6 +162,7 @@ export default Vue.extend({
                 this.currentPlayer,
                 this.table.board.enclosureController
             );
+            console.log('stop');
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
@@ -185,9 +186,13 @@ export default Vue.extend({
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
+            /*
             const directionCache: {
                 [key: string]: boolean;
             } = CheckAllowedSquares.returnDirectionCache();
+            */
+            let directionCache: { [key: string]: boolean } = square.allowedDirections;
+
             for (let direction in directionCache) {
                 if (directionCache.direction) {
                     switch (direction) {

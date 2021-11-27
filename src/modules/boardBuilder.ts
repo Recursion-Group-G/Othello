@@ -6,12 +6,12 @@ import Size from '../interfaces/size';
 class BoardBuilder {
     private size: Size;
     private squares: Square[][];
-    private enclosureController: EnclosureController | null;
+    private enclosureController: EnclosureController;
 
     public constructor() {
         this.size = { x: 0, y: 0 };
         this.squares = [];
-        this.enclosureController = null;
+        this.enclosureController = new EnclosureController();
     }
 
     public setSize(size: Size): BoardBuilder {
@@ -63,8 +63,10 @@ class BoardBuilder {
         const indexOutOfX: number = this.size.x - 1;
         const indexOutOfY: number = this.size.y - 1;
 
-        for (let y = 0; y <= indexOutOfY; y++) {
-            for (let x = 0; x <= indexOutOfX; x++) {
+        //        for (let y = 0; y <= indexOutOfY; y++) {
+        //            for (let x = 0; x <= indexOutOfX; x++) {
+        for (let x = 0; x <= indexOutOfY; x++) {
+            for (let y = 0; y <= indexOutOfX; y++) {
                 const curr: Square = this.squares[y][x];
 
                 //currから見た方向
@@ -104,7 +106,7 @@ class BoardBuilder {
     public reset(): BoardBuilder {
         this.size = { x: 0, y: 0 };
         this.squares = [];
-        this.enclosureController = null;
+        this.enclosureController = new EnclosureController();
         return this;
     }
 }
