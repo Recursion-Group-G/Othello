@@ -70,8 +70,8 @@ export default Vue.extend({
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        this.table = this.localStorageTable;
         LocalStorage.saveTable(this.table);
+        this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
     },
@@ -93,6 +93,9 @@ export default Vue.extend({
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
                     router.push('/');
             }
+        },
+        setTable(table: Table) {
+            this.table = table;
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
