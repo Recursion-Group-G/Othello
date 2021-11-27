@@ -10,6 +10,10 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
+                    <div>
+                        <!-- テスト表示 -->
+                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                    </div>
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -62,6 +66,7 @@ import Player from '@/models/player';
 import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import Direction from '@/interfaces/direction';
+import AllowedDirections from '@/models/allowedDirections';
 // import func from 'vue-temp/vue-editor-bridge';
 
 export default Vue.extend({
@@ -92,6 +97,10 @@ export default Vue.extend({
         //スマホの画面判定
         isXs() {
             return this.$vuetify.breakpoint.name === 'xs';
+        },
+        //プレイヤーターンの色テスト表示
+        currentPlayerColor(): string {
+            return this.currentPlayer.color.id === 0 ? 'Black' : 'White';
         },
     },
     methods: {
@@ -162,6 +171,7 @@ export default Vue.extend({
                 this.currentPlayer,
                 this.table.board.enclosureController
             );
+            console.log('stop');
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
@@ -185,48 +195,16 @@ export default Vue.extend({
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
-            const directionCache: {
-                [key: string]: boolean;
-            } = CheckAllowedSquares.returnDirectionCache();
-            for (let direction in directionCache) {
-                if (directionCache.direction) {
-                    switch (direction) {
-                        case Config.direction.top: {
-                            this.flipOneDirection(square, 'top');
-                            break;
-                        }
-                        case Config.direction.left: {
-                            this.flipOneDirection(square, 'left');
-                            break;
-                        }
-                        case Config.direction.right: {
-                            this.flipOneDirection(square, 'right');
-                            break;
-                        }
-                        case Config.direction.bottom: {
-                            this.flipOneDirection(square, 'bottom');
-                            break;
-                        }
-                        case Config.direction.topLeft: {
-                            this.flipOneDirection(square, 'topLeft');
-                            break;
-                        }
-                        case Config.direction.topRight: {
-                            this.flipOneDirection(square, 'topRight');
-                            break;
-                        }
-                        case Config.direction.bottomLeft: {
-                            this.flipOneDirection(square, 'bottomLeft');
-                            break;
-                        }
-                        case Config.direction.bottomRight: {
-                            this.flipOneDirection(square, 'bottomRight');
-                            break;
-                        }
-                    }
+            if (square.allowedDirections === undefined) return; //エラー回避
+            let directionCache: AllowedDirections = square.allowedDirections;
+
+            for (let direction in directionCache.allDirections) {
+                if (directionCache.allDirections[direction]) {
+                    this.flipOneDirection(square, direction as keyof Direction);
                 }
             }
         },
+
         flipOneDirection(square: Square, direction: keyof Direction) {
             let iterator: Square | null = square[direction];
             //currentPlayerと違う色が続くまで石をひっくり返し続ける
@@ -238,47 +216,10 @@ export default Vue.extend({
                 this.flipStoneAnimation(iterator);
                 iterator.stone.color = this.currentPlayer.color;
                 this.flipCounter += 1;
+                iterator = iterator[direction];
             }
         },
-        // flipStonesAllDirections: function (square: Square): void {
-        //     //1方向ずつ石をひっくり返す
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'top');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'right');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottom');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'left');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'topRight');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'topLeft');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottomRight');
-        //     this.flipCounter += this.flipStonesOneDirections(square, 'bottomLeft');
-        // },
-        // flipStonesOneDirections(square: Square, direction: keyof Square): number {
-        //     //1方向の石をひっくり返す
-        //     let flipSquare: Square[] = [];
-        //     let searchSquare: Square | null = square[direction];
-        //     if (square === null || square.stone === null) return 0;
-        //     while (
-        //         searchSquare !== null &&
-        //         searchSquare.stone !== null &&
-        //         searchSquare.stone.color.id !== square.stone.color.id
-        //     ) {
-        //         flipSquare.push(searchSquare);
-        //         searchSquare = searchSquare[direction];
-        //     }
 
-        //     if (
-        //         flipSquare.length > 0 &&
-        //         searchSquare !== null &&
-        //         searchSquare.stone !== null &&
-        //         searchSquare.stone.color.id === square.stone.color.id
-        //     ) {
-        //         for (let i = 0; i < flipSquare.length; i++) {
-        //             this.flipStoneAnimation(flipSquare[i]);
-        //             flipSquare[i].stone.color = square.stone.color;
-        //         }
-        //     } else flipSquare = [];
-
-        //     return flipSquare.length;
-        // },
         flipStoneAnimation: async function (square: Square): Promise<void> {
             //石をひっくり返すアニメーション
             if (square.stone === null) return;
