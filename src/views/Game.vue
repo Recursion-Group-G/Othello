@@ -9,13 +9,17 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
+                    <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
-                        <!-- テスト表示 -->
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <!-- PopUp test-->
                     <div>
-                        <v-btn tile @click="isFinished = true"> PopUP test </v-btn>
+                        <v-btn
+                            tile
+                            @click="isFinished = true"
+                            color="deep-purple accent-3 white--text"
+                            > PopUP test </v-btn>
                     </div>
 
                     <div

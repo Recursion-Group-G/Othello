@@ -11,7 +11,7 @@
                     <v-row>
                         <v-col cols="12" sm="6">
                             <v-btn
-                                class="deep-purple accent-3 white--text"
+                                class="deep-purple accent-3 white--text mt-10 mr-5"
                                 elevation="24"
                                 block
                                 @click="redirectTop()"
@@ -21,7 +21,7 @@
                         </v-col>
                         <v-col cols="12" sm="6">
                             <v-btn
-                                class="deep-purple accent-3 white--text"
+                                class="deep-purple accent-3 white--text mt-10 ml-5"
                                 elevation="24"
                                 block
                                 @click="redirectGame()"
@@ -69,6 +69,7 @@ export default Vue.extend({
         },
         redirectTop(): void {
             //ゲームリセット
+            
             this.$router.push('/');
         },
 
