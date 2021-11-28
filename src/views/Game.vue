@@ -296,11 +296,18 @@ export default Vue.extend({
                     isFullToPlace ||
                     isScoreZero
                 ) {
-                    this.isFinished = true;
+                    //1秒待ってゲーム終了(石のアニメーションの時間)
+                    window.setTimeout(() => {
+                        this.isFinished = true;
+                    }, 1000);
                     return;
                 }
 
-                this.turnChange();
+                //スキップした時は1秒待つ
+                window.setTimeout(() => {
+                    alert('skipped');
+                    this.turnChange();
+                }, 1000);
             } else {
                 //そのプレイヤーがプレイできたら全員リセット
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
