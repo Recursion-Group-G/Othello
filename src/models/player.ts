@@ -10,7 +10,7 @@ class Player {
 
     constructor() {
         this.name = '';
-        this.score = 0;
+        this.score = Config.player.initialScore;
         this.color = Config.stone.color.black;
         this.isCpu = false;
         this.isSkipped = false

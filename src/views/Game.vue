@@ -2,8 +2,7 @@
     <div class="v-content">
         <v-container class="d-flex justify-center text-center mt-5">
             <!-- Players上部(スマホの時のみ表示) -->
-            <!-- Playerの配列は仮、プレイヤーの枚数"2"は後でプレイヤーの配列や点数の状態で書き換え -->
-            <h2 v-if="isXs" class="player-font">{{ players[1] }}: 2</h2>
+            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
         </v-container>
 
         <v-container class="board">
@@ -24,6 +23,7 @@
                                 :id="`${square.point.x}-${square.point.y}`"
                                 class="board-square"
                                 @click="putStone(square)"
+                                v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
                             </div>
@@ -36,15 +36,14 @@
         <!-- Players下部 -->
         <v-container>
             <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
-                <!-- Playerの配列は仮、プレイヤーの枚数"2"は後で点数の状態で書き換え -->
-                <v-col v-for="k in players" :key="k">
-                    <h2 class="player-font">{{ k }}: 2</h2>
+                <v-col v-for="k in table.players" :key="k.name">
+                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">{{ players[0] }}: 2</h2>
+                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
         </v-container>
@@ -69,6 +68,7 @@ import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color'
 import PlayerDicisions from '@/modules/playerDicisions'
+import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
@@ -85,11 +85,12 @@ export default Vue.extend({
         flipCounter: 0 as number,
     }),
     created: function () {
-        this.getLocalStorage();
+        this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        this.saveLocalStorage();
+        LocalStorage.saveTable(this.table);
+        this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
@@ -117,6 +118,7 @@ export default Vue.extend({
             console.log(this.localStorageTable);
         },
         validateLocalStorage: function (): void {
+
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
@@ -129,6 +131,9 @@ export default Vue.extend({
         },
         clearLocalStorage: function (): void {
             localStorage.clear();
+        },
+        setTable(table: Table) {
+            this.table = table;
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
@@ -273,13 +278,20 @@ export default Vue.extend({
     cursor: pointer;
     transition: all 0.2s;
     gap: 20px;
-    background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
     border-bottom: 6px rgba(40, 40, 40, 0.35) solid;
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
 
     position: relative;
+}
+
+.square-basicColor{
+    background-color: #09c15a;
+}
+
+.square-markColor{
+    background-color: #ffd700;
 }
 
 /* テスト用に一旦コメントアウト */
