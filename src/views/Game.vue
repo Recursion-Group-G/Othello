@@ -95,7 +95,7 @@ export default Vue.extend({
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
-        this.initialGame();
+        this.initializeGame();
     },
     computed: {
         //スマホの画面判定
@@ -151,31 +151,36 @@ export default Vue.extend({
         setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
-        initialGame(): void {
+        initializeGame(): void {
             //石を4個最初に置く
             console.log('start initializing game')
-            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
-            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
-            //isEmptyをfalseに変更
-            this.table.board.squares[3][3].isEmpty = false;
-            this.table.board.squares[4][4].isEmpty = false;
-            this.table.board.squares[3][4].isEmpty = false;
-            this.table.board.squares[4][3].isEmpty = false;
-            //初期のEnclosure追加
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][2]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][3]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][4]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[2][5]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][2]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[3][5]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][2]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[4][5]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][2]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][3]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][4]);
-            this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][5]);
+
+            const whites = [
+                [3, 3],
+                [4, 4],
+            ]
+
+            const blacks = [
+                [3, 4],
+                [4, 3],
+            ]
+
+            const initilizeStone = (cordinates: number[][], color : Color) => {
+                for( let i = 0 ; i < cordinates.length; i++ ){
+                    const cordinate = cordinates[i];
+                    const y = cordinate[0];
+                    const x = cordinate[1];
+                    const square = this.table.board.squares[y][x];
+
+                    square.stone = new Stone(color);
+                    square.isEmpty = false;
+                    this.table.board.enclosureController.updateFromSquare(square);
+
+                }
+            }
+
+            initilizeStone(whites, Config.stone.color.white)
+            initilizeStone(blacks, Config.stone.color.black)
 
             //EnclosureControllerの中で石が置ける場所を確認
             this.setPlayerDecisions(this.currentPlayer)
