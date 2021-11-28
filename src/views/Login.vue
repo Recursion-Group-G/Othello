@@ -116,6 +116,7 @@ export default Vue.extend({
                 const color: Color = Config.stone.color[colorString];
 
                 player.color = color;
+                if (player.name === '') player.name = Config.player.cpuName;
             }
         },
         validate(): boolean {

@@ -29,6 +29,7 @@ interface Config {
         playerIndex: number;
         cpuIndex: number;
         cpuName: string;
+        initialScore: number;
     };
     table: {
         phase: {
