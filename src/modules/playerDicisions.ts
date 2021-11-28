@@ -1,10 +1,19 @@
-import Enclosure from "@/models/enclosure";
-import Player from "@/models/player";
-import Square from "@/models/square";
-import EnclosureController from "./enclosureController";
-import Direction from '@/interfaces/direction'
 import Config from "@/config";
 
+import Player from "@/models/player";
+import Square from "@/models/square";
+import Enclosure from "@/models/enclosure";
+import AllowedDirections from "@/models/allowedDirections";
+
+import EnclosureController from "@/modules/enclosureController";
+import Direction from '@/interfaces/direction'
+
+/**
+ * PlayerDicisions
+ * 
+ * EnclosureControllerが持つEnclosureの中からプレイヤーが置ける場所を探す。フィルタリングする。
+ * AllowedDirectionsを率いて探索すべき方向をキャッシュする。
+ */
 class PlayerDicisions {
 
     private squares: Square[]
@@ -18,38 +27,59 @@ class PlayerDicisions {
         this.enclosureController = enclosureController;
 
     }
-    get() {
+    public get() {
 
         return this.squares;
 
     }
-    // enclosureたどってplayerが置けたらsquaresにpushする=> filterEnclosureByPlayer()
+    public setAllowedDirectionsToSquare(square: Square) {
+
+        square.allowedDirections = new AllowedDirections()
+
+    }
     public filterDicisions() : PlayerDicisions{
         
         let currentEnclosure: Enclosure | null = this.enclosureController.head;
-
-        while (currentEnclosure !== null) {
-
+        while (currentEnclosure !== null && currentEnclosure.data !== null) {
             const square = currentEnclosure.data;
-            if (square == null) return this;
-            else if (this.isAbleToPlace(square)) {
-                this.squares.push(square);
-                square.isAllowedToPlace = true;
-            } else {
-                square.isAllowedToPlace = false;
-            }
-            currentEnclosure = currentEnclosure.next
 
+            if (this.isAbleToPlace(square)) {
+
+                this.cacheAllowedDirections(square)
+                square.isAllowedToPlace = true;
+                this.squares.push(square);
+
+            } else {
+
+                this.setAllowedDirectionsToSquare(square)
+                square.isAllowedToPlace = false;
+
+            }
+
+            currentEnclosure = currentEnclosure.next
         }
 
         return this;
+
+    }
+    public cacheAllowedDirections(square: Square): void {
+
+        this.setAllowedDirectionsToSquare(square);
+
+        for (const direction in Config.direction) {
+            if (this.willGetPoint(square, direction as keyof Direction)) {
+
+                square.allowedDirections[direction as keyof AllowedDirections] = true;
+
+            }
+        }
 
     }
     public isAbleToPlace(square: Square): boolean {
 
         if (square.stone !== null) return false;
 
-        for (let direction in Config.direction) {
+        for (const direction in Config.direction) {
             if (this.willGetPoint(square, direction as keyof Direction)) {
                 return true;
             }
@@ -60,9 +90,10 @@ class PlayerDicisions {
     }
     public willGetPoint(square: Square, direction: keyof Direction): boolean{
         
+        let nextSquare: Square | null = square[direction];
+        
         //すぐ隣チェック
         //隣にsquareがない or 隣にstoneがない or 隣が同じプレイヤーと同じ色の石を持っている
-        let nextSquare: Square | null = square[direction];
         if (
             nextSquare === null ||
             nextSquare.stone === null ||
@@ -85,3 +116,5 @@ class PlayerDicisions {
     }
 
 }
+
+export default PlayerDicisions

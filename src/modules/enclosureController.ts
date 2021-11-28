@@ -1,5 +1,6 @@
 import Square from '@/models/square';
 import Enclosure from '@/models/enclosure';
+import Direction from '@/interfaces/direction';
 
 class EnclosureController {
     public head: Enclosure | null;
@@ -40,7 +41,7 @@ class EnclosureController {
             'bottomLeft',
         ];
         for (let i = 0; i < directions.length; i++) {
-            const target = square[directions[i]];
+            const target = square[directions[i] as keyof Direction];
             if (target !== null && target.stone === null && !this.hashmap[target.id]) {
                 this.addEnclosure(target);
             }
