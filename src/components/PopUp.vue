@@ -69,7 +69,7 @@ export default Vue.extend({
         },
         redirectTop(): void {
             //ゲームリセット
-            
+
             this.$router.push('/');
         },
 

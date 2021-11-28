@@ -19,7 +19,9 @@
                             tile
                             @click="isFinished = true"
                             color="deep-purple accent-3 white--text"
-                            > PopUP test </v-btn>
+                        >
+                            PopUP test
+                        </v-btn>
                     </div>
 
                     <div
