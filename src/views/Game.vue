@@ -11,6 +11,7 @@
                 <div>
                     <div>
                         <!-- テスト表示 -->
+                        <h2>{{ isGameFinished ? "Game Finished!!..." : "Play Othello!!"}}</h2>
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <div
@@ -82,6 +83,7 @@ export default Vue.extend({
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
+        isGameFinished: false as boolean,
     }),
     created: function () {
         // this.localStorageTable = LocalStorage.fetchTable();
@@ -191,20 +193,20 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (square.isAllowedToPlace) {
-                square.stone = new Stone(this.currentPlayer.color);
-                square.isAllowedToPlace = false;
-                square.isEmpty = false;
-                this.flipAllDirections(square);
-                this.currentPlayer.score += 1;
-                this.updateScore();
-                this.table.turnCounter += 1;
+            if (!square.isAllowedToPlace) return;
 
-                //Enclosureを更新
-                this.table.board.enclosureController.updateFromSquare(square);
+            square.stone = new Stone(this.currentPlayer.color);
+            square.isAllowedToPlace = false;
+            square.isEmpty = false;
+            this.flipAllDirections(square);
+            this.currentPlayer.score += 1;
+            this.updateScore();
+            this.table.turnCounter += 1;
 
-                this.turnChange();
-            }
+            //Enclosureを更新
+            this.table.board.enclosureController.updateFromSquare(square);
+
+            this.turnChange();
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
@@ -253,10 +255,24 @@ export default Vue.extend({
 
             this.setPlayerDicisions(this.currentPlayer);
 
+
             if(this.playerDicisions.length === 0 ){
                 this.currentPlayer.isSkipped == true
                 //CONSIDER: 急にスキップしちゃうから間を置いたり、ポップアップを出した方がいい。
-                this.turnChange()
+
+                const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
+                    bool = p.isSkipped ? bool : false ;
+                }, true);
+
+                if( //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
+                    isPlayerAllSkipped || 
+                    this.table.board.enclosureController.head === null
+                ) {
+                    this.isGameFinished = true;
+                }
+                else {
+                    this.turnChange()
+                }
             }
         },
         updateScore: function (): void {
