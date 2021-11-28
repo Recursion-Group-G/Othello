@@ -27,12 +27,12 @@ class PlayerDicisions {
         this.enclosureController = enclosureController;
 
     }
-    public get() {
+    public get(): Square[] {
 
-        return this.squares;
+        return this.squares
 
     }
-    public setAllowedDirectionsToSquare(square: Square) {
+    public setAllowedDirectionsToSquare(square: Square): void {
 
         square.allowedDirections = new AllowedDirections()
 
@@ -102,10 +102,10 @@ class PlayerDicisions {
 
         while (nextSquare !== null) {
 
-            if (
-                nextSquare.stone !== null &&
-                nextSquare.stone.color.id === this.player.color.id
-            ) return true;
+            if (nextSquare.stone === null) return false;
+            else if (nextSquare.stone.color.id === this.player.color.id) {
+                return true;
+            }
 
             nextSquare = nextSquare[direction];
 

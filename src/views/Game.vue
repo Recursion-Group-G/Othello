@@ -25,7 +25,7 @@
                                 @click="putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
-                                <StoneView :stone="square.stone" v-if="square.stone" />
+                                <StoneView :stone="square.stone" v-if="square.stone && square.stone.isVisible" />
                             </div>
                         </div>
                     </div>
@@ -63,7 +63,6 @@ import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
 import EnclosureController from '@/modules/enclosureController';
-import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color'
@@ -85,12 +84,12 @@ export default Vue.extend({
         flipCounter: 0 as number,
     }),
     created: function () {
-        this.localStorageTable = LocalStorage.fetchTable();
+        // this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        LocalStorage.saveTable(this.table);
-        this.setTable(this.localStorageTable);
+        // LocalStorage.saveTable(this.table);
+        // this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
@@ -133,7 +132,8 @@ export default Vue.extend({
             localStorage.clear();
         },
         setTable(table: Table) {
-            this.table = table;
+            this.$emit('update:tableData', table);
+            // this.table = table
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
@@ -183,7 +183,11 @@ export default Vue.extend({
             this.playerDicisions = new PlayerDicisions(
                 player,
                 this.table.board.enclosureController
-            ).filterDicisions().get()
+            )
+            .filterDicisions()
+            .get()
+
+            console.log('hey')
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
@@ -226,19 +230,22 @@ export default Vue.extend({
         flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
 
+            const stone = square.stone
+            const fromColor = stone.color;
+
+            stone.color = toColor
+            stone.isVisible = false;
+
             const animation = new FlipAnimation(
-                `${square.point.x}-${square.point.y}`,
-                square.stone.color.code,
-                this.currentPlayer.color.code
+                square.id,
+                fromColor.code,
+                toColor.code
             );
 
-            const stone = square.stone
-            square.stone = null
-            await animation.flip();
-            animation.remove();
-            square.stone = stone
+            animation.flip(()=>{
+                stone.isVisible = true;
+            });
 
-            square.stone.color = toColor
         },
         turnChange: function (): void {
             let index = this.table.turnCounter % this.table.players.length;
