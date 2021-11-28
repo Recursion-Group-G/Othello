@@ -1,6 +1,7 @@
 import Square from '@/models/square';
 import Enclosure from '@/models/enclosure';
 import Direction from '@/interfaces/direction';
+import Config from '@/config';
 
 class EnclosureController {
     public head: Enclosure | null;
@@ -27,6 +28,34 @@ class EnclosureController {
         }
         //hashmap追加
         this.hashmap[square.id] = enclosure;
+    }
+    /**
+     * 
+     * @param square 
+     * このSquareはどうしてもstoneがあることが前提になってしまう。
+     * どのSquareでも対応しようとすると全く別のロジックが必要になる。
+     */
+    public updateFromSquare(square: Square): void {
+
+        if (square.stone === null) {
+            try {
+                throw new Error("Provided square must include stone.")
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        //stonを含むSquareをEnclosureから削除
+        this.removeEnclosure(square)
+
+        //全方位チェック
+        for (const direction in Config.direction) {
+            const nextSquare: Square | null = square[direction as keyof Direction]
+            
+            if (nextSquare === null) continue;
+            else if (nextSquare.stone !== null) this.removeEnclosure(nextSquare);
+            else this.addEnclosure(nextSquare);
+
+        }
     }
 
     public addEnclosures(square: Square): void {
