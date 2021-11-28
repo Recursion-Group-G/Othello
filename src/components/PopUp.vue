@@ -76,7 +76,6 @@ export default Vue.extend({
         redirectGame(): void {
             //ゲームリセット
             this.$emit('resetIsFinished');
-            this.$router.push('/game');
         },
     },
 

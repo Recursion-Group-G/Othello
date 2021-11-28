@@ -34,7 +34,7 @@
                                 @click="putStone(square)"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
-                                <Point v-if="square.isAllowedToPlace" />
+                                <Mark v-if="square.isAllowedToPlace" />
                             </div>
                         </div>
                     </div>
@@ -82,8 +82,7 @@ import Direction from '@/interfaces/direction';
 
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
-//仮
-import Point from '@/components/Point.vue';
+import Mark from '@/components/Mark.vue';
 
 // import func from 'vue-temp/vue-editor-bridge';
 
@@ -93,7 +92,7 @@ export default Vue.extend({
     components: {
         StoneView,
         PopUp,
-        Point,
+        Mark,
     },
     data: () => ({
         //仮のPlayer配列

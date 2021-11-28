@@ -1,7 +1,7 @@
 <template>
     <div class="size-fill d-flex justify-center align-center">
         <v-sheet
-            class="mx-auto transition-swing rounded-circle stone-style pink lighten-4"
+            class="mx-auto transition-swing rounded-circle mark-style pink lighten-4"
             elevation="12"
             color="#F8BBD0"
         ></v-sheet>
@@ -23,7 +23,7 @@ export default Vue.extend({
     height: 100%;
 }
 
-.stone-style {
+.mark-style {
     width: 30%;
     height: 30%;
 }
