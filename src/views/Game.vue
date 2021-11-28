@@ -20,7 +20,7 @@
                     >
                         <div v-for="(square, colIndex) in row" :key="colIndex">
                             <div
-                                :id="`${square.point.x}-${square.point.y}`"
+                                :id="square.id"
                                 class="board-square"
                                 @click="putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
@@ -227,7 +227,7 @@ export default Vue.extend({
         flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
             const animation = new FlipAnimation(
-                `${square.point.x}-${square.point.y}`,
+                square.id,
                 square.stone.color.code,
                 this.currentPlayer.color.code
             );
