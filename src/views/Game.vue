@@ -31,9 +31,10 @@
                     >
                         <div v-for="(square, colIndex) in row" :key="colIndex">
                             <div
-                                :id="`${square.point.x}-${square.point.y}`"
+                                :id="square.id"
                                 class="board-square"
                                 @click="putStone(square)"
+                                v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
                                 <Mark v-if="square.isAllowedToPlace" />
@@ -81,12 +82,12 @@ import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import LocalStorage from '@/modules/localStorage';
 
 import Direction from '@/interfaces/direction';
-
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-
-// import func from 'vue-temp/vue-editor-bridge';
+import AllowedDirections from '@/models/allowedDirections';
+import Color from '@/interfaces/color'
+import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
@@ -111,6 +112,7 @@ export default Vue.extend({
         // this.validateLocalStorage();
         // this.validateTable();
         LocalStorage.saveTable(this.table);
+        this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
@@ -141,6 +143,7 @@ export default Vue.extend({
             console.log(this.localStorageTable);
         },
         validateLocalStorage: function (): void {
+
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
@@ -153,6 +156,9 @@ export default Vue.extend({
         },
         clearLocalStorage: function (): void {
             localStorage.clear();
+        },
+        setTable(table: Table) {
+            this.table = table;
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
@@ -171,6 +177,7 @@ export default Vue.extend({
 
         initialGame(): void {
             //石を4個最初に置く
+            console.log('start')
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
@@ -246,23 +253,25 @@ export default Vue.extend({
                 iterator.stone !== null &&
                 iterator.stone.color.id !== this.currentPlayer.color.id
             ) {
-                this.flipStoneAnimation(iterator);
-                iterator.stone.color = this.currentPlayer.color;
+                this.flipStone(iterator, this.currentPlayer.color);
                 this.flipCounter += 1;
                 iterator = iterator[direction];
             }
         },
-
-        flipStoneAnimation: async function (square: Square): Promise<void> {
-            //石をひっくり返すアニメーション
+        flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
             const animation = new FlipAnimation(
-                `${square.point.x}-${square.point.y}`,
+                square.id,
                 square.stone.color.code,
                 this.currentPlayer.color.code
             );
-            await animation.flip(); //ひっくり返るのを待つ時はawaitつけて、待つ必要なしの場合はつけないでOK
+            const stone = square.stone
+            square.stone = null
+            await animation.flip();
             animation.remove();
+            square.stone = stone
+
+            square.stone.color = toColor
         },
         turnChange: function (): void {
             let index = this.table.turnCounter % this.table.players.length;
@@ -339,13 +348,20 @@ export default Vue.extend({
     cursor: pointer;
     transition: all 0.2s;
     gap: 20px;
-    background-color: #09c15a;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
     border: 6px rgba(255, 255, 255, 0.4) solid;
     border-bottom: 6px rgba(40, 40, 40, 0.35) solid;
     border-right: 6px rgba(40, 40, 40, 0.35) solid;
 
     position: relative;
+}
+
+.square-basicColor{
+    background-color: #09c15a;
+}
+
+.square-markColor{
+    background-color: #ffd700;
 }
 
 /* テスト用に一旦コメントアウト */
