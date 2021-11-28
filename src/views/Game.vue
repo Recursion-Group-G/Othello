@@ -67,7 +67,7 @@ import EnclosureController from '@/modules/enclosureController';
 import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color'
-import PlayerDicisions from '@/modules/playerDicisions'
+import PlayerDecisions from '@/modules/playerDecisions'
 import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
@@ -78,7 +78,7 @@ export default Vue.extend({
     },
     data: () => ({
         //仮のPlayer配列
-        playerDicisions : [] as Square[],
+        playerDecisions : [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
@@ -153,7 +153,7 @@ export default Vue.extend({
         },
         initialGame(): void {
             //石を4個最初に置く
-            console.log('start')
+            console.log('start initializing game')
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
@@ -178,18 +178,16 @@ export default Vue.extend({
             this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][5]);
 
             //EnclosureControllerの中で石が置ける場所を確認
-            this.setPlayerDicisions(this.currentPlayer)
-            console.log('stop');
+            this.setPlayerDecisions(this.currentPlayer)
+            console.log('end initilizing game');
         },
-        setPlayerDicisions(player: Player){
-            this.playerDicisions = new PlayerDicisions(
+        setPlayerDecisions(player: Player){
+            this.playerDecisions = new PlayerDecisions(
                 player,
                 this.table.board.enclosureController
             )
             .filterDicisions()
             .get()
-
-            console.log('hey')
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
@@ -253,10 +251,10 @@ export default Vue.extend({
             let index = this.table.turnCounter % this.table.players.length;
             this.currentPlayer = this.table.players[index];
 
-            this.setPlayerDicisions(this.currentPlayer);
+            this.setPlayerDecisions(this.currentPlayer);
 
 
-            if(this.playerDicisions.length === 0 ){
+            if(this.playerDecisions.length === 0 ){
                 this.currentPlayer.isSkipped == true
                 //CONSIDER: 急にスキップしちゃうから間を置いたり、ポップアップを出した方がいい。
 

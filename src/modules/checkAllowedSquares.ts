@@ -41,7 +41,7 @@ class CheckAllowedSquares {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
                 if (iterator.data != null) {
                     const allDirections = JSON.parse(JSON.stringify(this.allDirections));
-                    iterator.data.allowedDirections = new AllowedDirections(allDirections);
+                    iterator.data.allowedDirections = allDirections as AllowedDirections;
                 }
             }
             iterator = iterator.next;
@@ -119,8 +119,9 @@ class CheckAllowedSquares {
         while (iterator != null) {
             if (iterator.data != null && iterator.data.isAllowedToPlace) {
                 iterator.data.isAllowedToPlace = false;
-                if (iterator.data.allowedDirections != undefined)
-                    delete iterator.data.allowedDirections;
+                if (iterator.data.allowedDirections != undefined) {
+                    iterator.data.allowedDirections = new AllowedDirections();
+                }
             }
             iterator = iterator.next;
         }

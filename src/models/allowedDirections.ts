@@ -8,7 +8,7 @@ class AllowedDirections {
     topLeft: boolean;
     bottomRight: boolean;
     bottomLeft: boolean;
-
+    
     constructor() {
         this.top = false;
         this.right = false;
