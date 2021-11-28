@@ -1,5 +1,6 @@
 import Stone from './stone';
 import Point from '../interfaces/point';
+import AllowedDirections from './allowedDirections';
 
 class Square {
     point: Point;
@@ -7,6 +8,7 @@ class Square {
     isEmpty: boolean;
     id: string;
     isAllowedToPlace: boolean;
+    allowedDirections: AllowedDirections | undefined;
 
     top: Square | null;
     right: Square | null;

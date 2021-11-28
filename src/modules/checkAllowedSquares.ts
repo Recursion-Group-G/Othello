@@ -3,6 +3,8 @@ import Player from '@/models/player';
 import EnclosureController from './enclosureController';
 import Enclosure from '@/models/enclosure';
 import Config from '@/config';
+import AllowedDirections from '@/models/allowedDirections';
+import Direction from '@/interfaces/direction';
 
 /*
 checkAllowedSquares
@@ -34,9 +36,13 @@ class CheckAllowedSquares {
         while (iterator != null) {
             //8方向石が置けるか確認
             this.checkAllDirecstions(iterator, playerColor);
-            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにする
+            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにして、AllowedDirectionsのインスタンス作成
             if (!this.isSkipped()) {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
+                if (iterator.data != null) {
+                    const allDirections = JSON.parse(JSON.stringify(this.allDirections));
+                    iterator.data.allowedDirections = new AllowedDirections(allDirections);
+                }
             }
             iterator = iterator.next;
             //iteratorが次のポインタに移動した後、allDirectionsをリセット
@@ -62,7 +68,11 @@ class CheckAllowedSquares {
         for (const direction in hashmap) {
             //isEmpty === falseの時にその方向を探索、場所を発見した時点で一方向を検索
             if (!hashmap[direction]?.isEmpty) {
-                this.checkOneDirection(hashmap[direction], direction, playerColor);
+                this.checkOneDirection(
+                    hashmap[direction],
+                    direction as keyof Direction,
+                    playerColor
+                );
             }
         }
     }
@@ -70,7 +80,7 @@ class CheckAllowedSquares {
     //1方向のみの検索
     private static checkOneDirection(
         square: Square | null,
-        direction: string,
+        direction: keyof Direction,
         playerColor: string
     ): void {
         let curr: Square | null = square;
@@ -83,92 +93,9 @@ class CheckAllowedSquares {
             return currentSquare.isEmpty;
         };
 
-        //方向を判断して石の色が同じか、石が置かれていない場所まで探索
-        switch (direction) {
-            case Config.direction.top: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.top;
-                }
-                break;
-            }
-            case Config.direction.left: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.left;
-                }
-                break;
-            }
-            case Config.direction.right: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.right;
-                }
-                break;
-            }
-            case Config.direction.bottom: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottom;
-                }
-                break;
-            }
-            case Config.direction.topLeft: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.topLeft;
-                }
-                break;
-            }
-            case Config.direction.topRight: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.topRight;
-                }
-                break;
-            }
-            case Config.direction.bottomLeft: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottomLeft;
-                }
-                break;
-            }
-            case Config.direction.bottomRight: {
-                while (
-                    curr != null &&
-                    curr.stone != null &&
-                    (!isSameColor(curr) || isStoneEmpty(curr))
-                ) {
-                    curr = curr.bottomRight;
-                }
-                break;
-            }
-            //もし合致する色がないときはメッセージ
-            default:
-                console.log('The direction should be in Config.direction.');
-                break;
+
+        while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
+            curr = curr[direction];
         }
 
         //石の色がPlayerの色と同じ場合は石を置けるのでその方向をtrueにする
@@ -185,18 +112,15 @@ class CheckAllowedSquares {
         return true;
     }
 
-    //石の返せる方向をGame.vueから呼び出し
-    public static returnDirectionCache(): { [key: string]: boolean } {
-        return this.allDirections;
-    }
-
     //ターンが変わったらIsAllowedSquaresとallDirectionsをリセット
     public static resetAfterTurnOver(enclosureController: EnclosureController): void {
         let iterator: Enclosure | null = enclosureController.head;
-        //isAlloedToPlaceの初期化
+        //isAlloedToPlaceとallowedDirectionsの初期化
         while (iterator != null) {
             if (iterator.data != null && iterator.data.isAllowedToPlace) {
                 iterator.data.isAllowedToPlace = false;
+                if (iterator.data.allowedDirections != undefined)
+                    delete iterator.data.allowedDirections;
             }
             iterator = iterator.next;
         }

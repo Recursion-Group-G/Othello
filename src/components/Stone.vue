@@ -1,10 +1,9 @@
 <template>
-    <div v-if="!isEmpty()" class="size-fill d-flex justify-center align-center">
+    <div class="size-fill d-flex justify-center align-center">
         <v-sheet
-            v-if="isVisible"
             class="mx-auto transition-swing rounded-circle stone-style"
             elevation="12"
-            color="stone.color.code"
+            :color="stone.color.code"
         ></v-sheet>
     </div>
 </template>
@@ -15,15 +14,9 @@ import Stone from '@/models/stone';
 export default Vue.extend({
     props: {
         stone: Stone,
-        isVisible: Boolean,
     },
     data() {
         return {};
-    },
-    methods: {
-        isEmpty(): boolean {
-            return this.stone === null;
-        },
     },
 });
 </script>
