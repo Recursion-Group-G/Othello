@@ -15,6 +15,9 @@ class EnclosureController {
     }
 
     public addEnclosure(square: Square): void {
+
+        if (this.hashmap[square.id]) return;
+
         const enclosure: Enclosure = new Enclosure(square);
         if (this.head === null) {
             this.head = enclosure;
@@ -32,7 +35,7 @@ class EnclosureController {
     /**
      * 
      * @param square 
-     * このSquareはどうしてもstoneがあることが前提になってしまう。
+     * ここで渡されるSquareはどうしてもstoneがあることが前提になってしまう。
      * どのSquareでも対応しようとすると全く別のロジックが必要になる。
      */
     public updateFromSquare(square: Square): void {
@@ -52,8 +55,12 @@ class EnclosureController {
             const nextSquare: Square | null = square[direction as keyof Direction]
             
             if (nextSquare === null) continue;
-            else if (nextSquare.stone !== null) this.removeEnclosure(nextSquare);
-            else this.addEnclosure(nextSquare);
+            else if (nextSquare.stone !== null) {
+                this.removeEnclosure(nextSquare);
+            }
+            else if (!this.hashmap[nextSquare.id]) {
+                this.addEnclosure(nextSquare);
+            }
 
         }
     }
