@@ -107,7 +107,7 @@ export default Vue.extend({
             }
         },
         setPlayersColor(): void {
-            this.shufflePlayers();
+            //this.shufflePlayers();
             const colorStrings: string[] = Object.keys(Config.stone.color);
 
             for (let i = 0; i < this.players.length; i++) {

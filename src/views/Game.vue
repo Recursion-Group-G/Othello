@@ -197,6 +197,8 @@ export default Vue.extend({
                     this.currentPlayer,
                     this.table.board.enclosureController
                 );
+                //cpuの処理
+                setTimeout(this.cpuAlgorithm.bind(this), 1000);
             }
         },
         flipAllDirections(square: Square): void {
@@ -254,6 +256,16 @@ export default Vue.extend({
             nextPlayer.score -= this.flipCounter;
             this.flipCounter = 0;
         },
+        cpuAlgorithm: function (): void{
+            if(this.currentPlayer.name === Config.player.cpuName){
+                //少しランダムな処理を入れたい、検討中
+                let iterator = this.table.board.enclosureController.head;
+                while(!iterator.data.isAllowedToPlace) iterator = iterator.next;
+
+                const cpuSquare = iterator.data;
+                this.putStone(cpuSquare);
+            }
+        }
     },
 });
 </script>
