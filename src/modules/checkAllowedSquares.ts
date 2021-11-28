@@ -37,7 +37,7 @@ class CheckAllowedSquares {
             //8方向石が置けるか確認
             this.checkAllDirecstions(iterator, playerColor);
             //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにして、AllowedDirectionsのインスタンス作成
-            if (!this.isSkipped()) {
+            if (!this.isSquareAbleToPlace()) {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
                 if (iterator.data != null) {
                     const allDirections = JSON.parse(JSON.stringify(this.allDirections));
@@ -104,8 +104,7 @@ class CheckAllowedSquares {
         }
     }
 
-    //playerがスキップするか判断、Game.vueからも呼び出し可能
-    public static isSkipped(): boolean {
+    public static isSquareAbleToPlace(): boolean {
         for (const key in this.allDirections) {
             if (this.allDirections[key]) return false;
         }
