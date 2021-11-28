@@ -138,15 +138,15 @@ export default Vue.extend({
             // this.table = table
         },
         createBoard(): Board {
-            let boardBuilder = new BoardBuilder();
-            boardBuilder.setSize({
-                x: Config.board.size.x,
-                y: Config.board.size.y,
-            });
-            boardBuilder.createSquares();
-            boardBuilder.linkSquaresNode();
-            boardBuilder.setEnclosureController(new EnclosureController());
-            return boardBuilder.build();
+            return new BoardBuilder()
+                .setSize({
+                    x: Config.board.size.x,
+                    y: Config.board.size.y,
+                })
+                .createSquares()
+                .linkSquaresNode()
+                .setEnclosureController(new EnclosureController())
+                .build();
         },
         setBoardOnTable(board: Board): void {
             this.table.board = board;
