@@ -97,15 +97,15 @@ class PlayerDicisions {
         if (
             nextSquare === null ||
             nextSquare.stone === null ||
-            nextSquare.stone.color === this.player.color
+            nextSquare.stone.color.id === this.player.color.id
         ) return false;
 
         while (nextSquare !== null) {
 
-            if ( nextSquare.stone === null) continue;
-            else if (nextSquare.stone.color === this.player.color) {
-                return true;
-            }
+            if (
+                nextSquare.stone !== null &&
+                nextSquare.stone.color.id === this.player.color.id
+            ) return true;
 
             nextSquare = nextSquare[direction];
 
