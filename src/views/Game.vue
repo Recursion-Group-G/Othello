@@ -22,7 +22,7 @@
                             <div
                                 :id="square.id"
                                 class="board-square"
-                                @click="putStone(square)"
+                                @click="if(!currentPlayer.isCpu) putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
