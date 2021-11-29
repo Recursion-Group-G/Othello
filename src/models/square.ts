@@ -8,7 +8,7 @@ class Square {
     isEmpty: boolean;
     id: string;
     isAllowedToPlace: boolean;
-    allowedDirections: AllowedDirections ;
+    allowedDirections: AllowedDirections;
 
     top: Square | null;
     right: Square | null;
@@ -26,7 +26,7 @@ class Square {
         this.isEmpty = true;
         this.id = this.createId(point);
         this.isAllowedToPlace = false;
-        this.allowedDirections = new AllowedDirections()
+        this.allowedDirections = new AllowedDirections();
 
         this.top = null;
         this.right = null;

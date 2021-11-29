@@ -12,7 +12,7 @@
                     <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
                         <!-- テスト表示 -->
-                        <h2>{{ isGameFinished ? "Game Finished!!..." : "Play Othello!!"}}</h2>
+                        <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <!-- PopUp test-->
@@ -37,7 +37,10 @@
                                 class="board-square square-basicColor"
                                 @click="putStone(square)"
                             >
-                                <StoneView :stone="square.stone" v-if="square.stone && square.stone.isVisible" />
+                                <StoneView
+                                    :stone="square.stone"
+                                    v-if="square.stone && square.stone.isVisible"
+                                />
                                 <Mark v-if="square.isAllowedToPlace" />
                             </div>
                         </div>
@@ -81,14 +84,13 @@ import BoardBuilder from '../modules/boardBuilder';
 import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import LocalStorage from '@/modules/localStorage';
-import PlayerDecisions from '@/modules/playerDecisions'
+import PlayerDecisions from '@/modules/playerDecisions';
 
 import Direction from '@/interfaces/direction';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import Color from '@/interfaces/color'
-
+import Color from '@/interfaces/color';
 
 export default Vue.extend({
     name: 'Game',
@@ -100,7 +102,7 @@ export default Vue.extend({
     },
     data: () => ({
         //仮のPlayer配列
-        playerDecisions : [] as Square[],
+        playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
@@ -140,7 +142,6 @@ export default Vue.extend({
             console.log(this.localStorageTable);
         },
         validateLocalStorage(): void {
-
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
@@ -174,20 +175,20 @@ export default Vue.extend({
         },
         initializeGame(): void {
             //石を4個最初に置く
-            console.log('start initializing game')
+            console.log('start initializing game');
 
             const whites = [
                 [3, 3],
                 [4, 4],
-            ]
+            ];
 
             const blacks = [
                 [3, 4],
                 [4, 3],
-            ]
+            ];
 
-            const initilizeStone = (cordinates: number[][], color : Color) => {
-                for( let i = 0 ; i < cordinates.length; i++ ){
+            const initilizeStone = (cordinates: number[][], color: Color) => {
+                for (let i = 0; i < cordinates.length; i++) {
                     const cordinate = cordinates[i];
                     const y = cordinate[0];
                     const x = cordinate[1];
@@ -196,24 +197,20 @@ export default Vue.extend({
                     square.stone = new Stone(color);
                     square.isEmpty = false;
                     this.table.board.enclosureController.updateFromSquare(square);
-
                 }
-            }
+            };
 
-            initilizeStone(whites, Config.stone.color.white)
-            initilizeStone(blacks, Config.stone.color.black)
+            initilizeStone(whites, Config.stone.color.white);
+            initilizeStone(blacks, Config.stone.color.black);
 
             //EnclosureControllerの中で石が置ける場所を確認
-            this.setPlayerDecisions(this.currentPlayer)
+            this.setPlayerDecisions(this.currentPlayer);
             console.log('end initilizing game');
         },
-        setPlayerDecisions(player: Player){
-            this.playerDecisions = new PlayerDecisions(
-                player,
-                this.table.board.enclosureController
-            )
-            .filterDicisions()
-            .get()
+        setPlayerDecisions(player: Player) {
+            this.playerDecisions = new PlayerDecisions(player, this.table.board.enclosureController)
+                .filterDicisions()
+                .get();
         },
         putStone(square: Square): void {
             //石が置ける場所をクリックした場合
@@ -255,22 +252,17 @@ export default Vue.extend({
         async flipStone(square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
 
-            const stone = square.stone
+            const stone = square.stone;
             const fromColor = stone.color;
 
-            stone.color = toColor
+            stone.color = toColor;
             stone.isVisible = false;
 
-            const animation = new FlipAnimation(
-                square.id,
-                fromColor.code,
-                toColor.code
-            );
+            const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
-            animation.flip(()=>{
+            animation.flip(() => {
                 stone.isVisible = true;
             });
-
         },
         turnChange(): void {
             this.table.turnCounter += 1;
@@ -278,34 +270,30 @@ export default Vue.extend({
             this.currentPlayer = this.table.players[index];
 
             this.setPlayerDecisions(this.currentPlayer);
-            this.continueGame()
+            this.continueGame();
         },
-        continueGame(): void{
-            
+        continueGame(): void {
             //そのcurrentPlauerがプレイできたら...
-            if(this.playerDecisions.length !== 0 ){
+            if (this.playerDecisions.length !== 0) {
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
                 return;
             }
 
             //そのcurrentPlauerがプレイできない場合は...
-            this.currentPlayer.isSkipped = true
+            this.currentPlayer.isSkipped = true;
 
             const isNoWhereToPlace = this.table.board.enclosureController.head == null;
-            const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
-                bool = p.isSkipped ? bool : false ;
+            const isPlayerAllSkipped = this.table.players.reduce((bool: boolean, p: Player) => {
+                bool = p.isSkipped ? bool : false;
                 return bool;
             }, true);
-            
+
             //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
-            if( isNoWhereToPlace || isPlayerAllSkipped ) {
+            if (isNoWhereToPlace || isPlayerAllSkipped) {
                 //1秒待ってゲーム終了(石のアニメーションの時間)
-                window.setTimeout(() => {
-                    this.endGame()
-                }, 1000);
+                window.setTimeout(this.endGame, 1000);
                 return;
-            }
-            else {
+            } else {
                 //1秒待ってスキップ
                 window.setTimeout(() => {
                     alert('skipped');
@@ -313,7 +301,6 @@ export default Vue.extend({
                 }, 1000);
                 return;
             }
-
         },
         updateScore(): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
@@ -324,7 +311,7 @@ export default Vue.extend({
         },
         endGame(): void {
             this.isGameFinished = true;
-        }
+        },
     },
 });
 </script>
@@ -352,11 +339,11 @@ export default Vue.extend({
     position: relative;
 }
 
-.square-basicColor{
+.square-basicColor {
     background-color: #09c15a;
 }
 
-.square-markColor{
+.square-markColor {
     background-color: #ffd700;
 }
 
