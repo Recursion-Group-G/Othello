@@ -76,6 +76,7 @@ export default Vue.extend({
         redirectGame(): void {
             const isRedirectedTop = false;
             this.$emit('resetGame', isRedirectedTop);
+            this.$router.push('/game');
         },
     },
 
