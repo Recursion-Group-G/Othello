@@ -24,6 +24,7 @@
                                 class="board-square"
                                 @click="putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
+                                v-bind:disabled="currentPlayer.isCpu"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
                             </div>
@@ -257,14 +258,15 @@ export default Vue.extend({
             this.flipCounter = 0;
         },
         cpuAlgorithm: function (): void {
-            if(this.currentPlayer.name === Config.player.cpuName) {
-                //少しランダムな処理を入れたい、検討中
-                let iterator = this.table.board.enclosureController.head;
-                while(!iterator.data.isAllowedToPlace) iterator = iterator.next;
+            if(!this.currentPlayer.isCpu) return;
 
-                const cpuSquare = iterator.data;
-                this.putStone(cpuSquare);
-            }
+            const allowedSquares = this.table
+                                       .board
+                                       .enclosureController
+                                       .fetchAllowedPlaceSquares();
+            const randomIndex = Math.floor(Math.random() * allowedSquares.length);
+            const cpuSquare = allowedSquares[randomIndex];
+            this.putStone(cpuSquare);
         }
     },
 });
