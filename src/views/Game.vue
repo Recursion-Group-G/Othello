@@ -214,7 +214,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            // if (!square.isAllowedToPlace) return;
+            if (!square.isAllowedToPlace) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
