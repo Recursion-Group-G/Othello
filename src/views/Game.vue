@@ -24,7 +24,6 @@
                                 class="board-square"
                                 @click="putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
-                                v-bind:disabled="currentPlayer.isCpu"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
                             </div>
