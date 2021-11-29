@@ -85,15 +85,14 @@ export default Vue.extend({
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
     }),
-    created: function () {
+    created() {
         // this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
         // LocalStorage.saveTable(this.table);
         // this.setTable(this.localStorageTable);
-        let board = this.createBoard();
-        this.setBoardOnTable(board);
+        this.setBoardOnTable(this.createBoard());
         this.currentPlayer = this.table.players[0];
         this.initializeGame();
     },
@@ -108,17 +107,17 @@ export default Vue.extend({
         },
     },
     methods: {
-        validateTable: function (): void {
+        validateTable(): void {
             //必要な情報がnullであればトップページへ画面遷移
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
-        getLocalStorage: function (): void {
+        getLocalStorage(): void {
             let jsonTable = localStorage.getItem(Config.localStorage.table);
             this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
             console.log(this.localStorageTable);
         },
-        validateLocalStorage: function (): void {
+        validateLocalStorage(): void {
 
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
@@ -126,11 +125,11 @@ export default Vue.extend({
                     router.push('/');
             }
         },
-        saveLocalStorage: function (): void {
+        saveLocalStorage(): void {
             let tableJsonDecoded = JSON.stringify(this.table);
             localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
         },
-        clearLocalStorage: function (): void {
+        clearLocalStorage(): void {
             localStorage.clear();
         },
         setTable(table: Table) {
@@ -194,7 +193,7 @@ export default Vue.extend({
             .filterDicisions()
             .get()
         },
-        putStone: function (square: Square): void {
+        putStone(square: Square): void {
             //石が置ける場所をクリックした場合
             if (!square.isAllowedToPlace) return;
 
@@ -232,7 +231,7 @@ export default Vue.extend({
                 iterator = iterator[direction];
             }
         },
-        flipStone: async function (square: Square, toColor: Color): Promise<void> {
+        async flipStone(square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
 
             const stone = square.stone
@@ -252,39 +251,43 @@ export default Vue.extend({
             });
 
         },
-        turnChange: function (): void {
+        turnChange(): void {
             let index = this.table.turnCounter % this.table.players.length;
             this.currentPlayer = this.table.players[index];
 
             this.setPlayerDecisions(this.currentPlayer);
+            this.continueGame()
+        },
+        continueGame(): void{
+            if(this.playerDecisions.length !== 0 ) return;
 
+            this.currentPlayer.isSkipped == true
+            //CONSIDER: 急にスキップしちゃうから間を置いたり、ポップアップを出した方がいい。
 
-            if(this.playerDecisions.length === 0 ){
-                this.currentPlayer.isSkipped == true
-                //CONSIDER: 急にスキップしちゃうから間を置いたり、ポップアップを出した方がいい。
+            const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
+                bool = p.isSkipped ? bool : false ;
+            }, true);
 
-                const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
-                    bool = p.isSkipped ? bool : false ;
-                }, true);
-
-                if( //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
-                    isPlayerAllSkipped || 
-                    this.table.board.enclosureController.head === null
-                ) {
-                    this.isGameFinished = true;
-                }
-                else {
-                    this.turnChange()
-                }
+            if( //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
+                isPlayerAllSkipped || 
+                this.table.board.enclosureController.head === null
+            ) {
+                this.endGame()
+            }
+            else {
+                this.turnChange()
             }
         },
-        updateScore: function (): void {
+        updateScore(): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
             const nextPlayer = this.table.players[nextPlayerIndex];
             this.currentPlayer.score += this.flipCounter;
             nextPlayer.score -= this.flipCounter;
             this.flipCounter = 0;
         },
+        endGame(): void {
+            this.isGameFinished = true;
+        }
     },
 });
 </script>
