@@ -3,13 +3,15 @@ import Config from '../config';
 
 class LocalStorage {
     public static saveTable(table: Table): void {
-        const tableJsonDecoded = JSON.stringify(table);
+        const decycle = require('json-cyclic').decycle;// eslint-disable-line
+        const tableJsonDecoded = JSON.stringify(decycle(table));
         localStorage.setItem(Config.localStorage.table, tableJsonDecoded);
     }
 
     public static fetchTable(): Table {
+        const { encycle } = require('json-cyclic'); // eslint-disable-line
         const jsonTable = localStorage.getItem(Config.localStorage.table);
-        return jsonTable ? JSON.parse(jsonTable) : {};
+        return jsonTable ? encycle(JSON.parse(jsonTable)) : {};
     }
 
     public static clearData(): void {

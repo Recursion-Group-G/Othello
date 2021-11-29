@@ -15,7 +15,6 @@ class EnclosureController {
     }
 
     public addEnclosure(square: Square): void {
-
         if (this.hashmap[square.id]) return;
 
         const enclosure: Enclosure = new Enclosure(square);
@@ -33,35 +32,32 @@ class EnclosureController {
         this.hashmap[square.id] = enclosure;
     }
     /**
-     * 
-     * @param square 
+     *
+     * @param square
      * ここで渡されるSquareはどうしてもstoneがあることが前提になってしまう。
      * どのSquareでも対応しようとすると全く別のロジックが必要になる。
      */
     public updateFromSquare(square: Square): void {
-
         if (square.stone === null) {
             try {
-                throw new Error("Provided square must include stone.")
+                throw new Error('Provided square must include stone.');
             } catch (e) {
                 console.log(e);
             }
         }
         //stonを含むSquareをEnclosureから削除
-        this.removeEnclosure(square)
+        this.removeEnclosure(square);
 
         //全方位チェック
         for (const direction in Config.direction) {
-            const nextSquare: Square | null = square[direction as keyof Direction]
-            
+            const nextSquare: Square | null = square[direction as keyof Direction];
+
             if (nextSquare === null) continue;
             else if (nextSquare.stone !== null) {
                 this.removeEnclosure(nextSquare);
-            }
-            else if (!this.hashmap[nextSquare.id]) {
+            } else if (!this.hashmap[nextSquare.id]) {
                 this.addEnclosure(nextSquare);
             }
-
         }
     }
 

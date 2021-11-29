@@ -93,7 +93,6 @@ class CheckAllowedSquares {
             return currentSquare.isEmpty;
         };
 
-
         while (curr != null && curr.stone != null && (!isSameColor(curr) || isStoneEmpty(curr))) {
             curr = curr[direction];
         }
