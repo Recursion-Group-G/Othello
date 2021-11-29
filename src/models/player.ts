@@ -13,7 +13,7 @@ class Player {
         this.score = Config.player.initialScore;
         this.color = Config.stone.color.black;
         this.isCpu = false;
-        this.isSkipped = false
+        this.isSkipped = false;
     }
 }
 

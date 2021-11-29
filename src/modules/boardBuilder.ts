@@ -63,10 +63,8 @@ class BoardBuilder {
         const indexOutOfX: number = this.size.x - 1;
         const indexOutOfY: number = this.size.y - 1;
 
-        //        for (let y = 0; y <= indexOutOfY; y++) {
-        //            for (let x = 0; x <= indexOutOfX; x++) {
-        for (let x = 0; x <= indexOutOfY; x++) {
-            for (let y = 0; y <= indexOutOfX; y++) {
+        for (let y = 0; y <= indexOutOfY; y++) {
+            for (let x = 0; x <= indexOutOfX; x++) {
                 const curr: Square = this.squares[y][x];
 
                 //currから見た方向

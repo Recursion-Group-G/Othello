@@ -9,11 +9,23 @@
             <v-row class="d-flex justify-center my-3">
                 <!-- Board -->
                 <div>
+                    <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
                         <!-- テスト表示 -->
                         <h2>{{ isGameFinished ? "Game Finished!!..." : "Play Othello!!"}}</h2>
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
+                    <!-- PopUp test-->
+                    <div>
+                        <v-btn
+                            tile
+                            @click="isGameFinished = true"
+                            color="deep-purple accent-3 white--text"
+                        >
+                            PopUP test
+                        </v-btn>
+                    </div>
+
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -21,12 +33,12 @@
                     >
                         <div v-for="(square, colIndex) in row" :key="colIndex">
                             <div
-                                :id="`${square.point.x}-${square.point.y}`"
-                                class="board-square"
+                                :id="square.id"
+                                class="board-square square-basicColor"
                                 @click="putStone(square)"
-                                v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone && square.stone.isVisible" />
+                                <Mark v-if="square.isAllowedToPlace" />
                             </div>
                         </div>
                     </div>
@@ -48,33 +60,43 @@
                 </v-col>
             </v-row>
         </v-container>
+        <PopUp :table="this.table" @resetIsFinished="isFinished = false" v-if="isGameFinished" />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import FlipAnimation from '@/modules/flipAnimation';
 import router from '../router';
 import Config from '../config';
 import Table from '@/models/table';
-import BoardBuilder from '../modules/boardBuilder';
 import Board from '../models/board';
-import StoneView from '@/components/Stone.vue';
 import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
-import EnclosureController from '@/modules/enclosureController';
-import Direction from '@/interfaces/direction';
 import AllowedDirections from '@/models/allowedDirections';
-import Color from '@/interfaces/color'
+import Enclosure from '@/models/enclosure';
+
+import FlipAnimation from '@/modules/flipAnimation';
+import BoardBuilder from '../modules/boardBuilder';
+import EnclosureController from '@/modules/enclosureController';
+import CheckAllowedSquares from '@/modules/checkAllowedSquares';
+import LocalStorage from '@/modules/localStorage';
 import PlayerDecisions from '@/modules/playerDecisions'
-import LocalStorage from '../modules/localStorage';
+
+import Direction from '@/interfaces/direction';
+import PopUp from '../components/PopUp.vue';
+import StoneView from '@/components/Stone.vue';
+import Mark from '@/components/Mark.vue';
+import Color from '@/interfaces/color'
+
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
         StoneView,
+        PopUp,
+        Mark,
     },
     data: () => ({
         //仮のPlayer配列
@@ -195,7 +217,7 @@ export default Vue.extend({
         },
         putStone(square: Square): void {
             //石が置ける場所をクリックした場合
-            if (!square.isAllowedToPlace) return;
+            // if (!square.isAllowedToPlace) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -203,7 +225,6 @@ export default Vue.extend({
             this.flipAllDirections(square);
             this.currentPlayer.score += 1;
             this.updateScore();
-            this.table.turnCounter += 1;
 
             //Enclosureを更新
             this.table.board.enclosureController.updateFromSquare(square);
@@ -252,6 +273,7 @@ export default Vue.extend({
 
         },
         turnChange(): void {
+            this.table.turnCounter += 1;
             let index = this.table.turnCounter % this.table.players.length;
             this.currentPlayer = this.table.players[index];
 
@@ -259,24 +281,39 @@ export default Vue.extend({
             this.continueGame()
         },
         continueGame(): void{
-            if(this.playerDecisions.length !== 0 ) return;
+            
+            //そのcurrentPlauerがプレイできたら...
+            if(this.playerDecisions.length !== 0 ){
+                this.table.players.forEach((p: Player) => (p.isSkipped = false));
+                return;
+            }
 
-            this.currentPlayer.isSkipped == true
-            //CONSIDER: 急にスキップしちゃうから間を置いたり、ポップアップを出した方がいい。
+            //そのcurrentPlauerがプレイできない場合は...
+            this.currentPlayer.isSkipped = true
 
+            const isNoWhereToPlace = this.table.board.enclosureController.head == null;
             const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
                 bool = p.isSkipped ? bool : false ;
+                return bool;
             }, true);
-
-            if( //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
-                isPlayerAllSkipped || 
-                this.table.board.enclosureController.head === null
-            ) {
-                this.endGame()
+            
+            //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
+            if( isNoWhereToPlace || isPlayerAllSkipped ) {
+                //1秒待ってゲーム終了(石のアニメーションの時間)
+                window.setTimeout(() => {
+                    this.endGame()
+                }, 1000);
+                return;
             }
             else {
-                this.turnChange()
+                //1秒待ってスキップ
+                window.setTimeout(() => {
+                    alert('skipped');
+                    this.turnChange();
+                }, 1000);
+                return;
             }
+
         },
         updateScore(): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;

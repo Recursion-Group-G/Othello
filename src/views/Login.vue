@@ -59,6 +59,7 @@ import Color from '../interfaces/color';
 
 export default Vue.extend({
     name: 'Login',
+
     data() {
         return {
             Config: Config,
