@@ -22,7 +22,7 @@
                             <div
                                 :id="square.id"
                                 class="board-square"
-                                @click="if(!currentPlayer.isCpu) putStone(square)"
+                                @click="currentPlayer.isCpu ?  putStone(null) : putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
@@ -197,8 +197,8 @@ export default Vue.extend({
                     this.currentPlayer,
                     this.table.board.enclosureController
                 );
-                //cpuの処理、1000msの間にputStoneを実行するとバグが生じるので検討中
-                setTimeout(this.cpuAlgorithm.bind(this), 1000);
+                //cpuの処理
+                setTimeout(this.cpuAlgorithm.bind(this), 1500);
             }
         },
         flipAllDirections(square: Square): void {
