@@ -59,7 +59,7 @@
                 </v-col>
             </v-row>
         </v-container>
-        <PopUp :table="this.table" @resetIsFinished="isFinished = false" v-if="isGameFinished" />
+        <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
     </div>
 </template>
 
@@ -85,9 +85,7 @@ import Direction from '@/interfaces/direction';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color'
-import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
@@ -107,12 +105,14 @@ export default Vue.extend({
         isFinished: false,
     }),
     created: function () {
+        /* エラーがでるのでコメントアウト
         this.localStorageTable = LocalStorage.fetchTable();
         //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
         LocalStorage.saveTable(this.table);
         this.setTable(this.localStorageTable);
+        */
         let board = this.createBoard();
         this.setBoardOnTable(board);
         this.currentPlayer = this.table.players[0];
@@ -329,6 +329,30 @@ export default Vue.extend({
             nextPlayer.score -= this.flipCounter;
             this.flipCounter = 0;
         },
+
+        resetGame(isRedirectedTop: boolean): void {
+            this.isFinished = false;
+            this.table.board.size = { x: 0, y: 0 };
+            this.table.board.squares = [];
+            this.table.board.enclosureController = new EnclosureController();
+            this.table.board.turnCounter = 0;
+
+            this.table.players.map((p: Player) => {
+                p.score = Config.player.initialScore;
+            });
+
+            //Topに遷移した時はプレイヤーの名前をリセット(初期値null)
+            if (isRedirectedTop) {
+                this.table.players = null;
+            }
+
+            //createdの処理と重複しているで後ほど整理
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            this.currentPlayer = this.table.players[0];
+            this.initialGame();
+        },
+
     },
 });
 </script>
