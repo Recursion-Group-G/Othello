@@ -34,7 +34,11 @@
                                 :id="square.id"
                                 class="board-square"
                                 @click="putStone(square)"
-                                v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
+                                v-bind:class="
+                                    square.isAllowedToPlace
+                                        ? `square-markColor`
+                                        : `square-basicColor`
+                                "
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
                                 <Mark v-if="square.isAllowedToPlace" />
@@ -85,7 +89,7 @@ import Direction from '@/interfaces/direction';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import Color from '@/interfaces/color'
+import Color from '@/interfaces/color';
 
 export default Vue.extend({
     name: 'Game',
@@ -143,7 +147,6 @@ export default Vue.extend({
             console.log(this.localStorageTable);
         },
         validateLocalStorage: function (): void {
-
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
                 if (!this.localStorageTable.players || !this.localStorageTable.board)
@@ -177,7 +180,7 @@ export default Vue.extend({
 
         initialGame(): void {
             //石を4個最初に置く
-            console.log('start')
+            console.log('start');
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
@@ -265,13 +268,13 @@ export default Vue.extend({
                 square.stone.color.code,
                 this.currentPlayer.color.code
             );
-            const stone = square.stone
-            square.stone = null
+            const stone = square.stone;
+            square.stone = null;
             await animation.flip();
             animation.remove();
-            square.stone = stone
+            square.stone = stone;
 
-            square.stone.color = toColor
+            square.stone.color = toColor;
         },
         turnChange: function (): void {
             let index = this.table.turnCounter % this.table.players.length;
@@ -352,7 +355,6 @@ export default Vue.extend({
             this.currentPlayer = this.table.players[0];
             this.initialGame();
         },
-
     },
 });
 </script>
@@ -380,11 +382,11 @@ export default Vue.extend({
     position: relative;
 }
 
-.square-basicColor{
+.square-basicColor {
     background-color: #09c15a;
 }
 
-.square-markColor{
+.square-markColor {
     background-color: #ffd700;
 }
 

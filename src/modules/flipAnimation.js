@@ -97,7 +97,7 @@ class FlipAnimation {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.render(this.scene, this.camera);
     }
-    async flip () {
+    async flip() {
         this.square.childNodes.remove;
         const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
