@@ -76,6 +76,7 @@ import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color';
 import PlayerDecisions from '@/modules/playerDecisions';
 import LocalStorage from '../modules/localStorage';
+import config from '../config';
 
 export default Vue.extend({
     name: 'Game',
@@ -96,24 +97,29 @@ export default Vue.extend({
         // 今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
         // this.validateTable();
-        this.localStorageTable = LocalStorage.fetchTable();
-        if (Object.keys(this.localStorageTable).length > 0) {
-            this.setTable(this.localStorageTable);
-            
-        } else {
+
+        if (this.table.players !== null){
             let board = this.createBoard();
             this.setBoardOnTable(board);
+            this.currentPlayer = this.table.players[0];
             this.initialGame();
-        }
-        console.log('------table-------');
-        LocalStorage.saveTable(this.table);
+        } else {
+            this.localStorageTable = LocalStorage.fetchTable();
+            this.setTable(this.localStorageTable);
+        }        
+        console.log('created');
+        console.log(this.table);
         this.currentPlayer = this.table.players[0];
-
-        // let board = this.createBoard();
-        // this.setBoardOnTable(board);
-        // this.currentPlayer = this.table.players[0];
-        // this.initialGame();
+        LocalStorage.saveTable(this.table);
     },
+    // mounted: function() {
+    //     console.log('mounted');
+    //     console.log(this.table);
+    // },
+    // updated: function() {
+    //     console.log('updated');
+    //     console.log(this.table);
+    // },
     computed: {
         //スマホの画面判定
         isXs() {
