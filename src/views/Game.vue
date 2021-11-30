@@ -263,8 +263,6 @@ export default Vue.extend({
             this.holdTime = false;
             if(!this.currentPlayer.isCpu) return;
 
-            //this.holdTime = false;
-
             const allowedSquares = this.table
                                        .board
                                        .enclosureController
