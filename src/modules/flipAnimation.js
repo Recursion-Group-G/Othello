@@ -97,11 +97,11 @@ class FlipAnimation {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.render(this.scene, this.camera);
     }
-    flip (callback) {
+    flip(callback) {
         const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
 
-        const animate =  () => {
+        const animate = () => {
             // Render
             this.renderer.render(this.scene, this.camera);
 
@@ -109,8 +109,8 @@ class FlipAnimation {
                 cancelAnimationFrame(requestId);
                 this.othelloStone.rotation.z = rotationZ;
                 this.othelloStone.position.z = 0;
-                this.remove()
-                callback()
+                this.remove();
+                callback();
                 return;
             }
 
@@ -121,7 +121,6 @@ class FlipAnimation {
             }
             this.othelloStone.rotation.z += 0.05;
             requestId = requestAnimationFrame(animate);
-
         };
 
         animate();
