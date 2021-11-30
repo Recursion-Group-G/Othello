@@ -64,6 +64,7 @@
             </v-row>
         </v-container>
         <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
+        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer"/>
     </div>
 </template>
 
@@ -87,21 +88,26 @@ import LocalStorage from '@/modules/localStorage';
 import PlayerDecisions from '@/modules/playerDecisions';
 
 import Direction from '@/interfaces/direction';
+import Color from '@/interfaces/color';
+
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import Color from '@/interfaces/color';
+import SkipDialog from '@/components/SkipDialog.vue'
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
+        SkipDialog,
         StoneView,
         PopUp,
         Mark,
     },
     data: () => ({
         //仮のPlayer配列
+        skipDialog: false,
+        holdTime: false,
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
@@ -214,7 +220,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (!square.isAllowedToPlace) return;
+            // if (!square.isAllowedToPlace) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -291,11 +297,14 @@ export default Vue.extend({
                     }, 1000);
                     return;
                 } else {
-                    //1秒待ってスキップ
+                    //3秒待ってスキップ
+                    this.skipDialog = true
+                    this.holdTime = true
                     window.setTimeout(() => {
-                        alert('skipped');
+                        this.skipDialog = false
+                        this.holdTime = false
                         this.turnChange();
-                    }, 1000);
+                    }, 3000);
                     return;
                 }
             } else {

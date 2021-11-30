@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div id="popup" v-show="isVisible">
+        <v-dialog v-model="isVisible">
+        <div id="popup">
             <v-card id="content" class="d-flex justify-center">
                 <div>
                     <!--test-->
@@ -33,6 +34,7 @@
                 </div>
             </v-card>
         </div>
+        </v-dialog>
     </div>
 </template>
 
