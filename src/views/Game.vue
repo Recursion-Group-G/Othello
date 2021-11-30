@@ -213,6 +213,7 @@ export default Vue.extend({
                 .get();
         },
         putStone: function (square: Square): void {
+            console.log(this.holdTime)
             if(this.holdTime) return;
             //石が置ける場所をクリックした場合
             if (!square.isAllowedToPlace) return;
@@ -303,6 +304,15 @@ export default Vue.extend({
                 //そのプレイヤーがプレイできたら全員リセット
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
             }
+
+            if(this.currentPlayer.isCpu){
+                this.holdTime = true
+                window.setTimeout(()=>{
+                    this.holdTime = false;
+                    this.cpuAlgorithm();
+                },1000)
+            }
+
         },
         updateScore: function (): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
@@ -336,14 +346,9 @@ export default Vue.extend({
             this.initialGame();
         },
         cpuAlgorithm: function (): void {
-            this.holdTime = false;
-            if(!this.currentPlayer.isCpu) return;
-            const allowedSquares = this.table
-                                       .board
-                                       .enclosureController
-                                       .fetchAllowedPlaceSquares();
-            const randomIndex = Math.floor(Math.random() * allowedSquares.length);
-            const cpuSquare = allowedSquares[randomIndex];
+            if(this.currentPlayer.isCpu)return;
+            const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
+            const cpuSquare = this.playerDecisions[randomIndex];
             this.putStone(cpuSquare);
         },
     },
