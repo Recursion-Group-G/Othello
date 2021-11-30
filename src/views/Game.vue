@@ -66,7 +66,7 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
                             </div>
                         </div>
                     </div>
@@ -144,13 +144,14 @@ export default Vue.extend({
     data: () => ({
         //仮のPlayer配列
         skipDialog: false,
-        holdTime: false,
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
+        holdTime: false as boolean,
+        holdTimeForCpu: false as boolean,
     }),
     created: function () {
         // localStorageへの保存は見直す必要があるため一度コメントアウト
@@ -256,7 +257,11 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (!square.isAllowedToPlace || this.holdTime) return;
+            if (
+                !square.isAllowedToPlace || 
+                this.holdTime ||
+                this.holdTimeForCpu
+            ) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -335,6 +340,7 @@ export default Vue.extend({
                     }, 1000);
                     return;
                 } else {
+                    // FIX: 非同期処理に同じ変数を扱うのは副作用の原因になるのでできれば分けた方がいい
                     //3秒待ってスキップ
                     this.skipDialog = true;
                     this.holdTime = true;
@@ -349,6 +355,11 @@ export default Vue.extend({
                 //そのプレイヤーがプレイできたら全員リセット
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
             }
+
+            if(this.currentPlayer.isCpu){
+                this.cpuAlgorithm()
+            }
+
         },
         updateScore: function (): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
@@ -380,6 +391,19 @@ export default Vue.extend({
             this.setBoardOnTable(board);
             this.currentPlayer = this.table.players[0];
             this.initialGame();
+        },
+        cpuAlgorithm: function (): void {
+            console.log('hey')
+            if(!this.currentPlayer.isCpu)return;
+            const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
+            const cpuSquare = this.playerDecisions[randomIndex];
+            console.log(cpuSquare)
+
+            this.holdTimeForCpu = true
+            window.setTimeout(()=>{
+                this.holdTimeForCpu = false;
+                this.putStone(cpuSquare);
+            },2000)
         },
     },
 });

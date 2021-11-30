@@ -108,7 +108,7 @@ export default Vue.extend({
             }
         },
         setPlayersColor(): void {
-            this.shufflePlayers();
+            //this.shufflePlayers(); //シャッフルすると最初にplayerのputStone()でcpuが動作しなくなるため
             const colorStrings: string[] = Object.keys(Config.stone.color);
 
             for (let i = 0; i < this.players.length; i++) {
