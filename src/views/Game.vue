@@ -1,5 +1,5 @@
 <template>
-    <div class="v-content">
+    <div class="v-content game">
         <v-container class="d-flex justify-center text-center">
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
@@ -412,6 +412,10 @@ export default Vue.extend({
 <style>
 /* Google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.game {
+    font-family: 'Lato';
+}
 
 .v-content {
     background-color: #ffffff;

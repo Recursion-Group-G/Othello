@@ -1,5 +1,5 @@
 <template>
-    <div class="fill-height pa-1">
+    <div class="fill-height pa-1 login">
         <v-row justify="center">
             <v-col cols="10" sm="6" md="4">
                 <h1 class="page-title">Select Mode</h1>
@@ -147,6 +147,12 @@ export default Vue.extend({
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.login {
+    font-family: 'Lato';
+}
+
 .page-title {
     text-align: center;
     margin-top: 120px;
