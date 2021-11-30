@@ -133,6 +133,19 @@ class EnclosureController {
         this.hashmap = hashmap;
         return this;
     }
+
+    public fetchAllowedPlaceSquares(): Square[] {
+        const squares : Square[] = [];
+
+        let iterator = this.head;
+        while(iterator != null){
+            const square = iterator.data;
+           if(square != null && square.isAllowedToPlace) squares.push(square);
+            iterator = iterator.next;
+        }
+
+        return squares;
+    }
 }
 
 export default EnclosureController;

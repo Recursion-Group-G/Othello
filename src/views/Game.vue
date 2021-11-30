@@ -108,6 +108,7 @@ export default Vue.extend({
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
+        holdTime: false as boolean,
     }),
     created: function () {
         // localStorageへの保存は見直す必要があるため一度コメントアウト
@@ -212,6 +213,7 @@ export default Vue.extend({
                 .get();
         },
         putStone: function (square: Square): void {
+            if(this.holdTime) return;
             //石が置ける場所をクリックした場合
             if (!square.isAllowedToPlace) return;
 
@@ -332,6 +334,17 @@ export default Vue.extend({
             this.setBoardOnTable(board);
             this.currentPlayer = this.table.players[0];
             this.initialGame();
+        },
+        cpuAlgorithm: function (): void {
+            this.holdTime = false;
+            if(!this.currentPlayer.isCpu) return;
+            const allowedSquares = this.table
+                                       .board
+                                       .enclosureController
+                                       .fetchAllowedPlaceSquares();
+            const randomIndex = Math.floor(Math.random() * allowedSquares.length);
+            const cpuSquare = allowedSquares[randomIndex];
+            this.putStone(cpuSquare);
         },
     },
 });
