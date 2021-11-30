@@ -2,8 +2,11 @@
     <div class="v-content">
         <v-container class="d-flex justify-center text-center">
             <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">
-                {{ table.players[1].name }}: {{ table.players[1].score }}
+            <h2
+                v-if="isXs"
+                v-bind:class="k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+            >
+                {{ table.players[1].name }}: {{ k.score }}
             </h2>
         </v-container>
 
@@ -15,18 +18,39 @@
                     <div>
                         <!-- テスト表示 -->
                         <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
-                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                        <div class="d-flex justify-start">
+                            <h2>Current Color:</h2>
+
+                            <v-sheet
+                                v-if="currentPlayer.color.id === 0"
+                                class="ml-2 rounded-circle"
+                                elevation="12"
+                                height="30"
+                                width="30"
+                                color="#000000"
+                            ></v-sheet>
+
+                            <v-sheet
+                                v-else
+                                class="ml-2 rounded-circle"
+                                elevation="12"
+                                height="30"
+                                width="30"
+                                color="#FFFFFF"
+                            ></v-sheet>
+                        </div>
                     </div>
-                    <!-- PopUp test-->
-                    <!-- <div>
-                            <v-btn
-                                tile
-                                @click="isGameFinished = true"
-                                color="deep-purple accent-3 white--text"
-                            >
-                                PopUP test
-                            </v-btn>
-                        </div> -->
+                    <!-- For debug: PopUp test
+                    <div>
+                        <v-btn
+                            tile
+                            @click="isGameFinished = true"
+                            color="deep-purple accent-3 white--text"
+                        >
+                            PopUP test
+                        </v-btn>
+                    </div>
+                    -->
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -54,14 +78,24 @@
         <v-container>
             <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
                 <v-col v-for="k in table.players" :key="k.name">
-                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
+                    <h2
+                        v-bind:class="
+                            k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                        "
+                    >
+                        {{ k.name }}: {{ k.score }}
+                    </h2>
                 </v-col>
             </v-row>
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">
-                        {{ table.players[0].name }}: {{ table.players[1].score }}
+                    <h2
+                        v-bind:class="
+                            k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                        "
+                    >
+                        {{ table.players[0].name }}: {{ k.score }}
                     </h2>
                 </v-col>
             </v-row>
@@ -388,9 +422,15 @@ export default Vue.extend({
     background: #000000;
 } */
 
-.player-font {
+.player-font-turn {
     font-family: 'Lato';
     font-size: 40px;
+}
+
+.player-font-turn-waiting {
+    font-family: 'Lato';
+    font-size: 40px;
+    color: #c0c0c0;
 }
 
 @media screen and (max-width: 480px) {
