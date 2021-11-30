@@ -366,7 +366,7 @@ export default Vue.extend({
             window.setTimeout(()=>{
                 this.holdTimeForCpu = false;
                 this.putStone(cpuSquare);
-            },3000)
+            },2000)
         },
     },
 });
