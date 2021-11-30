@@ -13,8 +13,29 @@
                     <div>
                         <!-- テスト表示 -->
                         <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
+                        <div class="d-flex justify-start">
+                        <h2>Current Color:</h2>
+                        
+                        <v-sheet
+                            v-if="currentPlayer.color.id === 0"
+                            class="ml-2 rounded-circle"
+                            elevation="12"
+                            height="30"
+                            width="30"
+                            color="#000000"
+                        ></v-sheet>
+
+                        <v-sheet
+                            v-else
+                            class="ml-2 rounded-circle"
+                            elevation="12"
+                            height="30"
+                            width="30"
+                            color="#FFFFFF"
+                        ></v-sheet>
+                        </div>
                     </div>
-                    <!-- PopUp test-->
+                    <!-- For debug: PopUp test
                     <div>
                         <v-btn
                             tile
@@ -24,6 +45,7 @@
                             PopUP test
                         </v-btn>
                     </div>
+                    -->
 
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
