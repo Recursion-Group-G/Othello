@@ -22,7 +22,7 @@
                             <div
                                 :id="square.id"
                                 class="board-square"
-                                @click="currentPlayer.isCpu ? putStone(null) : putStone(square)"
+                                @click="putStone(square)"
                                 v-bind:class="square.isAllowedToPlace ? `square-markColor` : `square-basicColor`"
                             >
                                 <StoneView :stone="square.stone" v-if="square.stone" />
@@ -81,6 +81,7 @@ export default Vue.extend({
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
+        holdTime: false as boolean,
     }),
     created: function () {
         this.localStorageTable = LocalStorage.fetchTable();
@@ -180,6 +181,7 @@ export default Vue.extend({
             console.log('stop');
         },
         putStone: function (square: Square): void {
+            if(this.holdTime) return;
             //石が置ける場所をクリックした場合
             if (square.isAllowedToPlace) {
                 square.stone = new Stone(this.currentPlayer.color);
@@ -198,6 +200,7 @@ export default Vue.extend({
                     this.table.board.enclosureController
                 );
                 //cpuの処理
+                this.holdTime = true;
                 setTimeout(this.cpuAlgorithm.bind(this), 1500);
             }
         },
@@ -258,6 +261,8 @@ export default Vue.extend({
         },
         cpuAlgorithm: function (): void {
             if(!this.currentPlayer.isCpu) return;
+
+            this.holdTime = false;
 
             const allowedSquares = this.table
                                        .board
