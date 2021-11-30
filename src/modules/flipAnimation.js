@@ -97,12 +97,11 @@ class FlipAnimation {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.render(this.scene, this.camera);
     }
-    async flip () {
-        this.square.childNodes.remove;
+    flip(callback) {
         const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
 
-        const animate = async () => {
+        const animate = () => {
             // Render
             this.renderer.render(this.scene, this.camera);
 
@@ -110,6 +109,8 @@ class FlipAnimation {
                 cancelAnimationFrame(requestId);
                 this.othelloStone.rotation.z = rotationZ;
                 this.othelloStone.position.z = 0;
+                this.remove();
+                callback();
                 return;
             }
 
@@ -124,9 +125,9 @@ class FlipAnimation {
 
         animate();
 
-        const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
+        // const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
         //requestAnimationFrameの同期処理が叶わなかったので、setIntervelを使った。
-        await sleep(ThreeConfig.sleepTime);
+        // await sleep(ThreeConfig.sleepTime);
     }
     remove() {
         this.canvas.remove();

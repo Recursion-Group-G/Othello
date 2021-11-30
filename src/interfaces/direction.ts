@@ -1,6 +1,6 @@
 import Square from '@/models/square';
 
-interface direction {
+interface Direction {
     top: Square | null;
     left: Square | null;
     right: Square | null;
@@ -11,4 +11,4 @@ interface direction {
     bottomRight: Square | null;
 }
 
-export default direction;
+export default Direction;
