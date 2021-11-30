@@ -98,7 +98,6 @@ class FlipAnimation {
         this.renderer.render(this.scene, this.camera);
     }
     flip (callback) {
-
         const rotationZ = this.othelloStone.rotation.z + Math.PI;
         let requestId = undefined;
 

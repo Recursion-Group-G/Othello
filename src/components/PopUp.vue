@@ -68,14 +68,15 @@ export default Vue.extend({
             }
         },
         redirectTop(): void {
-            //ゲームリセット
-
+            const isRedirectedTop = true;
+            this.$emit('resetGame', isRedirectedTop);
             this.$router.push('/');
         },
 
         redirectGame(): void {
-            //ゲームリセット
-            this.$emit('resetIsFinished');
+            const isRedirectedTop = false;
+            this.$emit('resetGame', isRedirectedTop);
+            this.$router.push('/game');
         },
     },
 
