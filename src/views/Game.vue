@@ -1,12 +1,14 @@
 <template>
     <div class="v-content">
-        <v-container class="d-flex justify-center text-center mt-5">
+        <v-container class="d-flex justify-center text-center">
             <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
+            <h2 v-if="isXs" class="player-font">
+                {{ table.players[1].name }}: {{ table.players[1].score }}
+            </h2>
         </v-container>
 
         <v-container class="board">
-            <v-row class="d-flex justify-center my-3">
+            <v-row class="d-flex justify-center">
                 <!-- Board -->
                 <div>
                     <!-- 現在のプレイヤーの色テスト表示 -->
@@ -16,16 +18,15 @@
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <!-- PopUp test-->
-                    <div>
-                        <v-btn
-                            tile
-                            @click="isGameFinished = true"
-                            color="deep-purple accent-3 white--text"
-                        >
-                            PopUP test
-                        </v-btn>
-                    </div>
-
+                    <!-- <div>
+                            <v-btn
+                                tile
+                                @click="isGameFinished = true"
+                                color="deep-purple accent-3 white--text"
+                            >
+                                PopUP test
+                            </v-btn>
+                        </div> -->
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -59,12 +60,14 @@
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
+                    <h2 class="player-font">
+                        {{ table.players[0].name }}: {{ table.players[1].score }}
+                    </h2>
                 </v-col>
             </v-row>
         </v-container>
         <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
-        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer"/>
+        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
     </div>
 </template>
 
@@ -93,7 +96,7 @@ import Color from '@/interfaces/color';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import SkipDialog from '@/components/SkipDialog.vue'
+import SkipDialog from '@/components/SkipDialog.vue';
 
 export default Vue.extend({
     name: 'Game',
@@ -265,7 +268,7 @@ export default Vue.extend({
 
             const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
-            this.holdTime = true
+            this.holdTime = true;
             animation.flip(() => {
                 stone.isVisible = true;
                 this.holdTime = false;
@@ -357,8 +360,8 @@ export default Vue.extend({
 }
 
 .board-square {
-    width: 90px;
-    height: 90px;
+    width: 75px;
+    height: 75px;
 
     cursor: pointer;
     transition: all 0.2s;
@@ -397,8 +400,8 @@ export default Vue.extend({
     }
 
     .board-square {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         color: #ffffff;
         cursor: pointer;
         transition: all 0.2s;
