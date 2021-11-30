@@ -1,23 +1,24 @@
 <template>
     <div class="v-content">
-        <v-row>
-            <v-container class="d-flex justify-center text-center mt-5">
-                <!-- Players上部(スマホの時のみ表示) -->
-                <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
-            </v-container>
+        <v-container class="d-flex justify-center text-center">
+            <!-- Players上部(スマホの時のみ表示) -->
+            <h2 v-if="isXs" class="player-font">
+                {{ table.players[1].name }}: {{ table.players[1].score }}
+            </h2>
+        </v-container>
 
-            <v-container class="board">
-                <v-row class="d-flex justify-center my-3">
-                    <!-- Board -->
+        <v-container class="board">
+            <v-row class="d-flex justify-center">
+                <!-- Board -->
+                <div>
+                    <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
-                        <!-- 現在のプレイヤーの色テスト表示 -->
-                        <div>
-                            <!-- テスト表示 -->
-                            <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
-                            <h2>Current Color: {{ this.currentPlayerColor }}</h2>
-                        </div>
-                        <!-- PopUp test-->
-                        <div>
+                        <!-- テスト表示 -->
+                        <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
+                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                    </div>
+                    <!-- PopUp test-->
+                    <!-- <div>
                             <v-btn
                                 tile
                                 @click="isGameFinished = true"
@@ -25,48 +26,48 @@
                             >
                                 PopUP test
                             </v-btn>
-                        </div>
-
-                        <div
-                            v-for="(row, rowIndex) in table.board.squares"
-                            :key="rowIndex"
-                            class="d-flex"
-                        >
-                            <div v-for="(square, colIndex) in row" :key="colIndex">
-                                <div
-                                    :id="square.id"
-                                    class="board-square square-basicColor"
-                                    @click="putStone(square)"
-                                >
-                                    <StoneView
-                                        :stone="square.stone"
-                                        v-if="square.stone && square.stone.isVisible"
-                                    />
-                                    <Mark v-if="square.isAllowedToPlace && !holdTime" />
-                                </div>
+                        </div> -->
+                    <div
+                        v-for="(row, rowIndex) in table.board.squares"
+                        :key="rowIndex"
+                        class="d-flex"
+                    >
+                        <div v-for="(square, colIndex) in row" :key="colIndex">
+                            <div
+                                :id="square.id"
+                                class="board-square square-basicColor"
+                                @click="putStone(square)"
+                            >
+                                <StoneView
+                                    :stone="square.stone"
+                                    v-if="square.stone && square.stone.isVisible"
+                                />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
                             </div>
                         </div>
                     </div>
-                </v-row>
-            </v-container>
+                </div>
+            </v-row>
+        </v-container>
 
-            <!-- Players下部 -->
-            <v-container>
-                <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
-                    <v-col v-for="k in table.players" :key="k.name">
-                        <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
-                    </v-col>
-                </v-row>
+        <!-- Players下部 -->
+        <v-container>
+            <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
+                <v-col v-for="k in table.players" :key="k.name">
+                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
+                </v-col>
+            </v-row>
 
-                <v-row v-else class="d-flex space-between text-center mb-5">
-                    <v-col>
-                        <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
-                    </v-col>
-                </v-row>
-            </v-container>
-            <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
-            <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
-        </v-row>
+            <v-row v-else class="d-flex space-between text-center mb-5">
+                <v-col>
+                    <h2 class="player-font">
+                        {{ table.players[0].name }}: {{ table.players[1].score }}
+                    </h2>
+                </v-col>
+            </v-row>
+        </v-container>
+        <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
+        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
     </div>
 </template>
 
@@ -360,8 +361,8 @@ export default Vue.extend({
 }
 
 .board-square {
-    width: 65px;
-    height: 65px;
+    width: 75px;
+    height: 75px;
 
     cursor: pointer;
     transition: all 0.2s;
@@ -400,8 +401,8 @@ export default Vue.extend({
     }
 
     .board-square {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
         color: #ffffff;
         cursor: pointer;
         transition: all 0.2s;
