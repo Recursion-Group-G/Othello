@@ -1,38 +1,40 @@
 <template>
     <div>
-        <div id="popup" v-show="isVisible">
-            <v-card id="content" class="d-flex justify-center">
-                <div>
-                    <!--test-->
-                    <h1 class="text-center">{{ this.returnWinner() }}</h1>
-                    <!--
+        <v-dialog v-model="isVisible">
+            <div id="popup">
+                <v-card id="content" class="d-flex justify-center">
+                    <div>
+                        <!--test-->
+                        <h1 class="text-center">{{ this.returnWinner() }}</h1>
+                        <!--
                     <h1 class="text-center">{{this.returnWinner()}}</h1>
                     -->
-                    <v-row>
-                        <v-col cols="12" sm="6">
-                            <v-btn
-                                class="deep-purple accent-3 white--text mt-10 mr-5"
-                                elevation="24"
-                                block
-                                @click="redirectTop()"
-                            >
-                                Top
-                            </v-btn>
-                        </v-col>
-                        <v-col cols="12" sm="6">
-                            <v-btn
-                                class="deep-purple accent-3 white--text mt-10 ml-5"
-                                elevation="24"
-                                block
-                                @click="redirectGame()"
-                            >
-                                Retry
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </div>
-            </v-card>
-        </div>
+                        <v-row>
+                            <v-col cols="12" sm="6">
+                                <v-btn
+                                    class="deep-purple accent-3 white--text mt-10 mr-5"
+                                    elevation="24"
+                                    block
+                                    @click="redirectTop()"
+                                >
+                                    Top
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-btn
+                                    class="deep-purple accent-3 white--text mt-10 ml-5"
+                                    elevation="24"
+                                    block
+                                    @click="redirectGame()"
+                                >
+                                    Retry
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </div>
+                </v-card>
+            </div>
+        </v-dialog>
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="v-content">
-        <v-container class="d-flex justify-center text-center mt-5">
+        <v-container class="d-flex justify-center text-center">
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
                 v-if="isXs"
@@ -11,7 +11,7 @@
         </v-container>
 
         <v-container class="board">
-            <v-row class="d-flex justify-center my-3">
+            <v-row class="d-flex justify-center">
                 <!-- Board -->
                 <div>
                     <!-- 現在のプレイヤーの色テスト表示 -->
@@ -51,7 +51,6 @@
                         </v-btn>
                     </div>
                     -->
-
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -67,7 +66,7 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace" />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
                             </div>
                         </div>
                     </div>
@@ -102,6 +101,7 @@
             </v-row>
         </v-container>
         <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
+        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
     </div>
 </template>
 
@@ -125,21 +125,26 @@ import LocalStorage from '@/modules/localStorage';
 import PlayerDecisions from '@/modules/playerDecisions';
 
 import Direction from '@/interfaces/direction';
+import Color from '@/interfaces/color';
+
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import Color from '@/interfaces/color';
+import SkipDialog from '@/components/SkipDialog.vue';
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
+        SkipDialog,
         StoneView,
         PopUp,
         Mark,
     },
     data: () => ({
         //仮のPlayer配列
+        skipDialog: false,
+        holdTime: false,
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
@@ -217,10 +222,10 @@ export default Vue.extend({
         initialGame(): void {
             //石を4個最初に置く
             console.log('start initializing game');
-            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
-            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.black);
             //isEmptyをfalseに変更
             this.table.board.squares[3][3].isEmpty = false;
             this.table.board.squares[4][4].isEmpty = false;
@@ -251,7 +256,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (!square.isAllowedToPlace) return;
+            if (!square.isAllowedToPlace || this.holdTime) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -297,8 +302,10 @@ export default Vue.extend({
 
             const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
+            this.holdTime = true;
             animation.flip(() => {
                 stone.isVisible = true;
+                this.holdTime = false;
             });
         },
         turnChange: function (): void {
@@ -328,11 +335,14 @@ export default Vue.extend({
                     }, 1000);
                     return;
                 } else {
-                    //1秒待ってスキップ
+                    //3秒待ってスキップ
+                    this.skipDialog = true;
+                    this.holdTime = true;
                     window.setTimeout(() => {
-                        alert('skipped');
+                        this.skipDialog = false;
+                        this.holdTime = false;
                         this.turnChange();
-                    }, 1000);
+                    }, 3000);
                     return;
                 }
             } else {
@@ -384,8 +394,8 @@ export default Vue.extend({
 }
 
 .board-square {
-    width: 90px;
-    height: 90px;
+    width: 75px;
+    height: 75px;
 
     cursor: pointer;
     transition: all 0.2s;
@@ -430,8 +440,8 @@ export default Vue.extend({
     }
 
     .board-square {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         color: #ffffff;
         cursor: pointer;
         transition: all 0.2s;
