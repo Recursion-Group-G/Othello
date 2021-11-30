@@ -11,13 +11,15 @@
                 <div>
                     <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
+                        <!-- テスト表示 -->
+                        <h2>{{ isGameFinished ? "Game Finished!!..." : "Play Othello!!"}}</h2>
                         <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <!-- PopUp test-->
                     <div>
                         <v-btn
                             tile
-                            @click="isFinished = true"
+                            @click="isGameFinished = true"
                             color="deep-purple accent-3 white--text"
                         >
                             PopUP test
@@ -32,15 +34,10 @@
                         <div v-for="(square, colIndex) in row" :key="colIndex">
                             <div
                                 :id="square.id"
-                                class="board-square"
+                                class="board-square square-basicColor"
                                 @click="putStone(square)"
-                                v-bind:class="
-                                    square.isAllowedToPlace
-                                        ? `square-markColor`
-                                        : `square-basicColor`
-                                "
                             >
-                                <StoneView :stone="square.stone" v-if="square.stone" />
+                                <StoneView :stone="square.stone" v-if="square.stone && square.stone.isVisible" />
                                 <Mark v-if="square.isAllowedToPlace" />
                             </div>
                         </div>
@@ -84,6 +81,7 @@ import BoardBuilder from '../modules/boardBuilder';
 import EnclosureController from '@/modules/enclosureController';
 import CheckAllowedSquares from '@/modules/checkAllowedSquares';
 import LocalStorage from '@/modules/localStorage';
+import PlayerDecisions from '@/modules/playerDecisions'
 
 import Direction from '@/interfaces/direction';
 import PopUp from '../components/PopUp.vue';
@@ -101,12 +99,12 @@ export default Vue.extend({
     },
     data: () => ({
         //仮のPlayer配列
+        playerDecisions : [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
-        //test
-        isFinished: false,
+        isGameFinished: false as boolean,
     }),
     created: function () {
         /* エラーがでるのでコメントアウト
@@ -126,9 +124,6 @@ export default Vue.extend({
         //スマホの画面判定
         isXs() {
             return this.$vuetify.breakpoint.name === 'xs';
-        },
-        isGameFinished(): boolean {
-            return this.isFinished;
         },
         //プレイヤーターンの色テスト表示
         currentPlayerColor(): string {
@@ -161,7 +156,8 @@ export default Vue.extend({
             localStorage.clear();
         },
         setTable(table: Table) {
-            this.table = table;
+            this.$emit('update:tableData', table);
+            // this.table = table
         },
         createBoard(): Board {
             let boardBuilder = new BoardBuilder();
@@ -180,12 +176,12 @@ export default Vue.extend({
 
         initialGame(): void {
             //石を4個最初に置く
-            console.log('start');
+            console.log('start initializing game')
             this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
             this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
             this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
-            //isEmptyをtrueに変更
+            //isEmptyをfalseに変更
             this.table.board.squares[3][3].isEmpty = false;
             this.table.board.squares[4][4].isEmpty = false;
             this.table.board.squares[3][4].isEmpty = false;
@@ -203,50 +199,42 @@ export default Vue.extend({
             this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][3]);
             this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][4]);
             this.table.board.enclosureController.addEnclosure(this.table.board.squares[5][5]);
+
             //EnclosureControllerの中で石が置ける場所を確認
-            CheckAllowedSquares.searchAllowedSquares(
-                this.currentPlayer,
+            this.setPlayerDecisions(this.currentPlayer)
+            console.log('end initilizing game');
+        },
+        setPlayerDecisions(player: Player){
+            this.playerDecisions = new PlayerDecisions(
+                player,
                 this.table.board.enclosureController
-            );
-            console.log('stop');
+            )
+            .filterDicisions()
+            .get()
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (square.isAllowedToPlace) {
-                square.stone = new Stone(this.currentPlayer.color);
-                square.isAllowedToPlace = false;
-                square.isEmpty = false;
-                this.flipAllDirections(square);
-                this.currentPlayer.score += 1;
-                this.updateScore();
-                this.table.turnCounter += 1;
+            if (!square.isAllowedToPlace) return;
 
-                //Enclosureを更新
-                this.table.board.enclosureController.addEnclosures(square);
+            square.stone = new Stone(this.currentPlayer.color);
+            square.isAllowedToPlace = false;
+            square.isEmpty = false;
+            this.flipAllDirections(square);
+            this.currentPlayer.score += 1;
+            this.updateScore();
 
-                this.turnChange();
-            }
+            //Enclosureを更新
+            this.table.board.enclosureController.updateFromSquare(square);
+
+            this.turnChange();
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
-            if (square.allowedDirections === undefined) return; //エラー回避
-            let directionCache: AllowedDirections = square.allowedDirections;
-
-            for (let direction in directionCache.allDirections) {
-                if (directionCache.allDirections[direction]) {
+            for (let direction in square.allowedDirections) {
+                if (square.allowedDirections[direction as keyof AllowedDirections]) {
                     this.flipOneDirection(square, direction as keyof Direction);
                 }
             }
-        },
-        isTherePlaceToPlace(enclosureController: EnclosureController): boolean {
-            let iterator: Enclosure | null = enclosureController.head;
-            while (iterator != null) {
-                if (iterator.data?.allowedDirections !== undefined) {
-                    return true;
-                }
-                iterator = iterator.next;
-            }
-            return false;
         },
         flipOneDirection(square: Square, direction: keyof Direction) {
             let iterator: Square | null = square[direction];
@@ -263,63 +251,59 @@ export default Vue.extend({
         },
         flipStone: async function (square: Square, toColor: Color): Promise<void> {
             if (square.stone === null) return;
+
+            const stone = square.stone
+            const fromColor = stone.color;
+
+            stone.color = toColor
+            stone.isVisible = false;
+
             const animation = new FlipAnimation(
                 square.id,
-                square.stone.color.code,
-                this.currentPlayer.color.code
+                fromColor.code,
+                toColor.code
             );
-            const stone = square.stone;
-            square.stone = null;
-            await animation.flip();
-            animation.remove();
-            square.stone = stone;
 
-            square.stone.color = toColor;
+            animation.flip(()=>{
+                stone.isVisible = true;
+            });
         },
         turnChange: function (): void {
+            this.table.turnCounter += 1;
             let index = this.table.turnCounter % this.table.players.length;
             this.currentPlayer = this.table.players[index];
-            //this.dicitions = this.enclosureController.getPlayersDicisions(this.currentPlayer)//未作成のメソッド//プレイヤーが置ける場所のみを配列か連結リストかで返す。
-            //あとはプレイヤーが置ける場所を変えたり
-            //そこにあるもの以外を置けなくしたりする
-            //turnChange内に書くのではなくputStoneから呼び出す？
 
-            //プレイヤーの置ける場所を確認
-            CheckAllowedSquares.resetAfterTurnOver(this.table.board.enclosureController);
-            CheckAllowedSquares.searchAllowedSquares(
-                this.currentPlayer,
-                this.table.board.enclosureController
-            );
+            this.setPlayerDecisions(this.currentPlayer);
 
-            //今のプレイヤーが置ける場所がなかったら、スキップ
-            if (!this.isTherePlaceToPlace(this.table.board.enclosureController)) {
-                this.currentPlayer.isSkipped = true;
-                this.table.turnCounter += 1;
 
-                //プレイヤー全員がスキップしてたらゲーム終了
-                const skippedPlayers = this.table.players.filter(
-                    (p: Player) => p.isSkipped === true
-                );
-                const isFullToPlace = this.table.board.enclosureController.head == null;
-                const isScoreZero =
-                    this.table.players[0].score === 0 || this.table.players[1].score === 0;
-                if (
-                    skippedPlayers.length === this.table.players.length ||
-                    isFullToPlace ||
-                    isScoreZero
+            if(this.playerDecisions.length === 0 ){
+                this.currentPlayer.isSkipped = true
+
+                const isPlayerAllSkipped = this.table.players.reduce((bool : boolean, p:Player) => {
+                    bool = p.isSkipped ? bool : false ;
+                    return bool;
+                }, true);
+                const isNoWhereToPlace = this.table.board.enclosureController.head == null;
+
+                if( //プレイヤーが全員スキップした時 or Enclosure(stoneを置ける場所)がない時 ゲーム終了
+                    isNoWhereToPlace ||
+                    isPlayerAllSkipped
                 ) {
                     //1秒待ってゲーム終了(石のアニメーションの時間)
                     window.setTimeout(() => {
-                        this.isFinished = true;
+                        this.isGameFinished = true;
+                    }, 1000);
+                    return;
+                }
+                else {
+                    //1秒待ってスキップ
+                    window.setTimeout(() => {
+                        alert('skipped');
+                        this.turnChange();
                     }, 1000);
                     return;
                 }
 
-                //スキップした時は1秒待つ
-                window.setTimeout(() => {
-                    alert('skipped');
-                    this.turnChange();
-                }, 1000);
             } else {
                 //そのプレイヤーがプレイできたら全員リセット
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));

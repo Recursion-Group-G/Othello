@@ -1,4 +1,5 @@
 import Color from './color';
+import Direction from './direction';
 import Size from './size';
 
 interface Config {

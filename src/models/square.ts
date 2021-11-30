@@ -26,6 +26,7 @@ class Square {
         this.isEmpty = true;
         this.id = this.createId(point);
         this.isAllowedToPlace = false;
+        this.allowedDirections = new AllowedDirections()
 
         this.top = null;
         this.right = null;

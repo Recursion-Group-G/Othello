@@ -36,12 +36,13 @@ class CheckAllowedSquares {
         while (iterator != null) {
             //8方向石が置けるか確認
             this.checkAllDirecstions(iterator, playerColor);
-            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにして、AllowedDirectionsのインスタンス作成
+            //8方向のうちいずれか石が返せるようであれば、square.isAllowedToPlaceをtrueにして、
+            //allDirectionsをAllowedDirectionsのインスタンスとして追加
             if (!this.isSquareAbleToPlace()) {
                 if (iterator.data != null) iterator.data.isAllowedToPlace = true;
                 if (iterator.data != null) {
                     const allDirections = JSON.parse(JSON.stringify(this.allDirections));
-                    iterator.data.allowedDirections = new AllowedDirections(allDirections);
+                    iterator.data.allowedDirections = allDirections as AllowedDirections;
                 }
             }
             iterator = iterator.next;
@@ -117,8 +118,9 @@ class CheckAllowedSquares {
         while (iterator != null) {
             if (iterator.data != null && iterator.data.isAllowedToPlace) {
                 iterator.data.isAllowedToPlace = false;
-                if (iterator.data.allowedDirections != undefined)
-                    delete iterator.data.allowedDirections;
+                if (iterator.data.allowedDirections != undefined) {
+                    iterator.data.allowedDirections = undefined;
+                }
             }
             iterator = iterator.next;
         }

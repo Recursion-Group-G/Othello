@@ -1,8 +1,24 @@
 class AllowedDirections {
-    allDirections: { [key: string]: boolean };
+    top: boolean;
+    right: boolean;
+    bottom: boolean;
+    left: boolean;
 
-    constructor(allDirections: { [key: string]: boolean }) {
-        this.allDirections = allDirections;
+    topRight: boolean;
+    topLeft: boolean;
+    bottomRight: boolean;
+    bottomLeft: boolean;
+    
+    constructor() {
+        this.top = false;
+        this.right = false;
+        this.bottom = false;
+        this.left = false;
+
+        this.topRight = false;
+        this.topLeft = false;
+        this.bottomRight = false;
+        this.bottomLeft = false;
     }
 }
 
