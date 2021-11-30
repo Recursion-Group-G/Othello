@@ -76,7 +76,7 @@ export default Vue.extend({
         redirectGame(): void {
             const isRedirectedTop = false;
             this.$emit('resetGame', isRedirectedTop);
-            this.$router.push('/game');
+            // this.$router.push('/game'); // ERROR: NavigationDuplicated: Avoided redundant navigation to current location: "/game".
         },
     },
 

@@ -318,19 +318,20 @@ export default Vue.extend({
         },
 
         resetGame(isRedirectedTop: boolean): void {
-            this.isFinished = false;
+            this.isGameFinished = false;
             this.table.board.size = { x: 0, y: 0 };
             this.table.board.squares = [];
             this.table.board.enclosureController = new EnclosureController();
-            this.table.board.turnCounter = 0;
+            this.table.turnCounter = 0;
 
-            this.table.players.map((p: Player) => {
+            this.table.players.forEach((p: Player) => {
                 p.score = Config.player.initialScore;
             });
 
             //Topに遷移した時はプレイヤーの名前をリセット(初期値null)
             if (isRedirectedTop) {
                 this.table.players = null;
+                return;
             }
 
             //createdの処理と重複しているで後ほど整理
