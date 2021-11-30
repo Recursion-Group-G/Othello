@@ -1,46 +1,58 @@
 <template>
     <div>
-        <div id="popup" v-show="isVisible">
-            <v-card id="content" class="d-flex justify-center">
-                <div>
-                    <h1 class="text-center">XX is Winner</h1>
-
-                    <v-row>
-                        <v-col cols="12" sm="6">
-                            <router-link to="/top">
+        <v-dialog v-model="isVisible">
+            <div id="popup">
+                <v-card id="content" class="d-flex justify-center">
+                    <div>
+                        <!--test-->
+                        <h1 class="text-center">{{ this.returnWinner() }}</h1>
+                        <!--
+                    <h1 class="text-center">{{this.returnWinner()}}</h1>
+                    -->
+                        <v-row>
+                            <v-col cols="12" sm="6">
                                 <v-btn
-                                    class="deep-purple accent-3 white--text"
+                                    class="deep-purple accent-3 white--text mt-10 mr-md-5"
                                     elevation="24"
                                     block
+                                    @click="redirectTop()"
                                 >
                                     Top
                                 </v-btn>
-                            </router-link>
-                        </v-col>
-                        <v-col cols="12" sm="6">
-                            <router-link to="/game">
+                            </v-col>
+                            <v-col cols="12" sm="6">
                                 <v-btn
-                                    class="deep-purple accent-3 white--text"
+                                    class="deep-purple accent-3 white--text mt-10 ml-md-5"
                                     elevation="24"
                                     block
+                                    @click="redirectGame()"
                                 >
                                     Retry
                                 </v-btn>
-                            </router-link>
-                        </v-col>
-                    </v-row>
-                </div>
-            </v-card>
-        </div>
+                            </v-col>
+                        </v-row>
+                    </div>
+                </v-card>
+            </div>
+        </v-dialog>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
+    name: 'PopUp',
+
     data: () => ({
         isVisible: true,
     }),
+
+    props: {
+        table: {
+            type: Object,
+        },
+    },
+
     methods: {
         openModal(): void {
             this.isVisible = true;
@@ -48,7 +60,29 @@ export default Vue.extend({
         closeModal(): void {
             this.isVisible = false;
         },
+        returnWinner(): string {
+            if (this.table.players[0].score === this.table.players[1].score) {
+                return 'Tie Breaker';
+            } else {
+                return this.table.players[0].score > this.table.players[1].score
+                    ? this.table.players[0].name + ' is Winner'
+                    : this.table.players[1].name + ' is Winner';
+            }
+        },
+        redirectTop(): void {
+            const isRedirectedTop = true;
+            this.$emit('resetGame', isRedirectedTop);
+            this.$router.push('/');
+        },
+
+        redirectGame(): void {
+            const isRedirectedTop = false;
+            this.$emit('resetGame', isRedirectedTop);
+            // this.$router.push('/game'); // ERROR: NavigationDuplicated: Avoided redundant navigation to current location: "/game".
+        },
     },
+
+    computed: {},
 });
 </script>
 

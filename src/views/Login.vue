@@ -1,5 +1,5 @@
 <template>
-    <div class="fill-height pa-1">
+    <div class="fill-height pa-1 login">
         <v-row justify="center">
             <v-col cols="10" sm="6" md="4">
                 <h1 class="page-title">Select Mode</h1>
@@ -59,6 +59,7 @@ import Color from '../interfaces/color';
 
 export default Vue.extend({
     name: 'Login',
+
     data() {
         return {
             Config: Config,
@@ -107,7 +108,7 @@ export default Vue.extend({
             }
         },
         setPlayersColor(): void {
-            this.shufflePlayers();
+            //this.shufflePlayers(); //シャッフルすると最初にplayerのputStone()でcpuが動作しなくなるため
             const colorStrings: string[] = Object.keys(Config.stone.color);
 
             for (let i = 0; i < this.players.length; i++) {
@@ -116,6 +117,7 @@ export default Vue.extend({
                 const color: Color = Config.stone.color[colorString];
 
                 player.color = color;
+                if (player.name === '') player.name = Config.player.cpuName;
             }
         },
         validate(): boolean {
@@ -145,6 +147,12 @@ export default Vue.extend({
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.login {
+    font-family: 'Lato';
+}
+
 .page-title {
     text-align: center;
     margin-top: 120px;

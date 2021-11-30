@@ -1,20 +1,16 @@
 <template>
     <div class="size-fill d-flex justify-center align-center">
         <v-sheet
-            class="mx-auto transition-swing rounded-circle stone-style"
+            class="mx-auto transition-swing rounded-circle mark-style pink lighten-4"
             elevation="12"
-            :color="stone.color.code"
+            color="#F8BBD0"
         ></v-sheet>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Stone from '@/models/stone';
 export default Vue.extend({
-    props: {
-        stone: Stone,
-    },
     data() {
         return {};
     },
@@ -27,8 +23,8 @@ export default Vue.extend({
     height: 100%;
 }
 
-.stone-style {
-    width: 90%;
-    height: 90%;
+.mark-style {
+    width: 30%;
+    height: 30%;
 }
 </style>

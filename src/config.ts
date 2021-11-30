@@ -43,6 +43,7 @@ const config: Config = {
         playerIndex: 0, //CPUモードだったときのPlayer Index
         cpuIndex: 1,
         cpuName: 'CPU',
+        initialScore: 2,
     },
     table: {
         phase: {
@@ -53,6 +54,16 @@ const config: Config = {
     },
     localStorage: {
         table: 'table',
+    },
+    direction: {
+        top: 'top',
+        left: 'left',
+        right: 'right',
+        bottom: 'bottom',
+        topLeft: 'topLeft',
+        topRight: 'topRight',
+        bottomLeft: 'bottomLeft',
+        bottomRight: 'bottomRight',
     },
 };
 

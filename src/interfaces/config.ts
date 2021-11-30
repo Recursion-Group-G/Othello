@@ -1,4 +1,5 @@
 import Color from './color';
+import Direction from './direction';
 import Size from './size';
 
 interface Config {
@@ -29,6 +30,7 @@ interface Config {
         playerIndex: number;
         cpuIndex: number;
         cpuName: string;
+        initialScore: number;
     };
     table: {
         phase: {
@@ -36,6 +38,9 @@ interface Config {
         };
     };
     localStorage: {
+        [key: string]: string;
+    };
+    direction: {
         [key: string]: string;
     };
 }

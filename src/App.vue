@@ -3,7 +3,8 @@
         <v-main>
             <router-view
                 @playersData="setPlayer"
-                :table="this.table"
+                @update:tableData="setTable"
+                :table.sync="this.table"
             ></router-view>
         </v-main>
     </v-app>
@@ -23,6 +24,9 @@ export default Vue.extend({
     methods: {
         setPlayer(players: Player[]) {
             this.table.players = players;
+        },
+        setTable(table: Table) {
+            this.table = table;
         },
     },
     created: function () {
