@@ -41,7 +41,7 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
                             </div>
                         </div>
                     </div>
