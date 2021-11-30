@@ -110,16 +110,15 @@ export default Vue.extend({
         isGameFinished: false as boolean,
     }),
     created: function () {
-        /* エラーがでるのでコメントアウト
-        this.localStorageTable = LocalStorage.fetchTable();
-        //今は画面遷移しないようにコメントアウト
+        // localStorageへの保存は見直す必要があるため一度コメントアウト
+        // this.localStorageTable = LocalStorage.fetchTable();
         // this.validateLocalStorage();
-        // this.validateTable();
-        LocalStorage.saveTable(this.table);
-        this.setTable(this.localStorageTable);
-        */
+        // LocalStorage.saveTable(this.table);
+        // this.setTable(this.localStorageTable);
+
         let board = this.createBoard();
         this.setBoardOnTable(board);
+        this.validateTable();
         this.currentPlayer = this.table.players[0];
         this.initialGame();
     },
