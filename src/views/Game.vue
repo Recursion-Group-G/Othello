@@ -260,9 +260,10 @@ export default Vue.extend({
             this.flipCounter = 0;
         },
         cpuAlgorithm: function (): void {
+            this.holdTime = false;
             if(!this.currentPlayer.isCpu) return;
 
-            this.holdTime = false;
+            //this.holdTime = false;
 
             const allowedSquares = this.table
                                        .board
