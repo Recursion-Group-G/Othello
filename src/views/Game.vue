@@ -85,9 +85,7 @@ import Direction from '@/interfaces/direction';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import AllowedDirections from '@/models/allowedDirections';
 import Color from '@/interfaces/color'
-import LocalStorage from '../modules/localStorage';
 
 export default Vue.extend({
     name: 'Game',
@@ -107,14 +105,13 @@ export default Vue.extend({
         isFinished: false,
     }),
     created: function () {
-        this.localStorageTable = LocalStorage.fetchTable();
-        //今は画面遷移しないようにコメントアウト
+        // this.localStorageTable = LocalStorage.fetchTable();
         // this.validateLocalStorage();
-        // this.validateTable();
-        LocalStorage.saveTable(this.table);
-        this.setTable(this.localStorageTable);
+        // LocalStorage.saveTable(this.table);
+        // this.setTable(this.localStorageTable);
         let board = this.createBoard();
         this.setBoardOnTable(board);
+        this.validateTable();
         this.currentPlayer = this.table.players[0];
         this.initialGame();
     },
