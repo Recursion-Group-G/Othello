@@ -1,29 +1,29 @@
 <template>
-  <div class="text-center">
-    <v-dialog v-model="skipDialog">
-        <div>
-            <div id="skip-dialog" >
-                <v-card id="content" class="d-flex justify-center">
-                    <div>
-                        <h1 class="deep-purple-accent-3">>>>>>>>>>>>>>>>>>>>>>>>></h1>
-                        <h1 class="text-center m-3">Skip {{player.name}} !</h1>
-                        <p class="text-center color-gray">{{ player.name }} has no place to put his/her stone...</p>
-                        <h1 class="deep-purple-accent-3">>>>>>>>>>>>>>>>>>>>>>>>></h1>
-                    </div>
-                </v-card>
+    <div class="text-center">
+        <v-dialog v-model="skipDialog">
+            <div>
+                <div id="skip-dialog">
+                    <v-card id="content" class="d-flex justify-center">
+                        <div>
+                            <h1 class="deep-purple-accent-3">>>>>>>>>>>>>>>>>>>>>>>>></h1>
+                            <h1 class="text-center m-3">Skip {{ player.name }} !</h1>
+                            <p class="text-center color-gray">
+                                {{ player.name }} has no place to put his/her stone...
+                            </p>
+                            <h1 class="deep-purple-accent-3">>>>>>>>>>>>>>>>>>>>>>>>></h1>
+                        </div>
+                    </v-card>
+                </div>
             </div>
-        </div>
-    </v-dialog>
-  </div>
+        </v-dialog>
+    </div>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
     props: ['skipDialog', 'player'],
-
-})
+});
 </script>
 
 <style>
@@ -52,7 +52,7 @@ export default Vue.extend({
     background: #fff;
 }
 .deep-purple-accent-3 {
-    color: #651FFF;
+    color: #651fff;
 }
 .color-gray {
     color: #999;

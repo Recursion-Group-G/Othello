@@ -1,70 +1,72 @@
 <template>
     <div class="v-content">
-        <v-container class="d-flex justify-center text-center mt-5">
-            <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
-        </v-container>
+        <v-row>
+            <v-container class="d-flex justify-center text-center mt-5">
+                <!-- Players上部(スマホの時のみ表示) -->
+                <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
+            </v-container>
 
-        <v-container class="board">
-            <v-row class="d-flex justify-center my-3">
-                <!-- Board -->
-                <div>
-                    <!-- 現在のプレイヤーの色テスト表示 -->
+            <v-container class="board">
+                <v-row class="d-flex justify-center my-3">
+                    <!-- Board -->
                     <div>
-                        <!-- テスト表示 -->
-                        <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
-                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
-                    </div>
-                    <!-- PopUp test-->
-                    <div>
-                        <v-btn
-                            tile
-                            @click="isGameFinished = true"
-                            color="deep-purple accent-3 white--text"
-                        >
-                            PopUP test
-                        </v-btn>
-                    </div>
-
-                    <div
-                        v-for="(row, rowIndex) in table.board.squares"
-                        :key="rowIndex"
-                        class="d-flex"
-                    >
-                        <div v-for="(square, colIndex) in row" :key="colIndex">
-                            <div
-                                :id="square.id"
-                                class="board-square square-basicColor"
-                                @click="putStone(square)"
+                        <!-- 現在のプレイヤーの色テスト表示 -->
+                        <div>
+                            <!-- テスト表示 -->
+                            <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
+                            <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                        </div>
+                        <!-- PopUp test-->
+                        <div>
+                            <v-btn
+                                tile
+                                @click="isGameFinished = true"
+                                color="deep-purple accent-3 white--text"
                             >
-                                <StoneView
-                                    :stone="square.stone"
-                                    v-if="square.stone && square.stone.isVisible"
-                                />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
+                                PopUP test
+                            </v-btn>
+                        </div>
+
+                        <div
+                            v-for="(row, rowIndex) in table.board.squares"
+                            :key="rowIndex"
+                            class="d-flex"
+                        >
+                            <div v-for="(square, colIndex) in row" :key="colIndex">
+                                <div
+                                    :id="square.id"
+                                    class="board-square square-basicColor"
+                                    @click="putStone(square)"
+                                >
+                                    <StoneView
+                                        :stone="square.stone"
+                                        v-if="square.stone && square.stone.isVisible"
+                                    />
+                                    <Mark v-if="square.isAllowedToPlace && !holdTime" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </v-row>
-        </v-container>
+                </v-row>
+            </v-container>
 
-        <!-- Players下部 -->
-        <v-container>
-            <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
-                <v-col v-for="k in table.players" :key="k.name">
-                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
-                </v-col>
-            </v-row>
+            <!-- Players下部 -->
+            <v-container>
+                <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
+                    <v-col v-for="k in table.players" :key="k.name">
+                        <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
+                    </v-col>
+                </v-row>
 
-            <v-row v-else class="d-flex space-between text-center mb-5">
-                <v-col>
-                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
-                </v-col>
-            </v-row>
-        </v-container>
-        <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
-        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer"/>
+                <v-row v-else class="d-flex space-between text-center mb-5">
+                    <v-col>
+                        <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
+            <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
+        </v-row>
     </div>
 </template>
 
@@ -93,7 +95,7 @@ import Color from '@/interfaces/color';
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import SkipDialog from '@/components/SkipDialog.vue'
+import SkipDialog from '@/components/SkipDialog.vue';
 
 export default Vue.extend({
     name: 'Game',
@@ -266,7 +268,7 @@ export default Vue.extend({
 
             const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
-            this.holdTime = true
+            this.holdTime = true;
             animation.flip(() => {
                 stone.isVisible = true;
                 this.holdTime = false;
@@ -358,8 +360,8 @@ export default Vue.extend({
 }
 
 .board-square {
-    width: 90px;
-    height: 90px;
+    width: 65px;
+    height: 65px;
 
     cursor: pointer;
     transition: all 0.2s;
@@ -398,8 +400,8 @@ export default Vue.extend({
     }
 
     .board-square {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         color: #ffffff;
         cursor: pointer;
         transition: all 0.2s;
