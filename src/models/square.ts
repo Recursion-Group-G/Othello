@@ -8,7 +8,7 @@ class Square {
     isEmpty: boolean;
     id: string;
     isAllowedToPlace: boolean;
-    allowedDirections: AllowedDirections ;
+    allowedDirections: AllowedDirections | undefined;
 
     top: Square | null;
     right: Square | null;

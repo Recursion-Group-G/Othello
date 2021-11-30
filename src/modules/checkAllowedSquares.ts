@@ -120,7 +120,7 @@ class CheckAllowedSquares {
             if (iterator.data != null && iterator.data.isAllowedToPlace) {
                 iterator.data.isAllowedToPlace = false;
                 if (iterator.data.allowedDirections != undefined) {
-                    iterator.data.allowedDirections = new AllowedDirections();
+                    iterator.data.allowedDirections = undefined;
                 }
             }
             iterator = iterator.next;
