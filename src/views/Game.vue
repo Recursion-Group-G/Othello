@@ -4,9 +4,9 @@
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
                 v-if="isXs"
-                v-bind:class="k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+                v-bind:class="table.players[1] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
             >
-                {{ table.players[1].name }}: {{ k.score }}
+                {{ table.players[1].name }}: {{ table.players[1].score }}
             </h2>
         </v-container>
 
@@ -92,10 +92,10 @@
                 <v-col>
                     <h2
                         v-bind:class="
-                            k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                            table.players[0] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
                         "
                     >
-                        {{ table.players[0].name }}: {{ k.score }}
+                        {{ table.players[0].name }}: {{ table.players[0].score }}
                     </h2>
                 </v-col>
             </v-row>
