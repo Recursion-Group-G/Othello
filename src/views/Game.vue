@@ -41,7 +41,7 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace" />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime" />
                             </div>
                         </div>
                     </div>
@@ -220,7 +220,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (!square.isAllowedToPlace) return;
+            if (!square.isAllowedToPlace || this.holdTime) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -266,8 +266,10 @@ export default Vue.extend({
 
             const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
+            this.holdTime = true
             animation.flip(() => {
                 stone.isVisible = true;
+                this.holdTime = false;
             });
         },
         turnChange: function (): void {
@@ -298,11 +300,11 @@ export default Vue.extend({
                     return;
                 } else {
                     //3秒待ってスキップ
-                    this.skipDialog = true
-                    this.holdTime = true
+                    this.skipDialog = true;
+                    this.holdTime = true;
                     window.setTimeout(() => {
-                        this.skipDialog = false
-                        this.holdTime = false
+                        this.skipDialog = false;
+                        this.holdTime = false;
                         this.turnChange();
                     }, 3000);
                     return;
