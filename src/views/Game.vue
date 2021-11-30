@@ -2,7 +2,7 @@
     <div class="v-content">
         <v-container class="d-flex justify-center text-center mt-5">
             <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
+            <h2 v-if="isXs" v-bind:class="k == currentPlayer ? `player-font-turn`: `player-font-turn-waiting`">{{ table.players[1].name }}: {{ k.score }}</h2>
         </v-container>
 
         <v-container class="board">
@@ -13,7 +13,6 @@
                     <div>
                         <!-- テスト表示 -->
                         <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
-                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
                     </div>
                     <!-- PopUp test-->
                     <div>
@@ -53,13 +52,13 @@
         <v-container>
             <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
                 <v-col v-for="k in table.players" :key="k.name">
-                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
+                    <h2 v-bind:class="k == currentPlayer ? `player-font-turn`: `player-font-turn-waiting`">{{ k.name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
+                    <h2 v-bind:class="k == currentPlayer ? `player-font-turn`: `player-font-turn-waiting`">{{ table.players[0].name }}: {{ k.score }}</h2>
                 </v-col>
             </v-row>
         </v-container>
@@ -374,9 +373,15 @@ export default Vue.extend({
     background: #000000;
 } */
 
-.player-font {
+.player-font-turn {
     font-family: 'Lato';
     font-size: 40px;
+}
+
+.player-font-turn-waiting {
+    font-family: 'Lato';
+    font-size: 40px;
+    color: #C0C0C0;
 }
 
 @media screen and (max-width: 480px) {
