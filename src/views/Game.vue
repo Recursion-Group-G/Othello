@@ -258,7 +258,7 @@ export default Vue.extend({
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
             if (
-                !square.isAllowedToPlace || 
+                // !square.isAllowedToPlace || 
                 this.holdTime ||
                 this.holdTimeForCpu
             ) return;
