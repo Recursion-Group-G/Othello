@@ -179,10 +179,10 @@ export default Vue.extend({
         initialGame(): void {
             //石を4個最初に置く
             console.log('start initializing game');
-            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.black);
-            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.white);
-            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[3][3].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[4][4].stone = new Stone(Config.stone.color.white);
+            this.table.board.squares[3][4].stone = new Stone(Config.stone.color.black);
+            this.table.board.squares[4][3].stone = new Stone(Config.stone.color.black);
             //isEmptyをfalseに変更
             this.table.board.squares[3][3].isEmpty = false;
             this.table.board.squares[4][4].isEmpty = false;
