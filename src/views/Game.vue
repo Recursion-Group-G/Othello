@@ -78,6 +78,7 @@
                     </div>
                 </div>
             </v-row>
+            <v-btn v-on:click="this.clearData()">clear</v-btn>
         </v-container>
 
         <!-- Players下部 -->
@@ -156,6 +157,7 @@ export default Vue.extend({
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
         localStorageTable: {} as Table,
+        localStorageStones: {} as { key: Stone },
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
         holdTime: false as boolean,
@@ -168,11 +170,26 @@ export default Vue.extend({
         // LocalStorage.saveTable(this.table);
         // this.setTable(this.localStorageTable);
 
-        let board = this.createBoard();
-        this.setBoardOnTable(board);
-        this.validateTable();
-        this.currentPlayer = this.table.players[0];
-        this.initialGame();
+        this.localStorageStones = LocalStorage.fetchStones();
+        if (this.localStorageStones !== null && Object.keys(this.localStorageStones).length !== 0) {
+            this.table.players = LocalStorage.fetchPlayers();
+            this.table.turnCounter = LocalStorage.fetchTurnCounter();
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            this.setStonesOnTable();
+            this.currentPlayer = this.table.players[this.table.turnCounter % 2];
+        } else {
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            // this.validateTable();
+            this.currentPlayer = this.table.players[0];
+            this.initialGame();
+        }
+        // let board = this.createBoard();
+        // this.setBoardOnTable(board);
+        // // this.validateTable();
+        // this.currentPlayer = this.table.players[0];
+        // this.initialGame();
         LocalStorage.saveGame(this.table);
     },
     computed: {
@@ -228,7 +245,16 @@ export default Vue.extend({
         setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
-
+        setStonesOnTable(): void {
+            for (let y = 0; y < Config.square.size.y; y++) {
+                for (let x = 0; x < Config.square.size.x; x++) {
+                    const curr = this.table.board.squares[x][y];
+                    if (curr.id !== null && this.localStorageStones[curr.id] !== null) {
+                        curr.stone = this.localStorageStones[curr.id];
+                    }
+                }
+            }
+        },
         initialGame(): void {
             //石を4個最初に置く
             console.log('start initializing game');
@@ -408,6 +434,10 @@ export default Vue.extend({
                 this.holdTimeForCpu = false;
                 this.putStone(cpuSquare);
             }, 2000);
+        },
+        //デバッグ用
+        clearData(): void {
+            localStorage.clear();
         },
     },
 });

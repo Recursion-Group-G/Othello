@@ -1,6 +1,7 @@
 import Square from '@/models/square';
 import Stone from '@/models/stone';
 import Table from '@/models/table';
+import Player from '@/models/player';
 import Config from '../config';
 
 class LocalStorage {
@@ -18,20 +19,34 @@ class LocalStorage {
         localStorage.clear();
     }
 
+    public static fetchPlayers(): Player[] {
+        const jsonPlayers = localStorage.getItem(Config.localStorage.players);
+        return jsonPlayers ? JSON.parse(jsonPlayers) : {};
+    }
+
+    public static fetchTurnCounter(): number {
+        const jsonTurnCounter = localStorage.getItem(Config.localStorage.turnCounter);
+        return jsonTurnCounter ? parseInt(jsonTurnCounter) : 0;
+    }
+
+    public static fetchStones(): { key: Stone } {
+        const jsonStones = localStorage.getItem(Config.localStorage.stones);
+        return jsonStones ? JSON.parse(jsonStones) : null;
+    }
+
     public static saveGame(table: Table): void {
         if (table !== null && table.board !== null) {
             const playersJsonDecoded = JSON.stringify(table.players);
             const turnCounterJsonDecodes = JSON.stringify(table.turnCounter);
 
-            const stones:{key:Square}[] = [];
-            for (let x = 0; x < Config.square.size.x; x++) {
-                for (let y = 0; y < Config.square.size.y; y++) {
+            const stones = {};
+            for (let y = 0; y < Config.square.size.y; y++) {
+                for (let x = 0; x < Config.square.size.x; x++) {
                     const curr: Square = table.board.squares[x][y];
-                    const key: string = curr.id;
-                    if (curr.stone !== null) stones.push({key: curr});
+                    if (curr.stone !== null) stones[curr.id] = curr.stone;
                 }
             }
-
+            console.log(stones);
             const stonesJsonDecoded = JSON.stringify(stones);
 
             localStorage.setItem(Config.localStorage.players, playersJsonDecoded);
