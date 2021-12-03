@@ -131,6 +131,7 @@ import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
 import SkipDialog from '@/components/SkipDialog.vue';
+const env = process.env.NODE_ENV;
 
 export default Vue.extend({
     name: 'Game',
@@ -323,7 +324,8 @@ export default Vue.extend({
         putStone(square: Square): void {
             //石が置ける場所をクリックした場合
             if (
-                !square.isAllowedToPlace || 
+                //developmentの時は置ける
+                (env !== "development" && !square.isAllowedToPlace) ||
                 this.holdTime ||
                 this.holdTimeForCpu
             ) return;
@@ -352,7 +354,12 @@ export default Vue.extend({
             //そのcurrentPlauerがプレイできたら...
             if (this.playerDecisions.length !== 0) {
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
-                return;
+                if(this.currentPlayer.isCpu){
+                    this.cpuAlgorithm()
+                    return;
+                } else {
+                    return;
+                }
             }
             //そのcurrentPlauerがプレイできない場合は...
             this.currentPlayer.isSkipped = true;
@@ -368,7 +375,7 @@ export default Vue.extend({
                 //1秒待ってゲーム終了(石のアニメーションの時間)
                 window.setTimeout(this.endGame, 1000);
                 return;
-            } else if(this.playerDecisions.length === 0){
+            } else {
                 // FIX: 非同期処理に同じ変数を扱うのは副作用の原因になるのでできれば分けた方がいい
                 //3秒待ってスキップ
                 this.skipDialog = true;
@@ -380,11 +387,6 @@ export default Vue.extend({
                 }, 3000);
                 return;
             }
-
-            if(this.currentPlayer.isCpu){
-                this.cpuAlgorithm()
-            }
-
         },
         endGame(): void {
             this.isGameFinished = true;
@@ -414,7 +416,6 @@ export default Vue.extend({
             this.initializeGame();
         },
         cpuAlgorithm: function (): void {
-            console.log('hey')
             if(!this.currentPlayer.isCpu)return;
             const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
             const cpuSquare = this.playerDecisions[randomIndex];
