@@ -3,7 +3,7 @@
         <v-dialog v-model="skipDialog">
             <div>
                 <div id="skip-dialog">
-                    <v-card id="content" class="d-flex justify-center">
+                    <v-card id="skip-content" class="d-flex justify-center">
                         <div>
                             <h1 class="deep-purple-accent-3">>>>>>>>>>>>>>>>>>>>>>>>></h1>
                             <h1 class="text-center m-3">Skip {{ player.name }} !</h1>
@@ -45,9 +45,9 @@ export default Vue.extend({
     justify-content: center;
 }
 
-#content {
+#skip-content {
     z-index: 2;
-    width: 50%;
+    min-width: 50%;
     padding: 1em;
     background: #fff;
 }
