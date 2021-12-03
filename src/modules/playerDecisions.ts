@@ -53,7 +53,10 @@ class PlayerDicisions {
         this.setAllowedDirectionsToSquare(square);
 
         for (const direction in Config.direction) {
-            if (this.willGetPoint(square, direction as keyof Direction)) {
+            if (
+                this.willGetPoint(square, direction as keyof Direction) &&
+                square.allowedDirections !== undefined
+            ) {
                 square.allowedDirections[direction as keyof AllowedDirections] = true;
             }
         }

@@ -1,21 +1,46 @@
 <template>
-    <div class="v-content">
-        <v-container class="d-flex justify-center text-center mt-5">
+    <div class="v-content game">
+        <v-container class="d-flex justify-center text-center">
             <!-- Players上部(スマホの時のみ表示) -->
-            <h2 v-if="isXs" class="player-font">{{ table.players[1].name }}: {{ k.score }}</h2>
+            <h2
+                v-if="isXs"
+                v-bind:class="table.players[1] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+            >
+                {{ table.players[1].name }}: {{ table.players[1].score }}
+            </h2>
         </v-container>
 
         <v-container class="board">
-            <v-row class="d-flex justify-center my-3">
+            <v-row class="d-flex justify-center">
                 <!-- Board -->
                 <div>
                     <!-- 現在のプレイヤーの色テスト表示 -->
                     <div>
                         <!-- テスト表示 -->
                         <h2>{{ isGameFinished ? 'Game Finished!!...' : 'Play Othello!!' }}</h2>
-                        <h2>Current Color: {{ this.currentPlayerColor }}</h2>
+                        <div class="d-flex justify-start">
+                            <h2>Current Color:</h2>
+
+                            <v-sheet
+                                v-if="currentPlayer.color.id === 0"
+                                class="ml-2 rounded-circle"
+                                elevation="12"
+                                height="30"
+                                width="30"
+                                color="#000000"
+                            ></v-sheet>
+
+                            <v-sheet
+                                v-else
+                                class="ml-2 rounded-circle"
+                                elevation="12"
+                                height="30"
+                                width="30"
+                                color="#FFFFFF"
+                            ></v-sheet>
+                        </div>
                     </div>
-                    <!-- PopUp test-->
+                    <!-- For debug: PopUp test
                     <div>
                         <v-btn
                             tile
@@ -25,7 +50,7 @@
                             PopUP test
                         </v-btn>
                     </div>
-
+                    -->
                     <div
                         v-for="(row, rowIndex) in table.board.squares"
                         :key="rowIndex"
@@ -41,7 +66,7 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace" />
+                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
                             </div>
                         </div>
                     </div>
@@ -53,17 +78,30 @@
         <v-container>
             <v-row v-if="!isXs" class="d-flex space-between text-center mb-5">
                 <v-col v-for="k in table.players" :key="k.name">
-                    <h2 class="player-font">{{ k.name }}: {{ k.score }}</h2>
+                    <h2
+                        v-bind:class="
+                            k == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                        "
+                    >
+                        {{ k.name }}: {{ k.score }}
+                    </h2>
                 </v-col>
             </v-row>
 
             <v-row v-else class="d-flex space-between text-center mb-5">
                 <v-col>
-                    <h2 class="player-font">{{ table.players[0].name }}: {{ k.score }}</h2>
+                    <h2
+                        v-bind:class="
+                            table.players[0] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                        "
+                    >
+                        {{ table.players[0].name }}: {{ table.players[0].score }}
+                    </h2>
                 </v-col>
             </v-row>
         </v-container>
-        <PopUp :table="this.table" @resetIsFinished="isFinished = false" v-if="isGameFinished" />
+        <PopUp :table="this.table" @resetGame="resetGame" v-if="isGameFinished" />
+        <SkipDialog :skipDialog="skipDialog" :player="currentPlayer" />
     </div>
 </template>
 
@@ -87,15 +125,18 @@ import LocalStorage from '@/modules/localStorage';
 import PlayerDecisions from '@/modules/playerDecisions';
 
 import Direction from '@/interfaces/direction';
+import Color from '@/interfaces/color';
+
 import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
-import Color from '@/interfaces/color';
+import SkipDialog from '@/components/SkipDialog.vue';
 
 export default Vue.extend({
     name: 'Game',
     props: ['table'],
     components: {
+        SkipDialog,
         StoneView,
         PopUp,
         Mark,
@@ -108,15 +149,18 @@ export default Vue.extend({
         localStorageTable: {} as Table,
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
+        holdTime: false as boolean,
+        holdTimeForCpu: false as boolean,
+        skipDialog: false as boolean,
     }),
     created() {
+        // localStorageへの保存は見直す必要があるため一度コメントアウト
         // this.localStorageTable = LocalStorage.fetchTable();
-        //今は画面遷移しないようにコメントアウト
         // this.validateLocalStorage();
-        // this.validateTable();
         // LocalStorage.saveTable(this.table);
         // this.setTable(this.localStorageTable);
         this.setBoardOnTable(this.createBoard());
+        this.validateTable();
         this.currentPlayer = this.table.players[0];
         this.initializeGame();
     },
@@ -233,8 +277,10 @@ export default Vue.extend({
 
             const animation = new FlipAnimation(square.id, fromColor.code, toColor.code);
 
+            this.holdTime = true;
             animation.flip(() => {
                 stone.isVisible = true;
+                this.holdTime = false;
             });
         },
         /***************************
@@ -253,6 +299,10 @@ export default Vue.extend({
                 [3, 4],
                 [4, 3],
             ];
+            // this.table.board.squares[3][3].stone = new Stone(Config.stone.color.white);
+            // this.table.board.squares[4][4].stone = new Stone(Config.stone.color.white);
+            // this.table.board.squares[3][4].stone = new Stone(Config.stone.color.black);
+            // this.table.board.squares[4][3].stone = new Stone(Config.stone.color.black);
 
             const initilizeStone = (cordinates: number[][], color: Color) => {
                 for (let i = 0; i < cordinates.length; i++) {
@@ -276,7 +326,11 @@ export default Vue.extend({
         },
         putStone(square: Square): void {
             //石が置ける場所をクリックした場合
-            // if (!square.isAllowedToPlace) return;
+            if (
+                // !square.isAllowedToPlace || 
+                this.holdTime ||
+                this.holdTimeForCpu
+            ) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -304,7 +358,6 @@ export default Vue.extend({
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
                 return;
             }
-
             //そのcurrentPlauerがプレイできない場合は...
             this.currentPlayer.isSkipped = true;
 
@@ -319,17 +372,63 @@ export default Vue.extend({
                 //1秒待ってゲーム終了(石のアニメーションの時間)
                 window.setTimeout(this.endGame, 1000);
                 return;
-            } else {
-                //1秒待ってスキップ
+            } else if(this.playerDecisions.length === 0){
+                // FIX: 非同期処理に同じ変数を扱うのは副作用の原因になるのでできれば分けた方がいい
+                //3秒待ってスキップ
+                this.skipDialog = true;
+                this.holdTime = true;
                 window.setTimeout(() => {
-                    alert('skipped');
+                    this.skipDialog = false;
+                    this.holdTime = false;
                     this.turnChange();
-                }, 1000);
+                }, 3000);
                 return;
             }
+
+            if(this.currentPlayer.isCpu){
+                this.cpuAlgorithm()
+            }
+
         },
         endGame(): void {
             this.isGameFinished = true;
+        },
+
+        resetGame(isRedirectedTop: boolean): void {
+            this.isGameFinished = false;
+            this.table.board.size = { x: 0, y: 0 };
+            this.table.board.squares = [];
+            this.table.board.enclosureController = new EnclosureController();
+            this.table.turnCounter = 0;
+
+            this.table.players.forEach((p: Player) => {
+                p.score = Config.player.initialScore;
+            });
+
+            //Topに遷移した時はプレイヤーの名前をリセット(初期値null)
+            if (isRedirectedTop) {
+                this.table.players = null;
+                return;
+            }
+
+            //createdの処理と重複しているで後ほど整理
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            this.currentPlayer = this.table.players[0];
+            this.initializeGame();
+        },
+        cpuAlgorithm: function (): void {
+            console.log('hey')
+            if(!this.currentPlayer.isCpu)return;
+            const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
+            const cpuSquare = this.playerDecisions[randomIndex];
+            console.log(cpuSquare)
+
+            this.holdTimeForCpu = true
+            window.setTimeout(()=>{
+                this.holdTimeForCpu = false;
+                this.putStone(cpuSquare);
+            },2000)
         },
     },
 });
@@ -339,13 +438,17 @@ export default Vue.extend({
 /* Google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
+.game {
+    font-family: 'Lato';
+}
+
 .v-content {
     background-color: #ffffff;
 }
 
 .board-square {
-    width: 90px;
-    height: 90px;
+    width: 75px;
+    height: 75px;
 
     cursor: pointer;
     transition: all 0.2s;
@@ -372,9 +475,15 @@ export default Vue.extend({
     background: #000000;
 } */
 
-.player-font {
+.player-font-turn {
     font-family: 'Lato';
     font-size: 40px;
+}
+
+.player-font-turn-waiting {
+    font-family: 'Lato';
+    font-size: 40px;
+    color: #c0c0c0;
 }
 
 @media screen and (max-width: 480px) {
@@ -384,8 +493,8 @@ export default Vue.extend({
     }
 
     .board-square {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         color: #ffffff;
         cursor: pointer;
         transition: all 0.2s;
