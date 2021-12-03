@@ -4,7 +4,11 @@
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
                 v-if="isXs"
-                v-bind:class="table.players[1] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+                v-bind:class="
+                    table.players[1] == currentPlayer
+                        ? `player-font-turn`
+                        : `player-font-turn-waiting`
+                "
             >
                 {{ table.players[1].name }}: {{ table.players[1].score }}
             </h2>
@@ -66,7 +70,9 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
+                                <Mark
+                                    v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu"
+                                />
                             </div>
                         </div>
                     </div>
@@ -92,7 +98,9 @@
                 <v-col>
                     <h2
                         v-bind:class="
-                            table.players[0] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                            table.players[0] == currentPlayer
+                                ? `player-font-turn`
+                                : `player-font-turn-waiting`
                         "
                     >
                         {{ table.players[0].name }}: {{ table.players[0].score }}
@@ -115,13 +123,10 @@ import Stone from '../models/stone';
 import Square from '@/models/square';
 import Player from '@/models/player';
 import AllowedDirections from '@/models/allowedDirections';
-import Enclosure from '@/models/enclosure';
 
 import FlipAnimation from '@/modules/flipAnimation';
 import BoardBuilder from '../modules/boardBuilder';
 import EnclosureController from '@/modules/enclosureController';
-import CheckAllowedSquares from '@/modules/checkAllowedSquares';
-import LocalStorage from '@/modules/localStorage';
 import PlayerDecisions from '@/modules/playerDecisions';
 
 import Direction from '@/interfaces/direction';
@@ -131,6 +136,7 @@ import PopUp from '../components/PopUp.vue';
 import StoneView from '@/components/Stone.vue';
 import Mark from '@/components/Mark.vue';
 import SkipDialog from '@/components/SkipDialog.vue';
+
 const env = process.env.NODE_ENV;
 
 export default Vue.extend({
@@ -235,7 +241,7 @@ export default Vue.extend({
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
         },
-        
+
         validateLocalStorage(): void {
             //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
             if (Object.keys(this.localStorageTable).length) {
@@ -325,10 +331,11 @@ export default Vue.extend({
             //石が置ける場所をクリックした場合
             if (
                 //developmentの時は置ける
-                (env !== "development" && !square.isAllowedToPlace) ||
+                (env !== 'development' && !square.isAllowedToPlace) ||
                 this.holdTime ||
                 this.holdTimeForCpu
-            ) return;
+            )
+                return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -354,8 +361,8 @@ export default Vue.extend({
             //そのcurrentPlauerがプレイできたら...
             if (this.playerDecisions.length !== 0) {
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
-                if(this.currentPlayer.isCpu){
-                    this.cpuAlgorithm()
+                if (this.currentPlayer.isCpu) {
+                    this.cpuAlgorithm();
                     return;
                 } else {
                     return;
@@ -416,16 +423,16 @@ export default Vue.extend({
             this.initializeGame();
         },
         cpuAlgorithm: function (): void {
-            if(!this.currentPlayer.isCpu)return;
+            if (!this.currentPlayer.isCpu) return;
             const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
             const cpuSquare = this.playerDecisions[randomIndex];
-            console.log(cpuSquare)
+            console.log(cpuSquare);
 
-            this.holdTimeForCpu = true
-            window.setTimeout(()=>{
+            this.holdTimeForCpu = true;
+            window.setTimeout(() => {
                 this.holdTimeForCpu = false;
                 this.putStone(cpuSquare);
-            },2000)
+            }, 2000);
         },
     },
 });
