@@ -299,10 +299,6 @@ export default Vue.extend({
                 [3, 4],
                 [4, 3],
             ];
-            // this.table.board.squares[3][3].stone = new Stone(Config.stone.color.white);
-            // this.table.board.squares[4][4].stone = new Stone(Config.stone.color.white);
-            // this.table.board.squares[3][4].stone = new Stone(Config.stone.color.black);
-            // this.table.board.squares[4][3].stone = new Stone(Config.stone.color.black);
 
             const initilizeStone = (cordinates: number[][], color: Color) => {
                 for (let i = 0; i < cordinates.length; i++) {
@@ -327,7 +323,7 @@ export default Vue.extend({
         putStone(square: Square): void {
             //石が置ける場所をクリックした場合
             if (
-                // !square.isAllowedToPlace || 
+                !square.isAllowedToPlace || 
                 this.holdTime ||
                 this.holdTimeForCpu
             ) return;
