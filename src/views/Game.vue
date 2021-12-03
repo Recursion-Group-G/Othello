@@ -4,7 +4,11 @@
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
                 v-if="isXs"
-                v-bind:class="table.players[1] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+                v-bind:class="
+                    table.players[1] == currentPlayer
+                        ? `player-font-turn`
+                        : `player-font-turn-waiting`
+                "
             >
                 {{ table.players[1].name }}: {{ table.players[1].score }}
             </h2>
@@ -66,7 +70,9 @@
                                     :stone="square.stone"
                                     v-if="square.stone && square.stone.isVisible"
                                 />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
+                                <Mark
+                                    v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu"
+                                />
                             </div>
                         </div>
                     </div>
@@ -92,7 +98,9 @@
                 <v-col>
                     <h2
                         v-bind:class="
-                            table.players[0] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                            table.players[0] == currentPlayer
+                                ? `player-font-turn`
+                                : `player-font-turn-waiting`
                         "
                     >
                         {{ table.players[0].name }}: {{ table.players[0].score }}
@@ -165,6 +173,7 @@ export default Vue.extend({
         this.validateTable();
         this.currentPlayer = this.table.players[0];
         this.initialGame();
+        LocalStorage.saveGame(this.table);
     },
     computed: {
         //スマホの画面判定
@@ -257,11 +266,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (
-                !square.isAllowedToPlace || 
-                this.holdTime ||
-                this.holdTimeForCpu
-            ) return;
+            if (!square.isAllowedToPlace || this.holdTime || this.holdTimeForCpu) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -356,10 +361,9 @@ export default Vue.extend({
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
             }
 
-            if(this.currentPlayer.isCpu){
-                this.cpuAlgorithm()
+            if (this.currentPlayer.isCpu) {
+                this.cpuAlgorithm();
             }
-
         },
         updateScore: function (): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
@@ -393,17 +397,17 @@ export default Vue.extend({
             this.initialGame();
         },
         cpuAlgorithm: function (): void {
-            console.log('hey')
-            if(!this.currentPlayer.isCpu)return;
+            console.log('hey');
+            if (!this.currentPlayer.isCpu) return;
             const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
             const cpuSquare = this.playerDecisions[randomIndex];
-            console.log(cpuSquare)
+            console.log(cpuSquare);
 
-            this.holdTimeForCpu = true
-            window.setTimeout(()=>{
+            this.holdTimeForCpu = true;
+            window.setTimeout(() => {
                 this.holdTimeForCpu = false;
                 this.putStone(cpuSquare);
-            },2000)
+            }, 2000);
         },
     },
 });
