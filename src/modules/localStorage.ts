@@ -46,7 +46,6 @@ class LocalStorage {
                     if (curr.stone !== null) stones[curr.id] = curr.stone;
                 }
             }
-            console.log(stones);
             const stonesJsonDecoded = JSON.stringify(stones);
 
             localStorage.setItem(Config.localStorage.players, playersJsonDecoded);

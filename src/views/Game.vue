@@ -78,7 +78,6 @@
                     </div>
                 </div>
             </v-row>
-            <v-btn v-on:click="this.clearData()">clear</v-btn>
         </v-container>
 
         <!-- Players下部 -->
@@ -156,7 +155,6 @@ export default Vue.extend({
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
-        localStorageTable: {} as Table,
         localStorageStones: {} as { key: Stone },
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
@@ -164,12 +162,6 @@ export default Vue.extend({
         holdTimeForCpu: false as boolean,
     }),
     created: function () {
-        // localStorageへの保存は見直す必要があるため一度コメントアウト
-        // this.localStorageTable = LocalStorage.fetchTable();
-        // this.validateLocalStorage();
-        // LocalStorage.saveTable(this.table);
-        // this.setTable(this.localStorageTable);
-
         this.localStorageStones = LocalStorage.fetchStones();
         if (this.localStorageStones !== null && Object.keys(this.localStorageStones).length !== 0) {
             this.table.players = LocalStorage.fetchPlayers();
@@ -177,19 +169,18 @@ export default Vue.extend({
             let board = this.createBoard();
             this.setBoardOnTable(board);
             this.setStonesOnTable();
-            this.currentPlayer = this.table.players[this.table.turnCounter % 2];
+            this.validateTable();
+            this.currentPlayer = this.table.players[
+                this.table.turnCounter % this.table.players.length
+            ];
+            this.setPlayerDecisions(this.currentPlayer);
         } else {
             let board = this.createBoard();
             this.setBoardOnTable(board);
-            // this.validateTable();
+            this.validateTable();
             this.currentPlayer = this.table.players[0];
             this.initialGame();
         }
-        // let board = this.createBoard();
-        // this.setBoardOnTable(board);
-        // // this.validateTable();
-        // this.currentPlayer = this.table.players[0];
-        // this.initialGame();
         LocalStorage.saveGame(this.table);
     },
     computed: {
@@ -249,10 +240,10 @@ export default Vue.extend({
             for (let y = 0; y < Config.square.size.y; y++) {
                 for (let x = 0; x < Config.square.size.x; x++) {
                     const curr: Square = this.table.board.squares[x][y];
-                    if (curr.id !== null && this.localStorageStones[curr.id] !== null) {
+                    if (curr.id !== null && this.localStorageStones[curr.id] !== undefined) {
                         curr.stone = this.localStorageStones[curr.id];
-                        // curr.stone.isVisible = true;
                         curr.isEmpty = false;
+                        this.table.board.enclosureController.addEnclosures(curr);
                     }
                 }
             }
@@ -305,9 +296,9 @@ export default Vue.extend({
 
             //Enclosureを更新
             this.table.board.enclosureController.updateFromSquare(square);
-            LocalStorage.saveGame(this.table);
 
             this.turnChange();
+            LocalStorage.saveGame(this.table);
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
