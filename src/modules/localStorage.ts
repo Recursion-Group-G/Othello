@@ -39,7 +39,7 @@ class LocalStorage {
             const playersJsonDecoded = JSON.stringify(table.players);
             const turnCounterJsonDecodes = JSON.stringify(table.turnCounter);
 
-            const stones = {};
+            const stones: { [key: string]: Stone } = {};
             for (let y = 0; y < Config.square.size.y; y++) {
                 for (let x = 0; x < Config.square.size.x; x++) {
                     const curr: Square = table.board.squares[x][y];

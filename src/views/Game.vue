@@ -155,7 +155,7 @@ export default Vue.extend({
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
-        localStorageStones: {} as { key: Stone },
+        localStorageStones: {} as { [key: string]: Stone },
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
         holdTime: false as boolean,
@@ -198,18 +198,6 @@ export default Vue.extend({
             //必要な情報がnullであればトップページへ画面遷移
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
-        },
-        getLocalStorage: function (): void {
-            let jsonTable = localStorage.getItem(Config.localStorage.table);
-            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
-            console.log(this.localStorageTable);
-        },
-        validateLocalStorage: function (): void {
-            //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
-            if (Object.keys(this.localStorageTable).length) {
-                if (!this.localStorageTable.players || !this.localStorageTable.board)
-                    router.push('/');
-            }
         },
         saveLocalStorage: function (): void {
             let tableJsonDecoded = JSON.stringify(this.table);
