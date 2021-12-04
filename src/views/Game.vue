@@ -68,7 +68,7 @@
                             >
                                 <StoneView
                                     :stone="square.stone"
-                                    v-if="square.stone && square.stone"
+                                    v-if="square.stone"
                                 />
                                 <Mark
                                     v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu"
