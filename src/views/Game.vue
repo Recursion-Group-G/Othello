@@ -68,7 +68,7 @@
                             >
                                 <StoneView
                                     :stone="square.stone"
-                                    v-if="square.stone && square.stone.isVisible"
+                                    v-if="square.stone && square.stone"
                                 />
                                 <Mark
                                     v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu"
@@ -248,9 +248,11 @@ export default Vue.extend({
         setStonesOnTable(): void {
             for (let y = 0; y < Config.square.size.y; y++) {
                 for (let x = 0; x < Config.square.size.x; x++) {
-                    const curr = this.table.board.squares[x][y];
+                    const curr: Square = this.table.board.squares[x][y];
                     if (curr.id !== null && this.localStorageStones[curr.id] !== null) {
                         curr.stone = this.localStorageStones[curr.id];
+                        // curr.stone.isVisible = true;
+                        curr.isEmpty = false;
                     }
                 }
             }
@@ -303,6 +305,7 @@ export default Vue.extend({
 
             //Enclosureを更新
             this.table.board.enclosureController.updateFromSquare(square);
+            LocalStorage.saveGame(this.table);
 
             this.turnChange();
         },

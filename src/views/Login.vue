@@ -56,6 +56,7 @@ import Vue from 'vue';
 import Player from '../models/player';
 import Config from '../config';
 import Color from '../interfaces/color';
+import LocalStorage from '@/modules/localStorage';
 
 export default Vue.extend({
     name: 'Login',
@@ -126,6 +127,7 @@ export default Vue.extend({
         redirect(): void {
             this.setPlayersColor();
             if (this.validate()) {
+                LocalStorage.clearData();
                 this.sendPlayers();
                 this.$router.push('/game');
             }
