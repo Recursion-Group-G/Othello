@@ -387,6 +387,7 @@ export default Vue.extend({
             this.table.board.squares = [];
             this.table.board.enclosureController = new EnclosureController();
             this.table.turnCounter = 0;
+            LocalStorage.clearData();
 
             this.table.players.forEach((p: Player) => {
                 p.score = Config.player.initialScore;
@@ -403,6 +404,7 @@ export default Vue.extend({
             this.setBoardOnTable(board);
             this.currentPlayer = this.table.players[0];
             this.initialGame();
+            LocalStorage.saveGame(this.table);
         },
         cpuAlgorithm: function (): void {
             console.log('hey');
