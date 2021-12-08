@@ -4,7 +4,11 @@
             <!-- Players上部(スマホの時のみ表示) -->
             <h2
                 v-if="isXs"
-                v-bind:class="table.players[1] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`"
+                v-bind:class="
+                    table.players[1] == currentPlayer
+                        ? `player-font-turn`
+                        : `player-font-turn-waiting`
+                "
             >
                 {{ table.players[1].name }}: {{ table.players[1].score }}
             </h2>
@@ -64,9 +68,11 @@
                             >
                                 <StoneView
                                     :stone="square.stone"
-                                    v-if="square.stone && square.stone.isVisible"
+                                    v-if="square.stone"
                                 />
-                                <Mark v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu" />
+                                <Mark
+                                    v-if="square.isAllowedToPlace && !holdTime && !holdTimeForCpu"
+                                />
                             </div>
                         </div>
                     </div>
@@ -92,7 +98,9 @@
                 <v-col>
                     <h2
                         v-bind:class="
-                            table.players[0] == currentPlayer ? `player-font-turn` : `player-font-turn-waiting`
+                            table.players[0] == currentPlayer
+                                ? `player-font-turn`
+                                : `player-font-turn-waiting`
                         "
                     >
                         {{ table.players[0].name }}: {{ table.players[0].score }}
@@ -147,24 +155,33 @@ export default Vue.extend({
         playerDecisions: [] as Square[],
         players: ['Player1', 'Player2'],
         currentPlayer: new Player() as Player,
-        localStorageTable: {} as Table,
+        localStorageStones: {} as { [key: string]: Stone },
         flipCounter: 0 as number,
         isGameFinished: false as boolean,
         holdTime: false as boolean,
         holdTimeForCpu: false as boolean,
     }),
     created: function () {
-        // localStorageへの保存は見直す必要があるため一度コメントアウト
-        // this.localStorageTable = LocalStorage.fetchTable();
-        // this.validateLocalStorage();
-        // LocalStorage.saveTable(this.table);
-        // this.setTable(this.localStorageTable);
-
-        let board = this.createBoard();
-        this.setBoardOnTable(board);
-        this.validateTable();
-        this.currentPlayer = this.table.players[0];
-        this.initialGame();
+        this.localStorageStones = LocalStorage.fetchStones();
+        if (this.localStorageStones !== null && Object.keys(this.localStorageStones).length !== 0) {
+            this.table.players = LocalStorage.fetchPlayers();
+            this.table.turnCounter = LocalStorage.fetchTurnCounter();
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            this.setStonesOnTable();
+            this.validateTable();
+            this.currentPlayer = this.table.players[
+                this.table.turnCounter % this.table.players.length
+            ];
+            this.setPlayerDecisions(this.currentPlayer);
+        } else {
+            let board = this.createBoard();
+            this.setBoardOnTable(board);
+            this.validateTable();
+            this.currentPlayer = this.table.players[0];
+            this.initialGame();
+        }
+        LocalStorage.saveGame(this.table);
     },
     computed: {
         //スマホの画面判定
@@ -181,18 +198,6 @@ export default Vue.extend({
             //必要な情報がnullであればトップページへ画面遷移
             if (this.table == null || this.table.players == null || this.table.board == null)
                 router.push('/');
-        },
-        getLocalStorage: function (): void {
-            let jsonTable = localStorage.getItem(Config.localStorage.table);
-            this.localStorageTable = jsonTable ? JSON.parse(jsonTable) : {};
-            console.log(this.localStorageTable);
-        },
-        validateLocalStorage: function (): void {
-            //locakStirageから取得したTableオブジェクトが空ではないが、playerかboardが空であればトップページへ遷移
-            if (Object.keys(this.localStorageTable).length) {
-                if (!this.localStorageTable.players || !this.localStorageTable.board)
-                    router.push('/');
-            }
         },
         saveLocalStorage: function (): void {
             let tableJsonDecoded = JSON.stringify(this.table);
@@ -219,7 +224,18 @@ export default Vue.extend({
         setBoardOnTable(board: Board): void {
             this.table.board = board;
         },
-
+        setStonesOnTable(): void {
+            for (let y = 0; y < Config.square.size.y; y++) {
+                for (let x = 0; x < Config.square.size.x; x++) {
+                    const curr: Square = this.table.board.squares[x][y];
+                    if (curr.id !== null && this.localStorageStones[curr.id] !== undefined) {
+                        curr.stone = this.localStorageStones[curr.id];
+                        curr.isEmpty = false;
+                        this.table.board.enclosureController.addEnclosures(curr);
+                    }
+                }
+            }
+        },
         initialGame(): void {
             //石を4個最初に置く
             console.log('start initializing game');
@@ -257,11 +273,7 @@ export default Vue.extend({
         },
         putStone: function (square: Square): void {
             //石が置ける場所をクリックした場合
-            if (
-                !square.isAllowedToPlace || 
-                this.holdTime ||
-                this.holdTimeForCpu
-            ) return;
+            if (!square.isAllowedToPlace || this.holdTime || this.holdTimeForCpu) return;
 
             square.stone = new Stone(this.currentPlayer.color);
             square.isAllowedToPlace = false;
@@ -274,6 +286,7 @@ export default Vue.extend({
             this.table.board.enclosureController.updateFromSquare(square);
 
             this.turnChange();
+            LocalStorage.saveGame(this.table);
         },
         flipAllDirections(square: Square): void {
             //Squareがひっくり返せる方向を取得
@@ -356,10 +369,9 @@ export default Vue.extend({
                 this.table.players.forEach((p: Player) => (p.isSkipped = false));
             }
 
-            if(this.currentPlayer.isCpu){
-                this.cpuAlgorithm()
+            if (this.currentPlayer.isCpu) {
+                this.cpuAlgorithm();
             }
-
         },
         updateScore: function (): void {
             const nextPlayerIndex = (this.table.turnCounter + 1) % this.table.players.length;
@@ -375,6 +387,7 @@ export default Vue.extend({
             this.table.board.squares = [];
             this.table.board.enclosureController = new EnclosureController();
             this.table.turnCounter = 0;
+            LocalStorage.clearData();
 
             this.table.players.forEach((p: Player) => {
                 p.score = Config.player.initialScore;
@@ -391,19 +404,24 @@ export default Vue.extend({
             this.setBoardOnTable(board);
             this.currentPlayer = this.table.players[0];
             this.initialGame();
+            LocalStorage.saveGame(this.table);
         },
         cpuAlgorithm: function (): void {
-            console.log('hey')
-            if(!this.currentPlayer.isCpu)return;
+            console.log('hey');
+            if (!this.currentPlayer.isCpu) return;
             const randomIndex = Math.floor(Math.random() * this.playerDecisions.length);
             const cpuSquare = this.playerDecisions[randomIndex];
-            console.log(cpuSquare)
+            console.log(cpuSquare);
 
-            this.holdTimeForCpu = true
-            window.setTimeout(()=>{
+            this.holdTimeForCpu = true;
+            window.setTimeout(() => {
                 this.holdTimeForCpu = false;
                 this.putStone(cpuSquare);
-            },2000)
+            }, 2000);
+        },
+        //デバッグ用
+        clearData(): void {
+            localStorage.clear();
         },
     },
 });

@@ -54,6 +54,9 @@ const config: Config = {
     },
     localStorage: {
         table: 'table',
+        players: 'players',
+        turnCounter: 'turnCounter',
+        stones: 'stones',
     },
     direction: {
         top: 'top',
