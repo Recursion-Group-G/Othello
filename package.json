@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "express": "^4.17.2",
     "three": "^0.134.0",
     "vue": "^2.6.11",
     "vuetify": "^2.4.0"
